@@ -3,4 +3,4 @@ bump: minor
 category: Changes
 ---
 
-Add `org/write-luau-tests` — vendor-neutral test-quality doctrine (the red-first gate, forbidden moves, and the definition-of-good rubric), generalized from Flipbook's `write-flipbook-tests`.
+Add `org/write-luau-tests`, the vendor-neutral test-quality doctrine (red-first gate, forbidden moves, definition-of-good rubric) generalized from Flipbook's `write-flipbook-tests`.
