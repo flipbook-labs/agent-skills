@@ -10,7 +10,7 @@ Plugins built on [AgentGateway](https://github.com/flipbook-labs/agent-gateway) 
 
 ## When not to use
 
-This skill is for *consuming* a gateway from inside Studio. To build the AgentGateway example plugin and validate the gateway itself end-to-end, see `agent-gateway/e2e`.
+This skill is for *consuming* a gateway from inside Studio. To build the AgentGateway example plugin and validate the gateway itself end-to-end, see the `e2e` skill in the `flipbook-labs/agent-gateway` repo (it will move here as `agent-gateway/e2e` once seeded).
 
 ## Connect to Roblox Studio
 
@@ -108,11 +108,8 @@ return HttpService:JSONEncode(manifest.result)
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-05. Mirrored from the `use-agent-gateway` skill in `flipbook-labs/agent-gateway`; this hub is now its home.
+**Date stamped:** 2026-07-05. Based on the "discoverable and self-describing gateways" design in agent-gateway [PR #13](https://github.com/flipbook-labs/agent-gateway/pull/13) (branch `agent-discoverability`), which is **not yet merged**. Tag-based discovery and the `Usage`/`Description` attributes exist on that branch, not on agent-gateway `main`.
 
-**Re-verify these claims when this skill next loads** (run from an `agent-gateway` checkout, e.g. `../agent-gateway`):
+**Re-verify these claims when this skill next loads:** run `scripts/check-drift.luau` (via `lute` from the hub root). It checks the anchors against `origin/agent-discoverability` in a sibling `../agent-gateway` checkout (via `git show`, so it works regardless of what's checked out) and skips cleanly when the repo or ref is absent. It confirms the `AgentGateway` tag (`src/constants.luau`), the `list`/`call` methods (`src/types.luau`), and the `ProtocolVersion` / `Usage` / `Description` attributes (`src/createGateway.luau`).
 
-- The CollectionService tag is still `AgentGateway`: `grep -n 'local TAG = "AgentGateway"' src/constants.luau`
-- The protocol still has exactly the `list` and `call` methods: `grep -n 'method: "list" | "call"' src/types.luau`
-- Gateways still publish these attributes: `grep -n 'SetAttribute("ProtocolVersion"\|SetAttribute("Usage"\|SetAttribute("Description"' src/createGateway.luau`
-- Response shape `{ ok, result?, error? }` and the error-prefix grammar (`malformed request:`, `unknown action:`, `invalid params for`): `grep -rn 'malformed request\|unknown action\|invalid params for' src/`
+**When PR #13 merges:** re-point `REF` in the drift script to `origin/main` (or the release tag) and drop the "not yet merged" note above.
