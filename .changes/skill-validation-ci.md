@@ -3,4 +3,4 @@ bump: minor
 category: Changes
 ---
 
-Add `lute run test` skill validation (frontmatter + `AGENTS.md`↔`src/` consistency) and `lute run analyze` strict type-checking, wired as `test` and `analyze` CI jobs to gate skill PRs.
+Add skill validation as Lute-native `.spec.luau` tests (frontmatter + `AGENTS.md`↔`src/` consistency, run by `lute test`) and `lute run analyze` strict type-checking, wired as `test` and `analyze` CI jobs to gate skill PRs.

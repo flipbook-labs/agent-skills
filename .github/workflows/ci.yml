@@ -17,7 +17,7 @@ jobs:
           version: v1.2.0
 
       - name: Validate skills
-        run: lute run test
+        run: lute test
 
   analyze:
     runs-on: ubuntu-latest

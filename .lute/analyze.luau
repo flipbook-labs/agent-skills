@@ -10,8 +10,8 @@ local result = process.run({
 	"analyze",
 	"--platform=standard",
 	"--settings=.vscode/settings.json",
-	"--base-luaurc=.luaurc",
 	".lute",
+	"tests",
 	"src",
 }, {
 	stdio = "inherit",
