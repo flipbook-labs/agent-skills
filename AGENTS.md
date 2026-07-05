@@ -26,7 +26,7 @@ Each entry declares a genre. `type: process` is a runbook (what to do next) and
 
 ## Project Skills
 
-> Scaffold — no skills seeded yet. Entries land here (in the same commit as each
+> Scaffold: no skills seeded yet. Entries land here (in the same commit as each
 > skill) as the library is populated. Format per line:
 > `` - `<scope>/<name>`: <trigger-rich one-liner>. ``
 
@@ -35,7 +35,7 @@ Each entry declares a genre. `type: process` is a runbook (what to do next) and
 - `org/write-luau-tests`: writing unit tests that specify intended behavior and can actually fail. The red-first gate, forbidden moves (tautologies, mocking the subject, coverage theater), and the definition-of-good rubric. Vendor-neutral doctrine. Repo-specific runner and framework mechanics live in that repo's own test skill. `type: process`.
 - `org/writing-style`: the house voice for prose you generate (skills, docs, PRs, changelog entries). The banned patterns (antithesis framing, hype words, em dashes, semicolon overuse) and the self-critic pass. Run it over any prose you write or edit. `type: process`.
 
-### Family — Flipbook / Storyteller / ModuleLoader (`family/`)
+### Family: Flipbook / Storyteller / ModuleLoader (`family/`)
 
 _none yet_
 
