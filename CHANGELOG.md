@@ -9,4 +9,7 @@ bump can see exactly which skills changed and why.
 
 - Scaffold the repository: authoring doctrine (`CONTRIBUTING.md`), routing
   convention (`AGENTS.md` / `CLAUDE.md`), package identity (`loom.config.luau`),
-  and the scoped `src/` layout. No skills yet.
+  and the scoped `src/` layout.
+- Add `org/write-luau-tests` — vendor-neutral test-quality doctrine (the
+  red-first gate, forbidden moves, and the definition-of-good rubric),
+  generalized from Flipbook's `write-flipbook-tests`.

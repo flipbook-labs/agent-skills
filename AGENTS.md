@@ -32,7 +32,7 @@ Each entry declares a genre (`type: process` = runbook / what to do next;
 
 ### Cross-cutting (`org/`)
 
-_none yet_
+- `org/write-luau-tests` — writing unit tests that specify intended behavior and can actually fail: the red-first gate, forbidden moves (tautologies, mocking the subject, coverage theater), and the definition-of-good rubric. Vendor-neutral doctrine; repo-specific runner/framework mechanics live in that repo's own test skill. `type: process`.
 
 ### Family — Flipbook / Storyteller / ModuleLoader (`family/`)
 
