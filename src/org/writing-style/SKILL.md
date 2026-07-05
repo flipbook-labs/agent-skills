@@ -1,6 +1,6 @@
 ---
 name: writing-style
-description: "The house voice for prose you generate: skills, docs, PR descriptions, changelog entries, comments. Use when: writing or editing any prose in a flipbook-labs repo, or running a critic pass over your own draft for AI tells. Covers the voice, the banned patterns (antithesis framing, hype words, em dashes), and the self-critic pass."
+description: "The house voice for prose you generate: skills, docs, PR descriptions, changelog entries, comments. Use when: writing or editing any prose in a flipbook-labs repo, or running a critic pass over your own draft for AI tells. Covers the voice, the banned patterns (antithesis framing, hype words, em dashes, semicolon overuse), and the self-critic pass."
 type: process
 ---
 
@@ -26,6 +26,10 @@ It is not a linter to run against existing text. So:
 ## No em dashes
 
 A hard rule. Recast the sentence with a period, comma, parentheses, or colon. It applies to prose and to list blurbs alike: write a label and its blurb with a colon (`Label: blurb`), never with an em dash between them.
+
+## Limit semicolons
+
+Where you would reach for a semicolon, default to a period and a new sentence. A rare, deliberate semicolon is fine (for example, separating list items that contain commas), but joining two independent clauses with one is almost always two sentences in disguise. If a paragraph has more than one, recast it.
 
 ## Banned patterns
 
@@ -54,6 +58,6 @@ Before declaring any prose done, re-read the text *you* wrote or edited with one
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-05. The voice, banned-patterns list, and critic pass generalized from Flipbook's `write-docs` skill; the Flipbook and Obsidian docs-site mechanics stay in `flipbook/write-docs`, which defers here for voice.
+**Date stamped:** 2026-07-05. The voice, banned-patterns list, and critic pass generalized from Flipbook's `write-docs` skill. The Flipbook and Obsidian docs-site mechanics stay in `flipbook/write-docs`, which defers here for voice.
 
 **Re-verify these claims when this skill next loads:** this skill is pure doctrine and makes no claims about any repo's source, so it has no volatile layer to re-derive. When a repo's own writing or docs skill drifts from this voice, fix it there, and if the voice itself changes, update this skill and add a `.changes/` entry.

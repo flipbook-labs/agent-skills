@@ -32,7 +32,7 @@ Each entry declares a genre (`type: process` = runbook / what to do next;
 
 ### Cross-cutting (`org/`)
 
-- `org/writing-style` — the house voice for prose you generate (skills, docs, PRs, changelog entries): the banned patterns (antithesis framing, hype words, em dashes), and the self-critic pass. Run it over any prose you write or edit. `type: process`.
+- `org/writing-style` — the house voice for prose you generate (skills, docs, PRs, changelog entries): the banned patterns (antithesis framing, hype words, em dashes, semicolon overuse), and the self-critic pass. Run it over any prose you write or edit. `type: process`.
 
 ### Family — Flipbook / Storyteller / ModuleLoader (`family/`)
 
