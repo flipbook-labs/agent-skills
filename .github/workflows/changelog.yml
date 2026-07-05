@@ -1,0 +1,15 @@
+name: Changelog
+
+on:
+  pull_request:
+
+jobs:
+  require-entry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: flipbook-labs/changewrite@v0.5.0
+        with:
+          require-entry: "true"
