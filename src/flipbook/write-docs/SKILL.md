@@ -17,7 +17,7 @@ The hard rule: **never describe behavior you have not confirmed in the source.**
 
 ## Voice and banned patterns
 
-Follow **`org/writing-style`** for the house voice, the banned patterns (antithesis framing, hype and filler words, rule-of-three padding, meta-openers), the hard no-em-dash rule, and the self-critic pass. This skill layers the Flipbook and Obsidian docs-site mechanics on top of that.
+Follow **`org/writing-style`** for the house voice, the banned patterns (antithesis framing, hype and filler words, rule-of-three padding, meta-openers, semicolon overuse), the hard no-em-dash rule, and the self-critic pass. This skill layers the Flipbook and Obsidian docs-site mechanics on top of that.
 
 ## Workflow
 
@@ -48,7 +48,7 @@ Follow **`org/writing-style`** for the house voice, the banned patterns (antithe
    - `obsidian backlinks path=<path>` checks before deleting a note
    - `obsidian orphans` lists notes with no incoming links
 
-7. **Verify it builds** after structural changes: `cd docs/site && npm run build` (or have the user run it). Watch for broken wikilink and embed targets and unresolved references. If an Obsidian-ism surfaces as a build warning, flag it rather than rewriting it into Docusaurus syntax unprompted. Docs are also Prettier-formatted (`proseWrap: preserve`, so your line breaks are kept, which matters because joining a callout's lines would fold its body into the title). Run `npm run format` in `docs/site`, or let format-on-save handle it; CI runs `prettier --check`.
+7. **Verify it builds** after structural changes: `cd docs/site && npm run build` (or have the user run it). Watch for broken wikilink and embed targets and unresolved references. If an Obsidian-ism surfaces as a build warning, flag it rather than rewriting it into Docusaurus syntax unprompted. Docs are also Prettier-formatted (`proseWrap: preserve`, so your line breaks are kept, which matters because joining a callout's lines would fold its body into the title). Run `npm run format` in `docs/site`, or let format-on-save handle it. CI runs `prettier --check`.
 
 ## Conventions
 
@@ -58,10 +58,10 @@ Follow **`org/writing-style`** for the house voice, the banned patterns (antithe
 - **Callouts use Obsidian syntax, not Docusaurus `:::` admonitions:** `> [!note]`, `> [!tip]`, `> [!warning]`, `> [!seealso]`. Use `> [!warning]` for deprecations and breaking-change notices, and `> [!seealso]` (with wikilinks) for cross-reference blocks. **Put `> [!seealso]` blocks at the bottom of the page**, after the last content section.
 - **Internal links are Obsidian wikilinks, not absolute paths:** `[[usage/frameworks/react|React]]`, a vault-relative path with an optional `|Label`. Link to a heading with `#`: `[[api/storybook-format#Legacy Support]]`. Verify the target page and heading exist.
 - **Map of Content and `> [!seealso]` entries use a colon, not an em dash:** `[[link|Label]]: blurb`.
-- **Reuse content by linking to a single source of truth, not by transcluding it.** Note transclusion (`![[note]]` / `![[note#section]]`) is no longer supported, so keep each fact on one canonical page and link to it (e.g. `concepts/story` links to `api/story-format` for the full module API). If a page genuinely needs another's content inline, write a short purpose-built summary there and link out for the detail; don't copy-paste the whole section.
+- **Reuse content by linking to a single source of truth, not by transcluding it.** Note transclusion (`![[note]]` / `![[note#section]]`) is no longer supported, so keep each fact on one canonical page and link to it (e.g. `concepts/story` links to `api/story-format` for the full module API). If a page genuinely needs another's content inline, write a short purpose-built summary there and link out for the detail. Don't copy-paste the whole section.
 - **Sidebar order comes from `index.md` link lists, not frontmatter.** The sidebar generator (`docs/site/src/sidebar/obsidian.mjs`) labels each item from its `# H1` and orders each folder by the wikilink order in that folder's `index.md` (the root order comes from `README.md`). To place or reorder a page, edit the relevant index note's link list, and **don't add `sidebar_position`**.
 - **Every folder owns an `index.md`** that is its Map of Content: a one-line intro plus a bulleted list of `[[wikilinks]]` to the folder's pages, each followed by a colon and a short blurb (see `usage/index.md`, `concepts/index.md`). New page in a folder gets added to that index.
-- **Frontmatter is Obsidian-managed YAML.** Pages carry `aliases` and `linter-yaml-title-alias`, which the Obsidian Linter keeps in sync with the `# H1`, so don't hand-edit `linter-yaml-title-alias` (and commit the linter config so this stays shared). **Strip `notion-id`** when you touch a page; it's dead Notion-migration residue. Don't add a `base:` key (that's Obsidian Bases membership). Preserve other existing keys you didn't add (`tags`, `id`).
+- **Frontmatter is Obsidian-managed YAML.** Pages carry `aliases` and `linter-yaml-title-alias`, which the Obsidian Linter keeps in sync with the `# H1`, so don't hand-edit `linter-yaml-title-alias` (and commit the linter config so this stays shared). **Strip `notion-id`** when you touch a page. It's dead Notion-migration residue. Don't add a `base:` key (that's Obsidian Bases membership). Preserve other existing keys you didn't add (`tags`, `id`).
 - Images embed Obsidian-style with an optional size: `![[assets/flipbook-icon.png|32]]`. When you use standard `![alt](path)` syntax instead, write real, descriptive alt text.
 
 ## Code samples
@@ -75,7 +75,7 @@ Follow **`org/writing-style`** for the house voice, the banned patterns (antithe
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-05. Mirrored from the `write-docs` skill on Flipbook's **unmerged `flipbook-docs` branch**, with the voice and banned-patterns sections lifted into `org/writing-style` and this skill deferring there for them. All paths and mechanics below describe that branch's docs setup, not `main`.
+**Date stamped:** 2026-07-05. Mirrored from the `write-docs` skill on Flipbook's **unmerged `flipbook-docs` branch**, with the voice and banned-patterns sections lifted into `org/writing-style` and this skill deferring there for them. All paths and mechanics in this skill describe that branch's docs setup, not `main`.
 
 **Re-verify these claims when this skill next loads** (run from a `flipbook` checkout; the docs estate currently lives only on `flipbook-docs`):
 
