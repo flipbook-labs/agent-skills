@@ -96,7 +96,7 @@ relative to the repo the reader is working in.
 Skills do not heal themselves. An agent only updates a skill if it is told to, so this is
 the standing rule:
 
-> **When work contradicts a skill you loaded, fix the skill — and ship a `CHANGELOG.md`
+> **When work contradicts a skill you loaded, fix the skill — and add a `.changes/`
 > entry — as part of the same effort.** Renamed the symbol an anchor points at? Re-point
 > it. Changed the config a table documents? Update the row and its date stamp. Proved a
 > "known bug" is fixed? Move it to resolved in the failure archaeology.
@@ -110,7 +110,7 @@ Two cases, because this is a versioned package:
   `flipbook/` skills, whose anchors point into another repo's source) — you can't fix it
   in that repo's PR across the package boundary. Instead propose the fix here immediately
   (don't let the observation evaporate; `lute run contribute-skills` opens a draft PR with
-  a changelog entry) and note in your consumer PR that a shared-skill fix is pending. It
+  a `.changes/` entry) and note in your consumer PR that a shared-skill fix is pending. It
   reaches consumers when they bump the pinned version.
 
 This keeps drift local and cheap. A skill touched every time its subject changes never
@@ -149,4 +149,4 @@ drift fastest and heal slowest.
 - [ ] "When not to use" links sibling skills so the right one wins.
 - [ ] Provenance footer with a date stamp and a runnable re-verify block; a `scripts/`
       drift detector for single-repo scopes where the fact is mechanically checkable.
-- [ ] `CHANGELOG.md` entry describing the change for consumers.
+- [ ] A `.changes/` entry (`bump:` + short description) so the change lands in the next release's changelog.
