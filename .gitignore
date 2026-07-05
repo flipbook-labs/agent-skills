@@ -1,0 +1,17 @@
+# Luau
+sourcemap*.json
+globalTypes.d.luau
+LuauPackages
+*.lock.luau
+
+# Loom / Wally
+/Packages
+/DevPackages
+
+# Environment
+.env
+
+# Other
+/*.log
+__pycache__
+.DS_Store
