@@ -44,4 +44,4 @@ _none yet_
 
 ### AgentGateway (`agent-gateway/`)
 
-_none yet_
+- `agent-gateway/use-agent-gateway` — driving Studio plugins that expose actions via an AgentGateway: connecting to the Roblox Studio MCP server, discovering gateways by tag, and speaking the `list`/`call` protocol. `type: knowledge`.
