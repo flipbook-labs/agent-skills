@@ -32,7 +32,7 @@ Each entry declares a genre (`type: process` = runbook / what to do next;
 
 ### Cross-cutting (`org/`)
 
-_none yet_
+- `org/writing-style` — the house voice for prose you generate (skills, docs, PRs, changelog entries): the banned patterns (antithesis framing, hype words, em dashes), and the self-critic pass. Run it over any prose you write or edit. `type: process`.
 
 ### Family — Flipbook / Storyteller / ModuleLoader (`family/`)
 
@@ -40,7 +40,7 @@ _none yet_
 
 ### Flipbook (`flipbook/`)
 
-_none yet_
+- `flipbook/write-docs` — authoring Flipbook's docs (the Obsidian vault and Docusaurus site): the workflow, the site mechanics (wikilinks, callouts, sidebar, code samples), and conventions. Defers to `org/writing-style` for voice. `type: process`.
 
 ### AgentGateway (`agent-gateway/`)
 
