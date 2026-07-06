@@ -1,0 +1,84 @@
+---
+name: write-docs
+description: "Write or edit Flipbook's documentation (the Obsidian vault and the Docusaurus site) so it matches the house voice and the site's mechanics. Use when: writing, drafting, updating, or revising docs, a docs page, a guide, the docs site, or anything under `docs/`. For voice and banned patterns, follow org/writing-style."
+type: process
+---
+
+# Write Docs
+
+Flipbook's documentation is authored in the **Obsidian vault at `docs/obsidian-vault/`** as Obsidian-flavored Markdown (`.md`) so the team can edit and cross-link pages quickly in Obsidian. A build step processes the vault into the **Docusaurus site at `docs/site/`**, which is published to GitHub Pages. Author your pages in the vault: use the Obsidian conventions below, and keep pages valid Markdown that Docusaurus can render. Read this skill fully before writing or editing a page.
+
+The hard rule: **never describe behavior you have not confirmed in the source.** Generic, plausible-sounding docs that don't match the code are worse than no docs.
+
+**Not every page is public docs.** `usage/`, `api/`, `concepts/`, and `contributing/` are the high-rigor reference pages; apply the full house style and accuracy bar to them. `engineering/` (including `engineering/proposals/`), `product/`, and `product/ideas/` are living documents, tech specs, and RFCs: freeform, lower bar, often half-finished thoughts. Keep the voice there, but don't polish or "correct" someone's working notes. Match the surrounding informality and only change what you were asked to. (Everything publishes except a short sensitivity list excluded in `docs/site/docusaurus.config.ts`.)
+
+> [!note]
+> Author in Obsidian syntax. The build's remark plugin (`docs/site/src/remark/obsidian.mjs`) resolves wikilinks, image embeds, and `> [!callouts]`, so don't convert them to Docusaurus `:::` syntax to silence a warning; flag a genuinely unrenderable case instead. Note transclusion (embedding one note's body into another with `![[note]]`) is **not** supported: the plugin only embeds images, and a `![[note]]` falls back to a plain link. Don't author Obsidian Bases (`.base`): they don't render on the site (see Conventions).
+
+## Voice and banned patterns
+
+Follow **`org/writing-style`** for the house voice, the banned patterns (antithesis framing, hype and filler words, rule-of-three padding, meta-openers, semicolon overuse), the hard no-em-dash rule, and the self-critic pass. This skill layers the Flipbook and Obsidian docs-site mechanics on top of that.
+
+## Workflow
+
+1. **Read before you write.** Open the relevant source under `src/` (and existing tests) for anything you intend to document. Open the existing docs page if you are editing one. Do not write from general knowledge of how storybook tools "usually" work.
+
+2. **Ground every claim.** Every behavior, property, default, and signature you state must be traceable to a specific line of source or an existing test. If you can't point to it, don't write it. When unsure, say so to the user instead of inventing.
+
+3. **Cite while drafting.** As you draft, tag non-obvious claims with a source marker, e.g. `<!-- src: src/Storybook/init.luau:42 -->`. These make review trivial. Strip them before the page is final, but keep them in any draft you hand back for review.
+
+4. **Match the house voice** in `org/writing-style` and the conventions below.
+
+5. **Run the self-critic pass** from `org/writing-style` before declaring a page done, with the docs-specific addition of checking that every claim is backed by a cited source.
+
+6. **Use the `obsidian` CLI for vault operations:** reading files, checking backlinks before deleting, moving notes, verifying unresolved links. The CLI connects to the currently active Obsidian window. Two vaults share the name `obsidian-vault` (the personal vault and this one), so first confirm the CLI is pointed at the right one:
+
+   ```sh
+   open "obsidian://open?vault=obsidian-vault&path=README.md"
+   obsidian vault info=path   # must print .../flipbook/docs/obsidian-vault
+   ```
+
+   Key commands (all paths are vault-relative):
+   - `obsidian read path=<path>` reads a note
+   - `obsidian append path=<path> content=<text>` appends to a note (use `\n` for newlines)
+   - `obsidian create path=<path> content=<text>` creates a note
+   - `obsidian delete path=<path>` moves to trash (recoverable)
+   - `obsidian move path=<path> to=<dest-folder>` moves or renames
+   - `obsidian unresolved` lists broken wikilinks vault-wide
+   - `obsidian backlinks path=<path>` checks before deleting a note
+   - `obsidian orphans` lists notes with no incoming links
+
+7. **Verify it builds** after structural changes: `cd docs/site && npm run build` (or have the user run it). Watch for broken wikilink and embed targets and unresolved references. If an Obsidian-ism surfaces as a build warning, flag it rather than rewriting it into Docusaurus syntax unprompted. Docs are also Prettier-formatted (`proseWrap: preserve`, so your line breaks are kept, which matters because joining a callout's lines would fold its body into the title). Run `npm run format` in `docs/site`, or let format-on-save handle it. CI runs `prettier --check`.
+
+## Conventions
+
+- Capitalize Flipbook product nouns: Story, Storybook, Controls, Storyteller. Lowercase generic uses.
+- **Title Case for headings** ("Writing Stories", "Using Frameworks"). The page `# H1` is the feature or page name.
+- Reference data goes in **static Markdown tables**: `| **Property** | **Type** | **Description** |`. Use `string?` / `{ Instance }` style Luau types in the Type column. **Never use Obsidian Bases (`.base`)**: they're excluded from the build and render as nothing on the site, so hand-write the table instead.
+- **Callouts use Obsidian syntax, not Docusaurus `:::` admonitions:** `> [!note]`, `> [!tip]`, `> [!warning]`, `> [!seealso]`. Use `> [!warning]` for deprecations and breaking-change notices, and `> [!seealso]` (with wikilinks) for cross-reference blocks. **Put `> [!seealso]` blocks at the bottom of the page**, after the last content section.
+- **Internal links are Obsidian wikilinks, not absolute paths:** `[[usage/frameworks/react|React]]`, a vault-relative path with an optional `|Label`. Link to a heading with `#`: `[[api/storybook-format#Legacy Support]]`. Verify the target page and heading exist.
+- **Map of Content and `> [!seealso]` entries use a colon, not an em dash:** `[[link|Label]]: blurb`.
+- **Reuse content by linking to a single source of truth, not by transcluding it.** Note transclusion (`![[note]]` / `![[note#section]]`) is no longer supported, so keep each fact on one canonical page and link to it (e.g. `concepts/story` links to `api/story-format` for the full module API). If a page genuinely needs another's content inline, write a short purpose-built summary there and link out for the detail. Don't copy-paste the whole section.
+- **Sidebar order comes from `index.md` link lists, not frontmatter.** The sidebar generator (`docs/site/src/sidebar/obsidian.mjs`) labels each item from its `# H1` and orders each folder by the wikilink order in that folder's `index.md` (the root order comes from `README.md`). To place or reorder a page, edit the relevant index note's link list, and **don't add `sidebar_position`**.
+- **Every folder owns an `index.md`** that is its Map of Content: a one-line intro plus a bulleted list of `[[wikilinks]]` to the folder's pages, each followed by a colon and a short blurb (see `usage/index.md`, `concepts/index.md`). New page in a folder gets added to that index.
+- **Frontmatter is Obsidian-managed YAML.** Pages carry `aliases` and `linter-yaml-title-alias`, which the Obsidian Linter keeps in sync with the `# H1`, so don't hand-edit `linter-yaml-title-alias` (and commit the linter config so this stays shared). **Strip `notion-id`** when you touch a page. It's dead Notion-migration residue. Don't add a `base:` key (that's Obsidian Bases membership). Preserve other existing keys you didn't add (`tags`, `id`).
+- Images embed Obsidian-style with an optional size: `![[assets/flipbook-icon.png|32]]`. When you use standard `![alt](path)` syntax instead, write real, descriptive alt text.
+
+## Code samples
+
+- Vault pages are `.md`, so examples are **inline fenced code blocks** (` ```lua `), not raw-loader imports.
+- **Examples must be real, not invented.** Lift them from working modules (`workspace/code-samples/src/...` or actual `src/`) and keep them in sync with the source. Don't hand-write a snippet you haven't confirmed compiles. This is the same accuracy bar as prose: an example that doesn't run is a wrong claim.
+- Use ` ```diff ` fences to show migration or before/after steps (see the migration guides).
+- The raw-loader `<CodeBlock>` import pattern (importing from `workspace/code-samples/` and rendering with `<CodeBlock>` / `<Tabs>`) **only works in `.mdx` pages.** The Obsidian vault pages are `.md` and can't use JS imports, so don't reach for it here. If a page is genuinely `.mdx`, that pattern is available.
+
+---
+
+## Provenance and Maintenance
+
+**Date stamped:** 2026-07-05. Mirrored from the `write-docs` skill on Flipbook's **unmerged `flipbook-docs` branch**, with the voice and banned-patterns sections lifted into `org/writing-style` and this skill deferring there for them. All paths and mechanics in this skill describe that branch's docs setup, not `main`.
+
+**Re-verify these claims when this skill next loads** (run from a `flipbook` checkout; the docs estate currently lives only on `flipbook-docs`):
+
+- The remark plugin and sidebar generator still exist: `git show origin/flipbook-docs:docs/site/src/remark/obsidian.mjs | head` and `git show origin/flipbook-docs:docs/site/src/sidebar/obsidian.mjs | head`
+- The vault root is still `docs/obsidian-vault/`: `git ls-tree origin/flipbook-docs -- docs/obsidian-vault`
+- When `flipbook-docs` merges to `main`, drop "unmerged" from this footer and re-confirm the paths against `main`.
