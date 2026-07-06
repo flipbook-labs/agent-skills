@@ -1,6 +1,6 @@
 ---
 name: writing-style
-description: "The house voice for prose you generate: skills, docs, PR descriptions, changelog entries, comments. Use when: writing or editing any prose in a flipbook-labs repo, or running a critic pass over your own draft for AI tells. Covers the voice, the banned patterns (antithesis framing, hype words, em dashes, semicolon overuse), and the self-critic pass."
+description: "The house voice for prose you generate: skills, docs, PR descriptions and titles, commit messages, changelog entries, comments. Use when: writing or editing any prose in a flipbook-labs repo, naming a commit or PR, or running a critic pass over your own draft for AI tells. Covers the voice, the no-conventional-commits rule for commit and PR titles, the banned patterns (antithesis framing, hype words, em dashes, semicolon overuse), and the self-critic pass."
 type: process
 ---
 
@@ -31,6 +31,14 @@ A hard rule. Recast the sentence with a period, comma, parentheses, or colon. It
 
 Where you would reach for a semicolon, default to a period and a new sentence. A rare, deliberate semicolon is fine (for example, separating list items that contain commas), but joining two independent clauses with one is almost always two sentences in disguise. If a paragraph has more than one, recast it.
 
+## Commit messages and PR titles
+
+Write them as a plain imperative summary. Do not use conventional-commit prefixes (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, and the rest) or a parenthesized scope. The prefix is ceremony that tells a reader less than the summary already does, and nothing in this org's release flow reads it (Changewrite decides version bumps from `.changes/` entries, not commit subjects).
+
+- Open with a capitalized verb in the imperative: "Add the SLOP ALERT disclaimer", "Standardize the changelog voice", "Rename the render helper".
+- Keep the subject to one line with no trailing period. Detail belongs in the body or the PR description.
+- State what the change does. Which bucket it falls into is not information the reader needs.
+
 ## Banned patterns
 
 **Antithesis / negation framing** (the most important one to catch):
@@ -58,6 +66,6 @@ Before declaring any prose done, re-read the text *you* wrote or edited with one
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-05. The voice, banned-patterns list, and critic pass generalized from Flipbook's `write-docs` skill. The Flipbook and Obsidian docs-site mechanics stay in `flipbook/write-docs`, which defers here for voice.
+**Date stamped:** 2026-07-06. The voice, banned-patterns list, and critic pass generalized from Flipbook's `write-docs` skill. The commit-message and PR-title convention (no conventional-commit prefixes) was added from the maintainer's direction that this org does not use conventional commits. The Flipbook and Obsidian docs-site mechanics stay in `flipbook/write-docs`, which defers here for voice.
 
 **Re-verify these claims when this skill next loads:** this skill is pure doctrine and makes no claims about any repo's source, so it has no volatile layer to re-derive. When a repo's own writing or docs skill drifts from this voice, fix it there, and if the voice itself changes, update this skill and add a `.changes/` entry.

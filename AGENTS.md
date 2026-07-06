@@ -35,7 +35,7 @@ Each entry declares a genre. `type: process` is a runbook (what to do next) and
 - `org/changelog-entries`: what goes in a changelog / `.changes` entry and who it is for. Reading in isolation (no PR or in-progress-work references), cutting length, and matching the audience (developer-facing detail for a library, high-level summaries for a plugin). Defers to `org/writing-style` for voice. `type: process`.
 - `org/code-comments`: when a code comment earns its place, which is when it states a constraint or rationale the code cannot show. The delete-and-rewrite test, the forbidden kinds (narration, change-log talk, self-justification), and an exemplar. Run it over any code you write or edit. `type: process`.
 - `org/write-luau-tests`: writing unit tests that specify intended behavior and can actually fail. The red-first gate, forbidden moves (tautologies, mocking the subject, coverage theater), and the definition-of-good rubric. Vendor-neutral doctrine. Repo-specific runner and framework mechanics live in that repo's own test skill. `type: process`.
-- `org/writing-style`: the house voice for prose you generate (skills, docs, PRs, changelog entries). The banned patterns (antithesis framing, hype words, em dashes, semicolon overuse) and the self-critic pass. Run it over any prose you write or edit. `type: process`.
+- `org/writing-style`: the house voice for prose you generate (skills, docs, PRs, commit messages, changelog entries). The no-conventional-commits rule for commit and PR titles, the banned patterns (antithesis framing, hype words, em dashes, semicolon overuse), and the self-critic pass. Run it over any prose you write or edit. `type: process`.
 
 ### Family: Flipbook / Storyteller / ModuleLoader (`family/`)
 
