@@ -32,6 +32,7 @@ Each entry declares a genre. `type: process` is a runbook (what to do next) and
 
 ### Cross-cutting (`org/`)
 
+- `org/changelog-entries`: what goes in a changelog / `.changes` entry and who it is for. Reading in isolation (no PR or in-progress-work references), cutting length, and matching the audience (developer-facing detail for a library, high-level summaries for a plugin). Defers to `org/writing-style` for voice. `type: process`.
 - `org/write-luau-tests`: writing unit tests that specify intended behavior and can actually fail. The red-first gate, forbidden moves (tautologies, mocking the subject, coverage theater), and the definition-of-good rubric. Vendor-neutral doctrine. Repo-specific runner and framework mechanics live in that repo's own test skill. `type: process`.
 - `org/writing-style`: the house voice for prose you generate (skills, docs, PRs, changelog entries). The banned patterns (antithesis framing, hype words, em dashes, semicolon overuse) and the self-critic pass. Run it over any prose you write or edit. `type: process`.
 
