@@ -26,7 +26,7 @@ Link the issue or PR when a fuller story exists. The comment holds the constrain
 
 ## What a good one looks like
 
-From `loadStorybookModule.luau` in Storyteller (grep `foreign-module boundary`, from [storyteller#132](https://github.com/flipbook-labs/storyteller/pull/132)):
+A static snapshot from Storyteller ([storyteller#132](https://github.com/flipbook-labs/storyteller/pull/132)) — reproduced here as an illustration of the bar, not a live anchor into that repo's source:
 
 ```lua
 if result.packages and getmetatable(result.packages) == nil then
@@ -59,4 +59,4 @@ Match the comment density of the surrounding file. One comment that meets the te
 
 **Date stamped:** 2026-07-05. Doctrine written for the exemplar from storyteller#132, which the maintainer flagged as the house bar for code comments.
 
-**Re-verify these claims when this skill next loads:** the exemplar cites Storyteller source. Confirm the anchor still exists (grep `foreign-module boundary` in `src/loadStorybookModule.luau` in the storyteller repo). If the code moved or the comment changed shape, update the excerpt here rather than leaving a stale copy. The doctrine itself has no volatile layer.
+**Re-verify these claims when this skill next loads:** nothing. This `org/` skill carries no single-repo anchors — the exemplar above is a frozen snapshot quoted for illustration, deliberately *not* a live pointer into Storyteller source (broader-scope skills must avoid single-repo anchors; see CONTRIBUTING.md). It stands on its own even if that file later changes. The doctrine has no volatile layer.
