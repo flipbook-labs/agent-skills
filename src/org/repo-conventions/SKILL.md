@@ -1,6 +1,6 @@
 ---
 name: repo-conventions
-description: "Repo setup and CI conventions for any flipbook-labs repo: pinning GitHub Actions by trust boundary, 5-minute job timeouts, strictness from .luaurc instead of --!strict headers, check logic in .lute/ scripts rather than workflow YAML, @std/* over @lute/*, and fetching dev-tool artifacts from upstream main. Use when: creating a new repo, writing or reviewing a GitHub Actions workflow, adding a CI job, or writing a Lute script. For workflow-authoring craft (bash safety, YAML hygiene, job structure) see org/github-actions."
+description: "Repo setup and CI conventions for any flipbook-labs repo: pinning GitHub Actions by trust boundary, 5-minute job timeouts, strictness from .luaurc instead of --!strict headers, check logic in .lute/ scripts rather than workflow YAML, @std/* over @lute/*, and fetching dev-tool artifacts from upstream main. Use when: creating a new repo, writing or reviewing a GitHub Actions workflow, adding a CI job, or writing a Lute script."
 type: process
 ---
 
@@ -27,13 +27,15 @@ Why: a tag is mutable, so a compromised third-party repo can silently repoint it
 
 Set `timeout-minutes` on every job, and reach for 5, not a reflexive 10. Raise it per job only when a job measurably needs longer.
 
-Why: the timeout exists to cut off a hung job, and jobs in these repos finish in a minute or two. A padded ceiling doubles the wait and the billed runner minutes on every hang while protecting nothing.
+Why: the timeout exists to cut off a hung job, and jobs in these repos finish in a minute or two. Nothing is special about 5 itself. It is ample headroom for jobs that should never run that long, and a fatter ceiling only doubles the wait and the billed runner minutes on every hang.
 
 ## No `--!strict` file headers
 
-Do not add `--!strict` headers to Luau source. Strictness is repo-wide state: `.luaurc` sets `"languageMode": "strict"`, and a luau-lsp analyze job in CI enforces it. `--!nocheck` on vendored files remains acceptable, because exempting code the repo does not own is a per-file decision by nature.
+Do not add `--!strict` headers to Luau source. Strictness is repo-wide state: `.luaurc` sets `"languageMode": "strict"`, and a luau-lsp analyze job in CI enforces it.
 
-Why: one source of truth. Per-file headers drift (a new file forgets one and silently opts out), while the `.luaurc` setting plus an analyze job covers every file including the ones added tomorrow.
+Treat `--!nocheck` with the same scrutiny as an `any` cast: occasionally necessary, never routine. For code the repo does not own (vendored dependencies, generated files), the org's pattern is an intentional typechecking boundary in tooling config, such as the ignore globs in the workspace's VSCode `settings.json`, not a header that opts the file out. Never add a `--!nocheck` yourself; it needs a person's explicit approval.
+
+Why: one source of truth. Per-file headers drift (a new file forgets one and silently opts out), while the `.luaurc` setting plus an analyze job covers every file including the ones added tomorrow. A `--!nocheck` header punches a silent hole in that coverage, which is exactly why a human signs off on each one.
 
 ## Check logic lives in `.lute/` scripts, not workflow YAML
 
@@ -61,12 +63,12 @@ This is the opposite of the action-pinning rule above, and deliberately so. A th
 
 ## When not to use
 
-This skill covers repo setup and the CI *policies* a repo is configured against. For the craft of authoring workflow YAML and actions well (bash safety, YAML minimalism, job structure, naming, bot-PR ergonomics), see [`org/github-actions`](../github-actions/SKILL.md). For Luau code style and the idioms of a `.lute/` script's body, see [`org/write-luau-code`](../write-luau-code/SKILL.md). For test-writing discipline see [`org/write-luau-tests`](../write-luau-tests/SKILL.md), for changelog entry content see [`org/changelog-entries`](../changelog-entries/SKILL.md), and for the voice of any prose you write see [`org/writing-style`](../writing-style/SKILL.md).
+This skill covers repo setup and the CI *policies* a repo is configured against. The craft of authoring workflow YAML well (bash safety, YAML minimalism, job structure) and Luau code style are out of scope, and no skill covers them yet. For test-writing discipline see [`org/write-luau-tests`](../write-luau-tests/SKILL.md), for changelog entry content see [`org/changelog-entries`](../changelog-entries/SKILL.md), and for the voice of any prose you write see [`org/writing-style`](../writing-style/SKILL.md).
 
 ---
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-07. Captured from the maintainer's review of the CI and release infrastructure PR for a new repo (flipbook-labs/archivist#4), then corroborated against his review comments across storyteller, changewrite, flipbook-cli, agent-gateway, deploy-storybook, and module-loader: action pinning by trust boundary, 5-minute timeouts, `.luaurc` over `--!strict` headers, workflow logic in `.lute/` scripts, `@std/*` over `@lute/*`, and fetching dev-tool artifacts from upstream `main`. The downloads guidance is stated from Marin's explicit archivist#4 decision (*"Let's just use the main branch"*), which reversed an earlier pin-to-version draft.
+**Date stamped:** 2026-07-07. Captured from the maintainer's review of the CI and release infrastructure PR for a new repo (flipbook-labs/archivist#4), then corroborated against his review comments across storyteller, changewrite, flipbook-cli, agent-gateway, deploy-storybook, and module-loader: action pinning by trust boundary, 5-minute timeouts, `.luaurc` over `--!strict` headers, workflow logic in `.lute/` scripts, `@std/*` over `@lute/*`, and fetching dev-tool artifacts from upstream `main`. The downloads guidance is stated from Marin's explicit archivist#4 decision (*"Let's just use the main branch"*), which reversed an earlier pin-to-version draft. The `--!nocheck` stance (same scrutiny as an `any` cast, tooling-config boundaries for vendored code, human approval per header) is from his review of agent-skills#14, which corrected an earlier "acceptable on vendored files" draft.
 
 **Re-verify these claims when this skill next loads:** nothing mechanical. This `org/` skill is doctrine with no single-repo anchors. Its volatile edge is the named tooling (luau-lsp, rokit, Lute's `@std` library) and the luau-lsp `globalTypes` URL: if the repo you are working in has replaced one of these, follow that repo's setup and update this skill with a `.changes/` entry.
