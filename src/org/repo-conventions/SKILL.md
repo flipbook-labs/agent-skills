@@ -63,7 +63,7 @@ This is the opposite of the action-pinning rule above, and deliberately so. A th
 
 ## When not to use
 
-This skill covers repo setup and the CI *policies* a repo is configured against. The craft of authoring workflow YAML well (bash safety, YAML minimalism, job structure) is out of scope, and no skill covers it yet. For Luau code style and the idioms of a `.lute/` script's body, see [`org/write-luau-code`](../write-luau-code/SKILL.md). For test-writing discipline see [`org/write-luau-tests`](../write-luau-tests/SKILL.md), for changelog entry content see [`org/changelog-entries`](../changelog-entries/SKILL.md), and for the voice of any prose you write see [`org/writing-style`](../writing-style/SKILL.md).
+This skill covers repo setup and the CI *policies* a repo is configured against. For the craft of authoring workflow YAML and actions well (bash safety, YAML minimalism, job structure, naming, bot-PR ergonomics), see [`org/github-actions`](../github-actions/SKILL.md). For Luau code style and the idioms of a `.lute/` script's body, see [`org/write-luau-code`](../write-luau-code/SKILL.md). For test-writing discipline see [`org/write-luau-tests`](../write-luau-tests/SKILL.md), for changelog entry content see [`org/changelog-entries`](../changelog-entries/SKILL.md), and for the voice of any prose you write see [`org/writing-style`](../writing-style/SKILL.md).
 
 ---
 
