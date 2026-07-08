@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 
 
+## v0.3.0
+
+### Changes
+
+- `org/changelog-entries` now caps an entry at one short sentence of about 140 characters.
+
+- Cap every CI job at a 5-minute timeout.
+
+- Add `org/github-actions`, the authoring companion to `org/repo-conventions` for writing workflows and actions.
+
+- Add `org/repo-conventions`, the repo setup and CI conventions for flipbook-labs repos.
+
+- Add `org/reviewable-changes` and `org/user-facing-docs`, and reinforce four existing skills from org-wide review mining.
+
+- Add `org/write-luau-code`, the house Luau style for any flipbook-labs repo.
+
+- `org/writing-style` now covers commit messages and PR titles: write a plain imperative summary and skip conventional-commit prefixes (`feat:`, `fix:`, `docs:`, and the rest).
+
+- `org/writing-style` now bans a double hyphen (`--`) used as sentence punctuation, closing the gap agents used to slip past the em-dash ban.
+
+### Fixes
+
+- Refer to the maintainer with gender-neutral language in the `org/repo-conventions` and `org/changelog-entries` provenance notes.
+
+
 ## v0.2.0
 
 ### Changes
