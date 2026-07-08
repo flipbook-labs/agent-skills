@@ -1,6 +1,6 @@
 ---
 name: repo-conventions
-description: "Repo setup and CI conventions for any flipbook-labs repo: pinning GitHub Actions by trust boundary, 5-minute job timeouts, strictness from .luaurc instead of --!strict headers, check logic in .lute/ scripts rather than workflow YAML, @std/* over @lute/*, and deterministic third-party downloads. Use when: creating a new repo, writing or reviewing a GitHub Actions workflow, adding a CI job, or writing a Lute script."
+description: "Repo setup and CI conventions for any flipbook-labs repo: pinning GitHub Actions by trust boundary, 5-minute job timeouts, strictness from .luaurc instead of --!strict headers, check logic in .lute/ scripts rather than workflow YAML, @std/* over @lute/*, and fetching dev-tool artifacts from upstream main. Use when: creating a new repo, writing or reviewing a GitHub Actions workflow, adding a CI job, or writing a Lute script. For workflow-authoring craft (bash safety, YAML hygiene, job structure) see org/github-actions."
 type: process
 ---
 
@@ -47,20 +47,26 @@ Reach for `@std/*` first: it covers io, process, task, and fs. Drop to `@lute/*`
 
 Why: `@std/*` is the stable, portable surface, and keeping the `@lute/*` footprint small keeps scripts easier to move between runtimes and toolchain versions.
 
-## Deterministic third-party downloads in CI
+## Fetch dev-tool artifacts from upstream main, not a pinned version
 
-When a workflow downloads a third-party artifact (for example luau-lsp's globalTypes definitions), pin the URL to the release matching the tool's version in `rokit.toml`. Never fetch from `master` or `latest`.
+When a workflow downloads a companion artifact for a dev tool (for example luau-lsp's `globalTypes` type definitions), fetch it from the tool's upstream `main` branch, not a version-pinned URL:
 
-Why: an unpinned URL changes underneath you, so the same commit can pass one week and fail the next. Matching the pinned tool version also prevents skew between the tool and its companion files, which fails in confusing ways.
+```
+https://raw.githubusercontent.com/JohnnyMorganz/luau-lsp/main/scripts/globalTypes.d.lua
+```
+
+Why: this artifact only affects local development and CI analysis, never the shipped build, so tracking upstream costs nothing when it is stable and surfaces a real upstream change immediately as a loud CI failure rather than letting a stale pinned copy drift. Pinning it to match `rokit.toml` and bumping it by hand is maintenance burden with no payoff. Marin made this call explicitly on archivist#4, overriding a bot's pin-to-version suggestion: *"Let's just use the main branch."*
+
+This is the opposite of the action-pinning rule above, and deliberately so. A third-party *action* executes with repository permissions, so a mutable tag is a supply-chain risk worth a SHA pin. A type-definition file consumed only by an analyzer has no such blast radius, so the tradeoff flips toward staying current.
 
 ## When not to use
 
-This skill covers repo setup and CI mechanics. For test-writing discipline see [`org/write-luau-tests`](../write-luau-tests/SKILL.md), for changelog entry content see [`org/changelog-entries`](../changelog-entries/SKILL.md), and for the voice of any prose you write see [`org/writing-style`](../writing-style/SKILL.md).
+This skill covers repo setup and the CI *policies* a repo is configured against. For the craft of authoring workflow YAML and actions well (bash safety, YAML minimalism, job structure, naming, bot-PR ergonomics), see [`org/github-actions`](../github-actions/SKILL.md). For Luau code style and the idioms of a `.lute/` script's body, see [`org/write-luau-code`](../write-luau-code/SKILL.md). For test-writing discipline see [`org/write-luau-tests`](../write-luau-tests/SKILL.md), for changelog entry content see [`org/changelog-entries`](../changelog-entries/SKILL.md), and for the voice of any prose you write see [`org/writing-style`](../writing-style/SKILL.md).
 
 ---
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-07. Captured from the maintainer's review of the CI and release infrastructure PR for a new repo (flipbook-labs/archivist#4): action pinning by trust boundary, 5-minute timeouts, `.luaurc` over `--!strict` headers, workflow logic in `.lute/` scripts, `@std/*` over `@lute/*`, and pinned third-party downloads.
+**Date stamped:** 2026-07-07. Captured from the maintainer's review of the CI and release infrastructure PR for a new repo (flipbook-labs/archivist#4), then corroborated against his review comments across storyteller, changewrite, flipbook-cli, agent-gateway, deploy-storybook, and module-loader: action pinning by trust boundary, 5-minute timeouts, `.luaurc` over `--!strict` headers, workflow logic in `.lute/` scripts, `@std/*` over `@lute/*`, and fetching dev-tool artifacts from upstream `main`. The downloads guidance is stated from Marin's explicit archivist#4 decision (*"Let's just use the main branch"*), which reversed an earlier pin-to-version draft.
 
-**Re-verify these claims when this skill next loads:** nothing mechanical. This `org/` skill is doctrine with no single-repo anchors. Its volatile edge is the named tooling (luau-lsp, rokit, Lute's `@std` library): if the repo you are working in has replaced one of these, follow that repo's setup and update this skill with a `.changes/` entry.
+**Re-verify these claims when this skill next loads:** nothing mechanical. This `org/` skill is doctrine with no single-repo anchors. Its volatile edge is the named tooling (luau-lsp, rokit, Lute's `@std` library) and the luau-lsp `globalTypes` URL: if the repo you are working in has replaced one of these, follow that repo's setup and update this skill with a `.changes/` entry.
