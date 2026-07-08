@@ -68,7 +68,7 @@ Name an error field `err` or `problem`, not `error` (which shadows the global an
 
 ## When not to use
 
-This skill is code style only. For whether a test is any good, see [`org/write-luau-tests`](../write-luau-tests/SKILL.md). For when a comment earns its place, see [`org/code-comments`](../code-comments/SKILL.md). For repo setup, `.luaurc` strictness, and the `@std`-over-`@lute` policy, see [`org/repo-conventions`](../repo-conventions/SKILL.md).
+This skill is code style only. For whether a test is any good, see [`org/write-luau-tests`](../write-luau-tests/SKILL.md). For when a comment earns its place, see [`org/code-comments`](../code-comments/SKILL.md). For repo setup, `.luaurc` strictness, and the `@std`-over-`@lute` policy, see [`org/repo-conventions`](../repo-conventions/SKILL.md). For deciding a change is too large or exposes too much, see [`org/reviewable-changes`](../reviewable-changes/SKILL.md).
 
 ---
 

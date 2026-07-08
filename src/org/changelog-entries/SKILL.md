@@ -49,6 +49,11 @@ After:
 
 The cross-repo issue link and the in-progress-PR aside both go, because a user can act on neither. The "previously only" development framing goes. One sentence carries the fact. The affected renderers stay, because a Storyteller user works at that level.
 
+## Category and bump
+
+- **Keep category names consistent, in the present tense.** Use the same headings across entries so the assembled changelog reads uniformly: `Features`, `Fixes`, `Changes`, `Dependencies`, not a mix like `Add`/`Added`/`Fixed`. Match whatever set the repo already uses.
+- **Use `patch` as the catch-all when the tool offers no "skip".** Changewrite requires a bump on every entry and has no internal or skip level, so a change with no user-facing effect (CI, tooling, a pure refactor) takes `patch`. Marin: *"We're essentially using patch as a catch-all for actual patches and anything else a PR could possibly do since there's no skip option."* Reserve `minor` and `major` for changes a consumer would actually notice.
+
 ## Voice
 
 Everything in [`org/writing-style`](../writing-style/SKILL.md) applies to the body: no em dashes, no hype words, no antithesis framing, then the self-critic pass. This skill governs what to include and for whom. That one governs how it reads.
@@ -57,6 +62,6 @@ Everything in [`org/writing-style`](../writing-style/SKILL.md) applies to the bo
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-05. Written from the maintainer's guidance on a Storyteller changelog review: entries should read in isolation, drop in-progress-PR references, cut length by about half, and match the project's audience (developer-facing detail for a library, high-level summaries for a plugin like Flipbook). The length rule was tightened on 2026-07-07 from their reviews of agent-skills#14 and agent-skills#18: one short sentence with a ceiling of about 140 characters, because an entry that enumerates a change's every part stops being scannable.
+**Date stamped:** 2026-07-07. Written from the maintainer's guidance on a Storyteller changelog review: entries should read in isolation, drop in-progress-PR references, cut length by about half, and match the project's audience (developer-facing detail for a library, high-level summaries for a plugin like Flipbook). The length rule was tightened on 2026-07-07 from reviews of agent-skills#14 and agent-skills#18: one short sentence with a ceiling of about 140 characters, because an entry that enumerates a change's every part stops being scannable. Consistent present-tense category names and the `patch` catch-all bump were added the same day, from agent-gateway, Storyteller, and ModuleLoader reviews.
 
 **Re-verify these claims when this skill next loads:** nothing. This `org/` skill is pure doctrine with no single-repo anchors. The before/after above is a frozen snapshot quoted for illustration, not a live pointer into Storyteller source. The audience examples (Storyteller as a library, Flipbook as a plugin) are stable facts about the org. When the house approach to changelogs changes, update this skill and add a `.changes/` entry.
