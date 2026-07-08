@@ -19,7 +19,12 @@ The reader has no branch, no diff, no PR thread. The entry has to stand on its o
 
 ## Cut the length
 
-Aim to cut a first draft roughly in half. One or two short sentences carry almost every change: what changed, and if it helps the reader, why it matters to them. Drop implementation detail that does not change how they use the project.
+An entry has to be scannable. The changelog is read as a list of many entries, and a reader hunting for one fact skips over anything that looks like a paragraph, so a long entry loses the information it carries.
+
+- One short sentence: what changed, and only when it changes what the reader does, why.
+- Treat about 140 characters as the ceiling. Past it, cut content rather than compressing the grammar.
+- When a change has many parts, name the change and stop. "Add `org/repo-conventions`, the repo setup and CI conventions for flipbook-labs repos." is a complete entry. Following it with a colon and every convention inside the skill turns the entry into a wall of text, and a reader who wants the list opens the skill.
+- Drop implementation detail that does not change how the reader uses the project.
 
 ## Match the audience
 
@@ -52,6 +57,6 @@ Everything in [`org/writing-style`](../writing-style/SKILL.md) applies to the bo
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-05. Written from the maintainer's guidance on a Storyteller changelog review: entries should read in isolation, drop in-progress-PR references, cut length by about half, and match the project's audience (developer-facing detail for a library, high-level summaries for a plugin like Flipbook).
+**Date stamped:** 2026-07-05. Written from the maintainer's guidance on a Storyteller changelog review: entries should read in isolation, drop in-progress-PR references, cut length by about half, and match the project's audience (developer-facing detail for a library, high-level summaries for a plugin like Flipbook). The length rule was tightened on 2026-07-07 from his reviews of agent-skills#14 and agent-skills#18: one short sentence with a ceiling of about 140 characters, because an entry that enumerates a change's every part stops being scannable.
 
 **Re-verify these claims when this skill next loads:** nothing. This `org/` skill is pure doctrine with no single-repo anchors. The before/after above is a frozen snapshot quoted for illustration, not a live pointer into Storyteller source. The audience examples (Storyteller as a library, Flipbook as a plugin) are stable facts about the org. When the house approach to changelogs changes, update this skill and add a `.changes/` entry.
