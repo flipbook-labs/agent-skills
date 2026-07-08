@@ -51,6 +51,7 @@ These are the ways agents (and tired humans) game a test suite. All are prohibit
 - **Vacuous assertions.** No "is defined" / "is not nil" where a concrete value is assertable. Assert the value, the shape, or the observable effect.
 - **Behavior transcription.** Do not generate the expected value by running the code and pasting its output. That is a snapshot of current behavior, bugs included (see §1).
 - **Coverage theater.** Do not add tests whose only purpose is touching lines. Every test encodes a claim about intended behavior that the break-the-code gate can validate.
+- **Orphaned skips.** Do not leave a `skip`ped test in the suite without a reason. A skip is a disabled assertion, so either unskip it, or delete it, or leave a comment saying why it is off and when it comes back. Marin: *"Either unskip or remove this test."*
 
 ## 4. What good looks like: the rubric
 
@@ -60,6 +61,8 @@ These are the ways agents (and tired humans) game a test suite. All are prohibit
 - **Error and edge paths are first-class.** Every happy-path group is accompanied by the boundary and failure cases: out-of-range, malformed input, empty, the error message a caller should see.
 - **Shared fixtures over ad-hoc setup.** Use and extend existing test helpers rather than re-rolling setup per test; reset shared state between tests to prevent pollution.
 - **Arrange, act, assert; one behavior per test.** Multiple assertions are fine when they verify a single cohesive behavior.
+- **Assert across every analogous case, not just one.** When a family of constructors, factories, or branches share an invariant, assert it in all of them, not in a representative one. Marin, on a set of control constructors: *"If we're going to assert here, we should also assert in the other constructors where necessary,"* especially that the mappings actually map correctly. A test that checks one member of a family lets the others regress silently.
+- **Prefer determinism over waiting.** Reach for a synchronization point rather than a timed wait, and remove every `task.wait` a test does not truly need. Sprinkled waits are slow and flaky; if a wait is load-bearing, it is usually hiding a seam you could drive directly instead.
 
 ## 5. Testing behavior with observable effects
 
@@ -80,7 +83,7 @@ Before declaring test work complete, confirm every line:
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-05. Doctrine extracted and generalized from Flipbook's `write-flipbook-tests` skill; this is the vendor-neutral core, with runner, framework, and exemplar specifics left to each repo's own test skill.
+**Date stamped:** 2026-07-07. Doctrine extracted and generalized from Flipbook's `write-flipbook-tests` skill; this is the vendor-neutral core, with runner, framework, and exemplar specifics left to each repo's own test skill. Updated 2026-07-07 with orphaned-skip discipline, asserting across every analogous case, and preferring determinism over waits, from Storyteller review comments.
 
 **Re-verify these claims when this skill next loads:** this skill is pure doctrine and makes no claims about any repo's source, so it has no volatile layer to re-derive. When a consuming repo's test skill drifts from this doctrine (a forbidden move creeps into its exemplars, or its red-first wording weakens), fix it there, and if the *principle* changed, update this skill and add a `.changes/` entry.
 

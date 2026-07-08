@@ -35,6 +35,18 @@ Concrete check for the critic pass: flag any `--` that sits between spaces, or g
 
 Where you would reach for a semicolon, default to a period and a new sentence. A rare, deliberate semicolon is fine (for example, separating list items that contain commas), but joining two independent clauses with one is almost always two sentences in disguise. If a paragraph has more than one, recast it.
 
+## Soft-wrap prose, never hard-wrap
+
+Let prose reflow. Do not insert manual line breaks to wrap a paragraph at some column in Markdown, a README, a doc, or a PR body. One sentence or paragraph is one line; the renderer wraps it. Hard breaks fossilize a width and produce ragged diffs when the text is later edited. Marin: *"Don't hard wrap lines, rely on soft wrapping. Apply this generally, and apply to the PR body too."* This governs the prose you emit; leave a human's existing hard wraps alone, per the scope note above.
+
+## Avoid parenthetical asides
+
+Prefer a direct sentence to a thought tucked in parentheses. When you catch yourself adding a parenthetical, either promote it to its own sentence because it matters, or cut it because it does not. Marin trims these in review: *"We can skip the parenthetical."* A short clarifying parenthetical is not a crime, but a paragraph carrying several is a sign the sentences want restructuring.
+
+## Capitalize our product names
+
+Our tools are proper nouns: Flipbook, Storyteller, Changewrite, ModuleLoader. Capitalize them in prose even when the package id or repo is lowercase (`changewrite`, `module-loader`). Lowercase only a literal code identifier: a command, a path, an import.
+
 ## Commit messages and PR titles
 
 Write them as a plain imperative summary. Do not use conventional-commit prefixes (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, and the rest) or a parenthesized scope. The prefix is ceremony that tells a reader less than the summary already does, and nothing in this org's release flow reads it (Changewrite decides version bumps from `.changes/` entries, not commit subjects).
@@ -70,6 +82,6 @@ Before declaring any prose done, re-read the text *you* wrote or edited with one
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-08. The voice, banned-patterns list, and critic pass generalized from Flipbook's `write-docs` skill. The commit-message and PR-title convention (no conventional-commit prefixes) was added from the maintainer's direction that this org does not use conventional commits. The em-dash ban was extended to spell out that a double hyphen (`--`) used as sentence punctuation counts as an em dash, after agents reached for `--` to slip past the `—` ban. The Flipbook and Obsidian docs-site mechanics stay in `flipbook/write-docs`, which defers here for voice.
+**Date stamped:** 2026-07-08. The voice, banned-patterns list, and critic pass generalized from Flipbook's `write-docs` skill. The commit-message and PR-title convention (no conventional-commit prefixes) was added from the maintainer's direction that this org does not use conventional commits. The em-dash ban was extended to spell out that a double hyphen (`--`) used as sentence punctuation counts as an em dash, after agents reached for `--` to slip past the `—` ban. Soft-wrapping, avoiding parentheticals, and capitalizing product names were added from recurring corrections across agent-gateway, Storyteller, and Changewrite reviews. The Flipbook and Obsidian docs-site mechanics stay in `flipbook/write-docs`, which defers here for voice.
 
 **Re-verify these claims when this skill next loads:** this skill is pure doctrine and makes no claims about any repo's source, so it has no volatile layer to re-derive. When a repo's own writing or docs skill drifts from this voice, fix it there, and if the voice itself changes, update this skill and add a `.changes/` entry.
