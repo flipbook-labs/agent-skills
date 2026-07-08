@@ -27,6 +27,10 @@ It is not a linter to run against existing text. So:
 
 A hard rule. Recast the sentence with a period, comma, parentheses, or colon. It applies to prose and to list blurbs alike: write a label and its blurb with a colon (`Label: blurb`), never with an em dash between them.
 
+The rule covers the em-dash character `—` and every substitute for it. A double hyphen (`--`) used as an em dash, an en dash, or any other sentence punctuation is banned the same way, in prose and in code comments. "The test runs fast -- most of the time" fails the rule. Recast it as "The test runs fast, most of the time." Luau comment syntax is a separate matter: a comment may open with `--`, but a `--` inside the comment text, standing in for a dash, is still a violation.
+
+Concrete check for the critic pass: flag any `--` that sits between spaces, or glues two words or clauses together in place of a dash, and recast it the way you would an em dash.
+
 ## Limit semicolons
 
 Where you would reach for a semicolon, default to a period and a new sentence. A rare, deliberate semicolon is fine (for example, separating list items that contain commas), but joining two independent clauses with one is almost always two sentences in disguise. If a paragraph has more than one, recast it.
@@ -66,6 +70,6 @@ Before declaring any prose done, re-read the text *you* wrote or edited with one
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-06. The voice, banned-patterns list, and critic pass generalized from Flipbook's `write-docs` skill. The commit-message and PR-title convention (no conventional-commit prefixes) was added from the maintainer's direction that this org does not use conventional commits. The Flipbook and Obsidian docs-site mechanics stay in `flipbook/write-docs`, which defers here for voice.
+**Date stamped:** 2026-07-08. The voice, banned-patterns list, and critic pass generalized from Flipbook's `write-docs` skill. The commit-message and PR-title convention (no conventional-commit prefixes) was added from the maintainer's direction that this org does not use conventional commits. The em-dash ban was extended to spell out that a double hyphen (`--`) used as sentence punctuation counts as an em dash, after agents reached for `--` to slip past the `—` ban. The Flipbook and Obsidian docs-site mechanics stay in `flipbook/write-docs`, which defers here for voice.
 
 **Re-verify these claims when this skill next loads:** this skill is pure doctrine and makes no claims about any repo's source, so it has no volatile layer to re-derive. When a repo's own writing or docs skill drifts from this voice, fix it there, and if the voice itself changes, update this skill and add a `.changes/` entry.
