@@ -56,9 +56,10 @@ Name an error field `err` or `problem`, not `error` (which shadows the global an
 
 ## Module organization
 
-- **One responsibility per module.** Do not bundle several unrelated exports behind one function. When a set of small helpers each earns its keep, give each its own file in a folder and import as needed; when a helper is a couple of trivial lines used once, inline it instead of giving it a module.
-- **Hoist shared types to a `types.luau`** rather than re-declaring them across the files that use them.
+- **One responsibility per module, and that is usually one function.** A module earns its own file by carrying a single job, not by collecting several jobs that share a topic. Two functions living together because they are both "about the publish lock" is still a bundle, so split them. The tell is a module named for a theme (`statusHelpers`, `lockUtils`) that exports a handful of functions. Topical relatedness is not a license to bundle: it is what a *folder* is for, one function per file inside it.
+- **Fold a trivial, single-use helper into its caller.** A helper that is a couple of lines and called from one place has not earned a module or even an export. Inline it where it runs. When a themed module has only one function worth reusing, keep that one as the module and fold the rest back into their call sites rather than keeping them company.
 - **Extract an inline helper into its own module** once it is reused or non-trivial, instead of leaving it defined in the middle of an unrelated file.
+- **Hoist shared types to a `types.luau`** rather than re-declaring them across the files that use them.
 
 ## Do not abstract ahead of need
 
@@ -74,6 +75,6 @@ This skill is code style only. For whether a test is any good, see [`org/write-l
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-07. Distilled from Marin's inline review comments across storyteller, agent-gateway, changewrite, flipbook, and flipbook-cli, where the same Luau-style corrections recur (type discipline, expanded tables, verb-and-`is` naming, colon notation, stdlib-first, frozen-table enums, one-thing-per-module, no premature abstraction). Quotes are frozen illustrations, not live pointers into any repo's source.
+**Date stamped:** 2026-07-07. Distilled from Marin's inline review comments across storyteller, agent-gateway, changewrite, flipbook, and flipbook-cli, where the same Luau-style corrections recur (type discipline, expanded tables, verb-and-`is` naming, colon notation, stdlib-first, frozen-table enums, one-thing-per-module, no premature abstraction). Quotes are frozen illustrations, not live pointers into any repo's source. Updated 2026-07-09: the module-organization section was sharpened after a changewrite review where a themed module bundled several related pure helpers and the earlier "unrelated exports" wording read as permission, so it now says relatedness is not a license to bundle and a trivial single-use helper folds into its caller.
 
 **Re-verify these claims when this skill next loads:** nothing mechanical. This is `org/` doctrine with no single-repo anchors. The quotes above are frozen snapshots quoted for illustration. If the org's Luau conventions shift (a new formatter changes table style, a stdlib rename), update the relevant section and add a `.changes/` entry.
