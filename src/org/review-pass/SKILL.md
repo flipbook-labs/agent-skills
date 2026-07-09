@@ -38,7 +38,7 @@ Two passes catch the most, and both apply only to text and code you generated, n
 
 ## Feed drift back the same session
 
-The pass is also where you honor the library's maintenance norm. Ask whether anything you just did contradicted or strained a skill you loaded: a rule that read as permission when it should have caught you, an anchor that points at a renamed symbol, a "known bug" you just fixed. If so, fix the skill and add a `.changes/` entry in the same effort. Open an agent-skills PR when you are working in this repo, or run `lute run contribute-skills` (it opens a draft PR) when you noticed the drift from a consumer repo. Do not let the observation evaporate because the immediate task is done.
+The pass is also where you honor the library's maintenance norm. Ask whether anything you just did contradicted or strained a skill you loaded: a rule that read as permission when it should have caught you, an anchor that points at a renamed symbol, a "known bug" you just fixed. If so, fix the skill and add a `.changes/` entry in the same effort. When you are working in this repo, fold that into your PR. When you noticed the drift from a consumer repo, you cannot fix it across the package boundary, so open a separate PR against agent-skills and note the pending fix in your consumer PR. Do not let the observation evaporate because the immediate task is done.
 
 ## When not to use
 
