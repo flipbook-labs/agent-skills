@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 
 
+## v0.4.0
+
+### Changes
+
+- Sharpen `org/write-luau-code` so a module carries one responsibility and trivial single-use helpers fold into their caller.
+
+### Features
+
+- Add `org/review-pass`, the procedure for applying the skills over a diff and at task close so routing is not a one-time startup read.
+
+
 ## v0.3.0
 
 ### Changes
