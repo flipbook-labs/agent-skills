@@ -21,9 +21,6 @@ for the authoring doctrine.
 
 ## Consuming the library
 
-> Tooling shims (`lute run skills-path`, `lute run contribute-skills`) and the CI /
-> release workflow land in follow-up PRs. Until then, the manual path below applies.
-
 1. **Depend on it.** Add `AgentSkills` to your repo's `loom.config.luau`:
 
    ```luau

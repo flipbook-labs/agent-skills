@@ -109,8 +109,8 @@ Two cases, because this is a versioned package:
 - **You noticed the drift while working in a *consumer* repo** (the common case for
   `flipbook/` skills, whose anchors point into another repo's source) — you can't fix it
   in that repo's PR across the package boundary. Instead propose the fix here immediately
-  (don't let the observation evaporate; `lute run contribute-skills` opens a draft PR with
-  a `.changes/` entry) and note in your consumer PR that a shared-skill fix is pending. It
+  (don't let the observation evaporate) by opening a PR against agent-skills with a
+  `.changes/` entry, and note in your consumer PR that a shared-skill fix is pending. It
   reaches consumers when they bump the pinned version.
 
 This keeps drift local and cheap. A skill touched every time its subject changes never
