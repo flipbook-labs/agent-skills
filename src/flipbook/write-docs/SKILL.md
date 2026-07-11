@@ -71,14 +71,93 @@ Follow **`org/writing-style`** for the house voice, the banned patterns (antithe
 - Use ` ```diff ` fences to show migration or before/after steps (see the migration guides).
 - The raw-loader `<CodeBlock>` import pattern (importing from `workspace/code-samples/` and rendering with `<CodeBlock>` / `<Tabs>`) **only works in `.mdx` pages.** The Obsidian vault pages are `.md` and can't use JS imports, so don't reach for it here. If a page is genuinely `.mdx`, that pattern is available.
 
+## Pull Request Descriptions
+
+A PR body exists to orient the human who has to review an ever-growing diff. Its job is to inform and orient — explain what the change does and why it exists — not to catalog every line. The file-change view already owns the granular detail; the body should let a reviewer feel informed before they open a single file.
+
+**Follow the repo template.** `.github/pull_request_template.md` defines the sections: Problem (why the change is needed), Solution (what it does and any non-obvious decisions), Testing (how it was verified), and Notes for reviewers (tradeoffs, risks, follow-ups). Fill each in; don't invent a custom structure.
+
+**Lead with prose, keep code sparse.** Name things in sentences rather than wrapping every identifier in backticks — a body where half the nouns are inline code is unscannable, and the reader's eye snags on each one. Reserve inline code for things that genuinely read as code: a file path, an alias, a command, a version string. If a paragraph carries more backticks than commas, rewrite it as prose plus a table.
+
+**Push granular detail into tables and lists.** A "what changed" table grouped by area (not one row per file) and a verification table mapping each check to its result carry dense facts far better than a paragraph studded with identifiers. Group and summarize; the reviewer drops into the diff when they want the per-file specifics.
+
+**Keep the altitude high.** Explain intent and the decisions a reviewer couldn't infer from the diff; let the mechanical parts speak for themselves. A reader should finish the body knowing why the PR exists, what it changes at a high level, and what to watch for — then reach for the files for anything finer.
+
+## Key Files and Paths
+
+| File | Purpose |
+|------|---------|
+| `docs/docusaurus.config.ts` | Docusaurus config (site title, URLs, plugins, nav) |
+| `docs/sidebars.ts` | Sidebar structure and section organization |
+| `docs/package.json` | Node dependencies for Docusaurus |
+| `docs/docs/` | Markdown/MDX content root |
+| `.github/workflows/docs.yml` | CI workflow: build on PR, deploy on release |
+| `.lute/serve-docs.luau` | Task runner for local dev server |
+| `docs/obsidian-vault/` | Institutional knowledge vault |
+| `workspace/code-samples/` | Real example code embedded in docs |
+| `.github/pull_request_template.md` | PR template (docs sections in Problem/Solution) |
+
+## Common Patterns
+
+### Linking Between Pages
+
+**In Obsidian vault:** Use wikilinks:
+```markdown
+See [[creating-stories/writing-stories]] for the full guide.
+```
+
+**In Docusaurus site:** Use root-relative paths with `/docs/` prefix:
+```markdown
+See [Writing Stories](/docs/creating-stories/writing-stories) for the full guide.
+```
+
+### Embedding Code Samples
+
+**When the sample is short (< 10 lines):** Inline the code in a fenced block.
+
+**When the sample is long or lives in the repo:** Reference via code-sample syntax (Obsidian) or raw-loader (Docusaurus) so it auto-updates if source changes.
+
+**Obsidian code-sample syntax:**
+```
+```code-sample
+workspace/code-samples/src/React/ReactButton.luau#L4-L13
+```
+```
+
+### Callout Boxes
+
+Callout syntax for both Obsidian and Docusaurus:
+
+```markdown
+> [!note]
+> Information or note
+
+> [!tip]
+> Helpful information
+
+> [!warning]
+> Something to be careful about
+
+> [!seealso]
+> Related links (use for cross-reference blocks at page bottom)
+```
+
+### Sidebars and Navigation
+
+Sidebar structure is in `docs/sidebars.ts` for Docusaurus. Obsidian sidebar comes from `index.md` link lists in each folder. Add new pages by:
+1. Create `.md` file under appropriate section in `docs/obsidian-vault/`.
+2. Add to that folder's `index.md` link list (or update `docs/sidebars.ts` for Docusaurus).
+3. Set `sidebar_position` in frontmatter to control sort order (Docusaurus only).
+
 ---
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-05. Mirrored from the `write-docs` skill on Flipbook's **unmerged `flipbook-docs` branch**, with the voice and banned-patterns sections lifted into `org/writing-style` and this skill deferring there for them. All paths and mechanics in this skill describe that branch's docs setup, not `main`.
+**Date stamped:** 2026-07-11. Consolidated with Flipbook's `flipbook-docs-and-writing` skill from `.agents/skills/flipbook-docs-and-writing/`. Voice and banned-patterns sections are lifted into `org/writing-style`.
 
-**Re-verify these claims when this skill next loads** (run from a `flipbook` checkout; the docs estate currently lives only on `flipbook-docs`):
+**Re-verify these claims when this skill next loads** (run from a `flipbook` checkout):
 
-- The remark plugin and sidebar generator still exist: `git show origin/flipbook-docs:docs/site/src/remark/obsidian.mjs | head` and `git show origin/flipbook-docs:docs/site/src/sidebar/obsidian.mjs | head`
-- The vault root is still `docs/obsidian-vault/`: `git ls-tree origin/flipbook-docs -- docs/obsidian-vault`
-- When `flipbook-docs` merges to `main`, drop "unmerged" from this footer and re-confirm the paths against `main`.
+- The remark plugin and sidebar generator still exist: `git show origin/main:docs/site/src/remark/obsidian.mjs | head` and `git show origin/main:docs/site/src/sidebar/obsidian.mjs | head`
+- The vault root is still `docs/obsidian-vault/`: `git ls-tree origin/main -- docs/obsidian-vault`
+- Docusaurus is still the build system: `grep "docusaurus\|@docusaurus" docs/package.json`
+- PR template exists: `head -5 .github/pull_request_template.md`
