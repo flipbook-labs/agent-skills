@@ -1,6 +1,7 @@
 {
   "luau-lsp.platform.type": "standard",
   "luau-lsp.ignoreGlobs": [
-    "**/.lute/typedefs/**"
+    "**/.lute/typedefs/**",
+    "**/scripts/**"
   ]
 }
