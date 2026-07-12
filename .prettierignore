@@ -1,0 +1,5 @@
+# Nested Claude worktrees are throwaway checkouts, not library source.
+.claude/
+
+# CHANGELOG.md is assembled by Changewrite; let the release tooling own its format.
+CHANGELOG.md
