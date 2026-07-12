@@ -10,7 +10,7 @@ This skill describes the three validation tiers, what they prove and cannot prov
 
 ## When NOT to use this skill
 
-Use `change-control` (sibling 1) for PR gating rules and non-negotiables. Use `run-checks` (under `.agents/skills/`) for quick command reference (lint, analyze, test). Use `debugging-playbook` for symptom→triage when a test fails. Use `diagnostics-and-tooling` to measure/instrument and find bugs.
+Use `change-control` (sibling 1) for PR gating rules and non-negotiables. Use `run-checks` for quick command reference (lint, analyze, test). Use `debugging-playbook` for symptom→triage when a test fails. Use `diagnostics-and-tooling` to measure/instrument and find bugs.
 
 ## The Three Validation Tiers
 
@@ -21,11 +21,13 @@ Flipbook uses three layered validation gates that build on each other. Each has 
 **What it proves:** Style compliance, dead code, missing requires, typos in identifiers — the low-hanging fruit caught by static linters.
 
 **Command:**
+
 ```bash
 lute run lint
 ```
 
 **What it checks:**
+
 - Selene (`std = "roblox"`, `global_usage = "allow"`)
 - StyLua with `sort_requires = true`
 - Markdown formatting (via Prettier)
@@ -42,11 +44,13 @@ lute run lint
 **What it proves:** Type violations, unused locals, incorrect function signatures, schema mismatches — all violations of strict Luau semantics.
 
 **Command:**
+
 ```bash
 lute run analyze
 ```
 
 **How it works:**
+
 - Runs `luau-lsp` in strict mode (`.luaurc` sets `"languageMode": "strict"`)
 - Requires `lune setup` and `lute setup` before first run (handled by CI)
 - Checks all workspace members and build outputs
@@ -63,6 +67,7 @@ lute run analyze
 **What it proves:** Behavior in a real Roblox DataModel with actual Instances, Signals, and Roblox APIs available. Tests are the only place where rendering, component lifecycle, hooks, and store subscriptions are validated.
 
 **Command:**
+
 ```bash
 lute run test
 lute run test --filter "PatternString"
@@ -70,6 +75,7 @@ lute run test --apiKey "YOUR_KEY"
 ```
 
 **How it works:**
+
 - Builds dev plugin (`lute run build plugin --channel dev --clean --skip-reload`)
 - Packs a test place via Rojo (loads built plugin into ReplicatedStorage)
 - Runs jsdotlua Jest in the cloud via Rocale/Luau Execution API
@@ -81,6 +87,7 @@ lute run test --apiKey "YOUR_KEY"
 **Requires:** `ROBLOX_API_KEY` in `.env` or `--apiKey` flag (from Open Cloud).
 
 **What it CANNOT catch:**
+
 - **Visual regressions:** Tests render into Instances, not screenshot pixels. A color, font size, or layout change is invisible to Jest unless explicitly asserted (rare).
 - **Studio-only interactions:** Plugin hot-reload, script debugger integration, .rbxm file sync, Explorer drag-drop.
 - **ContextProvider errors:** Known FIXME in `createFlipbookApp.luau` (grep `FIXME: ContextProviders having an error won't fail tests`) — if a ContextProvider throws, tests do not fail (React error boundaries capture it; the test sees an empty tree and passes). This is a gap; a manual smoke-test is required (see "Honest Fallback" below).
@@ -95,24 +102,24 @@ lute run test --apiKey "YOUR_KEY"
 
 Count by `find workspace/flipbook-core/src -name "*.spec.luau" | wc -l`.
 
-| File | Lines | Coverage |
-|------|-------|----------|
-| `FlipbookApp.spec.luau` | 71 | App mount/lifecycle |
-| `stories.spec.luau` | 69 | Every-story smoke test; all 49 stories render without error |
-| `createStoryControlsStore.spec.luau` | 71 | Store defaults, overrides, signal identity, getControls() flattening |
-| `createTreeNodeStore.spec.luau` | ~50 | Tree node store mutations |
-| `createPluginSettingsStore.spec.luau` | ~40 | Plugin settings store |
-| `renderHook.spec.luau` | ~30 | React hook testing utility |
-| `newFolder.spec.luau` | ~20 | Instance creation helper |
-| `usePrevious.spec.luau` | 66 | Hook: previous value tracking |
-| `useZoom.spec.luau` | ~40 | Hook: zoom state |
-| `getInstanceFromPath.spec.luau` | ~30 | Path resolution |
-| `useThemeName.spec.luau` | ~20 | Hook: theme name |
-| `getInstanceFromFullName.spec.luau` | ~30 | Full name parsing |
-| `mapRanges.spec.luau` | ~20 | Numeric range mapping |
-| `getInstancePath.spec.luau` | ~30 | Path generation |
-| `useEvent.spec.luau` | ~40 | Hook: event listening |
-| `createPinnedInstanceStore.spec.luau` | ~40 | Pinned instance store |
+| File                                  | Lines | Coverage                                                             |
+| ------------------------------------- | ----- | -------------------------------------------------------------------- |
+| `FlipbookApp.spec.luau`               | 71    | App mount/lifecycle                                                  |
+| `stories.spec.luau`                   | 69    | Every-story smoke test; all 49 stories render without error          |
+| `createStoryControlsStore.spec.luau`  | 71    | Store defaults, overrides, signal identity, getControls() flattening |
+| `createTreeNodeStore.spec.luau`       | ~50   | Tree node store mutations                                            |
+| `createPluginSettingsStore.spec.luau` | ~40   | Plugin settings store                                                |
+| `renderHook.spec.luau`                | ~30   | React hook testing utility                                           |
+| `newFolder.spec.luau`                 | ~20   | Instance creation helper                                             |
+| `usePrevious.spec.luau`               | 66    | Hook: previous value tracking                                        |
+| `useZoom.spec.luau`                   | ~40   | Hook: zoom state                                                     |
+| `getInstanceFromPath.spec.luau`       | ~30   | Path resolution                                                      |
+| `useThemeName.spec.luau`              | ~20   | Hook: theme name                                                     |
+| `getInstanceFromFullName.spec.luau`   | ~30   | Full name parsing                                                    |
+| `mapRanges.spec.luau`                 | ~20   | Numeric range mapping                                                |
+| `getInstancePath.spec.luau`           | ~30   | Path generation                                                      |
+| `useEvent.spec.luau`                  | ~40   | Hook: event listening                                                |
+| `createPinnedInstanceStore.spec.luau` | ~40   | Pinned instance store                                                |
 
 ### Story Files: 49 total (validation artifacts, not unit tests)
 
@@ -121,6 +128,7 @@ Count by `find workspace -name "*.story.luau" | wc -l`.
 Stories are colocated with source and serve as smoke tests. `stories.spec.luau` iterates all 49 stories and verifies each mounts and unmounts without crashing.
 
 **Notable gaps in spec coverage (dirs with zero .spec.luau files):**
+
 - `About/` — AboutView, RobloxProfile stories exist but untested
 - `Embedding/` — Core embedding feature; no spec
 - `Enums/` — Enum definitions; no spec (not behavior-critical)
@@ -151,6 +159,7 @@ A spec that fails before the fix and passes after, demonstrating the specific be
 **Example:** "Added test for ControlGroup flattening in `createStoryControlsStore.spec.luau`. Before fix: test fails (schema not flattened). After fix: test passes."
 
 **How to write:**
+
 ```luau
 test("flattens ControlGroup into flat control schema", function()
   local schema = {
@@ -236,17 +245,17 @@ end)
 
 ### Jest Idioms Specific to Luau + jsdotlua
 
-| Pattern | Luau Jest | Notes |
-|---------|-----------|-------|
-| **Import globals** | `local test = JestGlobals.test` | Do NOT use `require("jest")` or Node-style globals |
-| **Describe** | `describe(name, fn)` | Groups related tests |
-| **Test** | `test(name, fn)` or `it(name, fn)` | Defines a single test case |
-| **Expect** | `expect(value).toBe(expected)` | Assertion; supports `.toEqual()`, `.toContain()`, etc. |
-| **Before/After** | `beforeEach(fn)`, `afterEach(fn)` | Setup/teardown per test |
-| **React Testing** | `ReactRoblox.act()`, `root:render()`, `root:unmount()` | Wrap renders in `act()` |
-| **Instances** | Create with `Instance.new("ScreenGui")` | Tests run inside Roblox; use real Instance APIs |
-| **Signals** | Use `Instance.new("BindableEvent")` for reactivity | Emit with `:Fire()` to trigger hook updates |
-| **Skip** | `test.skip()` or `describe.skip()` | Temporarily disable without deleting |
+| Pattern            | Luau Jest                                              | Notes                                                  |
+| ------------------ | ------------------------------------------------------ | ------------------------------------------------------ |
+| **Import globals** | `local test = JestGlobals.test`                        | Do NOT use `require("jest")` or Node-style globals     |
+| **Describe**       | `describe(name, fn)`                                   | Groups related tests                                   |
+| **Test**           | `test(name, fn)` or `it(name, fn)`                     | Defines a single test case                             |
+| **Expect**         | `expect(value).toBe(expected)`                         | Assertion; supports `.toEqual()`, `.toContain()`, etc. |
+| **Before/After**   | `beforeEach(fn)`, `afterEach(fn)`                      | Setup/teardown per test                                |
+| **React Testing**  | `ReactRoblox.act()`, `root:render()`, `root:unmount()` | Wrap renders in `act()`                                |
+| **Instances**      | Create with `Instance.new("ScreenGui")`                | Tests run inside Roblox; use real Instance APIs        |
+| **Signals**        | Use `Instance.new("BindableEvent")` for reactivity     | Emit with `:Fire()` to trigger hook updates            |
+| **Skip**           | `test.skip()` or `describe.skip()`                     | Temporarily disable without deleting                   |
 
 ### Real Example: Hook Testing
 
@@ -300,6 +309,7 @@ end)
 ```
 
 Key patterns:
+
 - Create an Instance (`ScreenGui`) as the render target
 - Create a `BindableEvent` to signal state changes from outside
 - Render component with `ReactRoblox.act()`
@@ -328,6 +338,7 @@ end)
 ```
 
 Key patterns:
+
 - Stores return signal getters; call them with `()` to read current value
 - Test signal identity stability (same getter object on repeated calls)
 - Test that overrides do not bleed into other controls
@@ -359,6 +370,7 @@ lute run test --apiKey "roblox_open_cloud_key_here"
 ```
 
 Or set `.env`:
+
 ```
 ROBLOX_API_KEY=roblox_open_cloud_key_here
 ROBLOX_UNIT_TESTING_PLACE_ID=123506190725771
@@ -368,11 +380,13 @@ ROBLOX_UNIT_TESTING_UNIVERSE_ID=6599100156
 ### Failed Test Debugging
 
 If a test fails, the output includes:
+
 - Assertion error (expected vs actual)
 - Stack trace with line numbers
 - Which test suite failed
 
 **Common causes:**
+
 - Instance not found (`.FindFirstChildWhichIsA()` returns nil)
 - Signal not subscribed (hook not updating)
 - Type mismatch (string expected, got number)
@@ -389,10 +403,12 @@ If `ROBLOX_API_KEY` is unavailable (local setup, CI on fork, dev environment):
 ### Fallback Priority
 
 1. **Run lint + analyze** (both work offline):
+
    ```bash
    lute run lint
    lute run analyze
    ```
+
    These catch ~80% of bugs (style, types, dead code). Accept it as sufficient for typos, renames, obvious fixes.
 
 2. **Manual smoke-test** (documented recipe):
@@ -404,6 +420,7 @@ If `ROBLOX_API_KEY` is unavailable (local setup, CI on fork, dev environment):
 ### Document Fallback Status in PR
 
 If tests could not run, add to PR body:
+
 ```markdown
 **Testing note:** Cloud tests require ROBLOX_API_KEY (unavailable in this environment).
 Fallback validation: ✅ lint, ✅ analyze, ✅ manual smoke-test (see #123 for steps).
@@ -506,12 +523,12 @@ return story
 ```
 
 **Expectations:**
+
 - Every interactive component has a story
 - Stories with controls let developers test the component's interface
 - Stories are colocated with the component
 
 ---
-
 
 ## Provenance and Maintenance
 

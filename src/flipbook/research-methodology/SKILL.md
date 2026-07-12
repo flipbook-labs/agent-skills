@@ -31,6 +31,7 @@ This skill documents how Flipbook's community and maintainers move from hypothes
 ### Mechanism Validation Checklist
 
 Before accepting a root-cause explanation:
+
 1. **Collect all observations:** What broke? What didn't? What platforms, Lute versions, contexts were involved?
 2. **State the mechanism:** One sentence describing how the bug operates (e.g., "Lute's stdio parameter default changed between v0.1.0-nightly.20251210 and subsequent versions, breaking stdout capture in git rev-parse calls").
 3. **Check negatives:** Why didn't this affect local builds? (Answer: rokit pins Lute version; CI's nightly workflow does not.) Why did it work once in #426? (Answer: commit 1863e994 accidentally set a compatible version alongside the fix.)
@@ -67,6 +68,7 @@ This is **scaffolding**: code added to catch regressions after understanding was
 **Experiment (PR #576):** Created `createStoryControlsStore.luau` (dedicated Charm store for controls state) and `StoryControlsContext.luau` (React context to isolate updates). Refactored `StoryView.luau` to use the context.
 
 **Prediction vs. result:**
+
 - **Predicted:** Individual controls re-render only when their value changes.
 - **Actual outcome:** Validated in PR description: "Now we should be getting localized updates only to the components that need to be rerendered." Merged with 280 insertions in new store logic and 135 lines removed from monolithic StoryView.
 
@@ -91,11 +93,13 @@ This is **scaffolding**: code added to catch regressions after understanding was
 ### Lifecycle Stages
 
 **Stage 1: Hunch (scratch/experiment branch)**
+
 - Hypothesis is untested; mechanism unclear.
 - Branching rule: use descriptive names (`fix/story-reload-on-source-change`, not `branchX`).
 - Examples: `fix/iteration-loop-with-rotriever` (commit 389a0891, 2026-05-15), `try/fork-workflows` (commit 6896cca5, 2026-04-18).
 
 **Stage 2: Experiment (working branch, often with tests)**
+
 - Implement and measure (use hypothesis-prediction pattern from Section II).
 - Collect evidence: test pass/fail, benchmark deltas, real-world validation.
 - Examples:
@@ -103,12 +107,14 @@ This is **scaffolding**: code added to catch regressions after understanding was
   - `fix/story-controls-store` (PR #576, commit 371d7752, 2026-05-30): Dedicated state store + React context (280 insertions, test file 71 lines, measurement validated).
 
 **Stage 3a: Adopted Change (PR merged, code persists)**
+
 - Fix passes adversarial review (Section I), hypothesis validated (Section II), tests added.
 - Examples:
   - **Path-length mitigation (PR #523, commit 7a6c69b5, 2026-03-12):** Bundle Wally + Loom packages as `.rbxm` files to defeat Windows MAX_PATH. Mechanism: "Rotriever is not picky about content root format." Result: Permanent fix, rbxm bundling in `compileAsync.luau` (grep `packToRbxm`) still active on current main. Rationale embedded in code comment: "alleviate path length limit issues."
   - **Embedding (PR #582, commit 78d71e8f, 2026-06-21):** Introduced `Pluginlike` abstraction (Section II of `architecture-contract`). Shipped with architectural write-up.
 
 **Stage 3b: Documented Retirement (PR merged, code/branch deleted, verdict in archaeology)**
+
 - Idea proved unsound or obsolete; decision captured for future reference.
 - Examples:
   - **Build parallelization (PR #405 revert, commit 68b0e2f4, 2025-11-03, 1-day lifetime):** Attempted parallel compilation to cut build time 10s → 5s. Failed within hours; reverted with minimal explanation. Later understood (PR #437): related to Lute's `process.spawn` brittleness. Verdict: parallelization idea abandoned; sequential builds remain standard.
@@ -119,25 +125,29 @@ This is **scaffolding**: code added to catch regressions after understanding was
 Flipbook has ~18 stalled branches with work-in-progress; most violate this protocol by existing without a verdict.
 
 **Nearly-ready (awaiting merge review):**
+
 - `adopt-changewrite` (1 commit, 2026-06-28): feature-complete, no obstacles evident.
 - `agent-actions-registry` (2 commits, 2026-06-18): stalled at review stage; needs verdict (merge or document why not).
 - `update-darklua-0.19-loaders` (1 commit, 2026-06-11): awaiting integration test results; verdict pending.
 
 **Blocked/exploratory (deep work, unclear status):**
+
 - `embedded-http-proxy` (75 commits, 2026-06-19): substantial feature; 75 commits suggests major architectural addition; no recent activity; needs verdict.
 - `uilabs-controls-support` (3 commits, 2026-05-09): stalled 53 days; noted "ControlGroup and Object are broken"; verdict: blocked on Storyteller/UI Labs fixes upstream.
 - `upgrade-loom-dependencies` (6 commits, 2026-05-09): infrastructure upgrade; described as "nightmare" (cascading API breakage); stalled 53 days; verdict: deprioritized or awaiting full integration.
 
 **Forgotten (dormant 7+ months):**
+
 - `docs-in-studio` (8 commits, 2025-12-26): 187 days dormant; "Embed documentation in Roblox Studio"; unclear if viable; needs verdict.
 - `storybook-onboarding` (7 commits, 2025-11-02): 242 days dormant; likely superseded; needs verdict.
 
 ### Mandate: Every Stalled Branch Gets a Verdict
 
 When maintaining Flipbook, treat each stalled branch as a debt item:
+
 1. **Assess:** Is the work still aligned with roadmap? Can it ship as-is?
 2. **Decide:** Merge (Stage 3a) or retire (Stage 3b).
-3. **Document:** If retiring, add a one-line entry to `failure-archaeology` SKILL (also in `.agents/skills/failure-archaeology/SKILL.md`) explaining the verdict and when, so future maintainers know: "attempted X in branch Y, did not proceed because Z."
+3. **Document:** If retiring, add a one-line entry to the `failure-archaeology` skill explaining the verdict and when, so future maintainers know: "attempted X in branch Y, did not proceed because Z."
 
 Example verdict to add to archaeology:
 
@@ -158,12 +168,14 @@ Example verdict to add to archaeology:
 **Mechanism:** Flipbook's UI is built in React and previewed in Flipbook's own storybook. Pain felt by maintainers developing Flipbook is pain felt by users.
 
 **Example: Controls re-render regression (PR #576)**
+
 - **Pain:** After Signals→Charm migration (PR #509), maintainers noticed story controls became laggy and exhibited visual artifacts when editing controls.
 - **Root cause:** State management change exposed architectural issue (controls state coupled to entire panel).
 - **Solution:** Dedicated controls store + React context isolation.
 - **Outcome:** Shipped in PR #576; maintainers validated fix by developing Flipbook itself via Flipbook.
 
 **Example: DevTools instrumentation (scripts/)**
+
 - Pain: Build times unclear; no visibility into which phases were slow.
 - Solution: Lute scripts in `.lute/` added for `analyze`, `lint`, `test` — each solving a specific friction point.
 - Outcome: Lute scripts become shared scaffolding; documented in `diagnostics-and-tooling`.
@@ -189,6 +201,7 @@ Controls revamp (#465, #576, #579) is shipping to close UI Labs gap. Features li
 **Mechanism:** Creators post in DevForum, GitHub issues, Discord. High-signal requests become experiments.
 
 **Example: Auto-launch suppression (PR #593)**
+
 - **Community pain:** Users report Flipbook reopening unexpectedly when Studio layout resets.
 - **Root cause:** `DockWidgetPluginGuiInfo` had `initEnabled=true`; Studio's layout recovery re-instantiated the widget.
 - **Solution:** Set `initEnabled=false` (toolbar button only); change initial dock state from Top to Float.
@@ -199,16 +212,19 @@ Controls revamp (#465, #576, #579) is shipping to close UI Labs gap. Features li
 **Mechanism:** When a developer feels friction repeatedly, they automate. The script becomes shared scaffolding.
 
 **Example 1: Type checking (lute run analyze)**
+
 - **Pain:** Luau strict analysis catching real errors; running manually slow; CI needs it too.
 - **Solution:** Lute script `.lute/analyze.luau` encapsulates `lune setup`, Luau language server invocation, artifact cleanup.
 - **Outcome:** `lute run analyze` becomes the canonical type-check command; same script runs locally and in CI.
 
 **Example 2: Testing (lute run test)**
+
 - **Pain:** Jest tests run inside Roblox; requires Rocale (Luau Execution), API key, place file. Manual invocation complex.
 - **Solution:** `.lute/test.luau` packs the test place, invokes Rocale with environment gating, filters by `--filter <pattern>`.
 - **Outcome:** `lute run test --filter Controls` works locally; same script runs in CI with environment-gated API key access.
 
 **Example 3: Build (lute run build plugin --channel dev --watch)**
+
 - **Pain:** Multiple build targets (plugin, workspace, storybook); multiple channels (dev, beta, prod). Manual command fragile.
 - **Solution:** Consolidated build system in `.lute/lib/build-system/` with Darklua integration. Single entry point handles all combinations.
 - **Outcome:** Developers use `lute run build` idiomatically; no knowledge of Rojo, Darklua, or sourcemap plumbing required.
@@ -218,6 +234,7 @@ Controls revamp (#465, #576, #579) is shipping to close UI Labs gap. Features li
 **Mechanism:** Library APIs change (Storyteller, Charm, Roblox packages); Flipbook adapts or breaks. The adaptation often surfaces new patterns.
 
 **Example: Charm.flags.frozen workaround (src/PluginStarterScript.plugin.luau, grep `Charm.flags.frozen = false`)**
+
 - **Upstream issue:** Storyteller mutates immutable Charm state (storyteller#100, unresolved).
 - **Pain:** Flipbook crashes with "Attempt to modify a readonly table."
 - **Solution:** Disable Charm immutability (`Charm.flags.frozen = false`) as temporary workaround.
@@ -234,6 +251,7 @@ Controls revamp (#465, #576, #579) is shipping to close UI Labs gap. Features li
 **Applies to:** Every PR.
 
 **Checks:**
+
 - `build-plugin` (dev + prod channels): Darklua, Rojo, builds succeed; provenance attestation generated.
 - `build-package` (flipbook-core rotriever): Package builds without path-length overflow (validates Section I mechanism from PATH-LENGTH SAGA).
 - `analyze` (Luau strict type checking + selene lint).
@@ -248,6 +266,7 @@ Controls revamp (#465, #576, #579) is shipping to close UI Labs gap. Features li
 **Applies to:** PR authoring.
 
 **Decision tree:**
+
 - **Internal refactor** (no user-facing change): standard review.
 - **Bug fix**: describe root cause (evidence bar from Section I), link to issue/archaeology, provide test.
 - **Feature**: feature-gated via BUILD_CHANNEL or explicit opt-in (telemetry); documented in roadmap.
@@ -259,11 +278,13 @@ Controls revamp (#465, #576, #579) is shipping to close UI Labs gap. Features li
 **Applies to:** Changes touching story controls, state management, performance-sensitive code.
 
 **Evidence standard:**
+
 - Hypothesis-prediction from Section II validated? (e.g., PR #576: "localized updates to touched controls only").
 - Test suite updated to capture new behavior?
 - Benchmarks or counter evidence collected?
 
 **Example: PR #576 (controls re-render fix)**
+
 - Added `createStoryControlsStore.spec.luau` (71 lines): tests for state isolation, subscription, re-render prevention.
 - Before/after measurement: visually confirmed no artifacts when dragging controls slider (maintainer's dogfooding).
 - Test isolation: new store logic testable without React scheduler (deferred from Section II pattern).
@@ -275,6 +296,7 @@ Controls revamp (#465, #576, #579) is shipping to close UI Labs gap. Features li
 **Applies to:** Features, telemetry, API changes.
 
 **Doctrine (from shared-brief):**
+
 - **Community-first:** Flipbook is brought to Roblox internal users but internal support ends at parity with community version. No internal-only features.
 - **Telemetry/Privacy:** Immediate opt-out dialog exists (TelemetryOptOutDialog). No privacy policy yet (open obligation). No telemetry expansion without written privacy docs.
 
@@ -295,12 +317,14 @@ Controls revamp (#465, #576, #579) is shipping to close UI Labs gap. Features li
 **Work:** Multiple fixes across API boundaries; stalled 53 days (as of 2026-07-01).
 
 **Missing verdict:**
+
 - Is the branch viable? (Unknown.)
 - Is the work still relevant? (Unknown; newer Lute versions may have released.)
 - Should future maintainers attempt this again? (No guidance.)
 - Should this work be rebased on main or abandoned? (No decision.)
 
 **Residue:** Stalled branch lingers; future maintainers see "nightmare" comment but no resolution. Do they:
+
 - Resurrect and finish?
 - Delete and wait for upstream fix?
 - Wait for maintainer guidance that never comes?
@@ -309,6 +333,7 @@ Controls revamp (#465, #576, #579) is shipping to close UI Labs gap. Features li
 
 ```markdown
 #### `upgrade-loom-dependencies` (stalled, 2026-05-09)
+
 **Status:** Abandoned; superseded by `lute@1.0.1` public release.
 **Reason:** Manual Lute nightly migration proved fragile. Wait for stable release.
 **Verdict:** Do not resurrect. If Lute needs upgrading, start from main with fresh branch.

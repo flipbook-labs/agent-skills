@@ -23,6 +23,7 @@ lute run bump-version <major|minor|patch>
 ```
 
 **Implementation:** `.lute/bump-version.luau` reads current version from wally.toml (source of truth), calculates next semver, and updates all three manifests in place. Examples:
+
 - `lute run bump-version patch` → 2.5.0 → 2.5.1
 - `lute run bump-version minor` → 2.5.0 → 2.6.0
 - `lute run bump-version major` → 2.5.0 → 3.0.0
@@ -30,12 +31,14 @@ lute run bump-version <major|minor|patch>
 **Next steps:**
 
 1. Create and push a feature branch:
+
 ```bash
 git checkout -b release/2.6.0
 git push -u origin release/2.6.0
 ```
 
 2. Open a draft PR using the repo template:
+
 ```bash
 gh pr create --draft --title "Bump to 2.6.0" --template .github/pull_request_template.md
 ```
@@ -69,28 +72,33 @@ Once the bump PR is approved and CI passes, merge it to main. This is a regular 
 Once the release is published, GitHub Actions triggers:
 
 #### `release.yml → publish-github-release` job
+
 - **Condition:** Only runs if `github.event.release` exists (i.e., release was published, not a push to main).
 - **What it does:** Builds prod Flipbook.rbxm, attaches it to the release's Assets.
 - **Artifact:** `Flipbook.rbxm` (renamed to `Flipbook-<sha>.rbxm` in CI, then downloaded and renamed back for the release).
 
 #### `release.yml → publish-plugin` job
+
 - **Condition:** Only runs on release events.
 - **Environment gate:** `roblox-creator-store` (requires approval secret `ROBLOX_API_KEY`).
 - **What it does:** Calls `lune run publish-plugin --channel prod --apiKey <key>`, which invokes rbxasset to publish to the Creator Store asset `8517129161` (Flipbook prod).
 - **Concurrency:** `production` group (one release at a time; blocks nightly builds).
 
 #### `release.yml → publish-nightly-plugin` job (automatic per-push to main)
+
 - **Condition:** Runs only on pushes to main (not releases).
 - **Environment gate:** `roblox-creator-store-dev` (separate secret, separate Creator Store asset).
 - **What it does:** Calls `lune run publish-plugin --channel beta --apiKey <key>`, publishing to asset `88523969718241` (Flipbook dev/nightly).
 - **Concurrency:** `nightly` group (independent of release, but serialized with itself).
 
 **Asset mapping (in `.lune/publish-plugin.luau`)**
+
 ```
 channel dev  → asset dev
 channel beta → asset dev  (reuses dev asset; this is intentional)
 channel prod → asset prod
 ```
+
 When `--smoketest` flag is passed (strict.yml tests job), it publishes to asset `smoketest` instead.
 
 ---
@@ -121,6 +129,7 @@ build/
 ### Rbxm Naming Convention
 
 In CI, rbxm files are renamed to include a 7-character commit SHA for traceability:
+
 ```
 Flipbook-<sha>.rbxm  # e.g., Flipbook-a1b2c3d.rbxm (in CI)
 Flipbook.rbxm        # default name locally and in release assets
@@ -131,6 +140,7 @@ The SHA helps trace which commit produced a given binary when debugging.
 ### Build Provenance Attestation
 
 CI jobs use `actions/attest-build-provenance@v3` to create SLSA provenance attestations for both:
+
 - Plugin .rbxm files (build-plugin matrix)
 - Flipbook-core rotriever packages (build-package matrix)
 
@@ -140,11 +150,11 @@ These attestations prove the artifacts were built in CI and can be verified by R
 
 Each build channel has different behavior:
 
-| Channel | Contents | Use Case | Default |
-|---------|----------|----------|---------|
-| dev | Includes test files, storybooks, stories | Flipbook development; `--watch` for incremental | `plugin` subcommand default |
-| beta | Prod build shipped to nightly asset | Nightly CI builds (maps to dev asset) | `release.yml` nightly job |
-| prod | Strips code-samples, example, template, test-runner, *.spec.luau, *.story.luau | Public releases | `release.yml` release job |
+| Channel | Contents                                                                       | Use Case                                        | Default                     |
+| ------- | ------------------------------------------------------------------------------ | ----------------------------------------------- | --------------------------- |
+| dev     | Includes test files, storybooks, stories                                       | Flipbook development; `--watch` for incremental | `plugin` subcommand default |
+| beta    | Prod build shipped to nightly asset                                            | Nightly CI builds (maps to dev asset)           | `release.yml` nightly job   |
+| prod    | Strips code-samples, example, template, test-runner, *.spec.luau, *.story.luau | Public releases                                 | `release.yml` release job   |
 
 ---
 
@@ -153,6 +163,7 @@ Each build channel has different behavior:
 **Trigger:** Every push to main (via release.yml).
 
 **What happens:**
+
 1. `publish-nightly-plugin` job runs (independent of release events).
 2. Builds `--channel beta` (which publishes to dev asset).
 3. Uses concurrency group `nightly` (serialized; one at a time).
@@ -171,6 +182,7 @@ Each build channel has different behavior:
 **Trigger:** `strict.yml` tests job (pull_request_target + push to main, behind environment gates).
 
 **What it does:**
+
 ```sh
 lune run publish-plugin --smoketest --channel prod --apiKey <key>
 ```
@@ -178,6 +190,7 @@ lune run publish-plugin --smoketest --channel prod --apiKey <key>
 **Behavior:** Builds prod channel, publishes to asset `smoketest` (defined in rbxasset.toml), validates the publish succeeded. Does not test actual loading in Studio (offline validation only).
 
 **Historical lessons:**
+
 - PR #562 "Fix smoketest deployments cancelling each other" — early smoketest logic in `release.yml` had concurrency bugs when combined with approval gates. Solution: moved smoketest to `strict.yml` tests job (its proper role as an end-to-end test).
 - PR #561 "Fix dev deployments triggering for all PRs" — dev deployments leaked into all PRs. Solution: flipped logic to deploy only on non-PR events (push to main).
 
@@ -194,6 +207,7 @@ lune run publish-plugin --smoketest --channel prod --apiKey <key>
 ### Main Branch Storybook Deploy
 
 On `main` only:
+
 1. Build prod Flipbook.rbxm (`lute run build plugin --channel prod --skip-reload --clean`).
 2. Deploy to place ID `139676401890813` (from `project.luau`, stored in `ROBLOX_STORYBOOK_PLACE_ID`).
 3. Pass local Flipbook.rbxm as runtime (`flipbook-rbxm: build/prod/Flipbook.rbxm`).
@@ -203,6 +217,7 @@ On `main` only:
 ### PR Storybook Deploy
 
 On each PR:
+
 1. Build storybook place only (no fresh Flipbook build).
 2. Deploy to per-PR place named `Flipbook Preview <PR number>`.
 3. Let deploy-storybook fetch latest Flipbook release from GitHub (don't pass `flipbook-rbxm`).
@@ -212,6 +227,7 @@ On each PR:
 ### Universe & Place IDs
 
 From `project.luau`:
+
 - Universe ID: `10262009842` (experience/game)
 - Place ID: `139676401890813` (main storybook place)
 
@@ -222,6 +238,7 @@ These are hardcoded in the action inputs and also resolved dynamically in storyb
 **Tool:** flipbook-labs/flipbook-cli (installed via Rokit).
 
 **Inputs:**
+
 - `api-key`: Open Cloud API key (stored as `ROBLOX_STORYBOOK_PREVIEW_API_KEY` secret in environment `storybook-preview`).
 - `universe-id`: Experience ID.
 - `place-name`: Display name for the place (e.g., "Flipbook Stories" for main, "Flipbook Preview <N>" for PRs).
@@ -242,11 +259,11 @@ These are hardcoded in the action inputs and also resolved dynamically in storyb
 
 Runs on every PR and push to main:
 
-| Job | Channels | Targets | Notes |
-|-----|----------|---------|-------|
-| build-plugin | dev, beta, prod | plugin (default) | 3 matrix runs; attests provenance |
-| build-package | flipbook-core | rotriever | 3 channel runs; zips for Rotriever consumers |
-| analyze | — | — | Runs lute lint, lune setup, lute setup, lute analyze; single run |
+| Job           | Channels        | Targets          | Notes                                                            |
+| ------------- | --------------- | ---------------- | ---------------------------------------------------------------- |
+| build-plugin  | dev, beta, prod | plugin (default) | 3 matrix runs; attests provenance                                |
+| build-package | flipbook-core   | rotriever        | 3 channel runs; zips for Rotriever consumers                     |
+| analyze       | —               | —                | Runs lute lint, lune setup, lute setup, lute analyze; single run |
 
 ### Strict Job Schedule
 
@@ -254,8 +271,8 @@ Runs on every PR and push to main:
 
 Runs on pull_request_target and push to main (secrets gated):
 
-| Job | Condition | Environment | Notes |
-|-----|-----------|-------------|-------|
+| Job   | Condition      | Environment                                                  | Notes                                        |
+| ----- | -------------- | ------------------------------------------------------------ | -------------------------------------------- |
 | tests | all PRs / main | `luau-execution-gated` (fork) or `luau-execution` (internal) | Runs `lute run test`, then smoketest publish |
 
 Fork PRs require explicit approval before running (environment gate); internal PRs run automatically.
@@ -266,11 +283,11 @@ Fork PRs require explicit approval before running (environment gate); internal P
 
 Triggered by GitHub release events AND push to main:
 
-| Job | Trigger | Environment | Concurrency |
-|-----|---------|-------------|-------------|
-| publish-github-release | release event only | — | Attaches .rbxm to release assets |
-| publish-plugin | release event only | roblox-creator-store | production (blocks nightly) |
-| publish-nightly-plugin | push to main only | roblox-creator-store-dev | nightly (serialized) |
+| Job                    | Trigger            | Environment              | Concurrency                      |
+| ---------------------- | ------------------ | ------------------------ | -------------------------------- |
+| publish-github-release | release event only | —                        | Attaches .rbxm to release assets |
+| publish-plugin         | release event only | roblox-creator-store     | production (blocks nightly)      |
+| publish-nightly-plugin | push to main only  | roblox-creator-store-dev | nightly (serialized)             |
 
 ### Storybook Job Schedule
 
@@ -278,8 +295,8 @@ Triggered by GitHub release events AND push to main:
 
 Runs on push to main and every PR:
 
-| Job | Trigger | Environment | Concurrency |
-|-----|---------|-------------|-------------|
+| Job    | Trigger   | Environment       | Concurrency                                        |
+| ------ | --------- | ----------------- | -------------------------------------------------- |
 | deploy | main + PR | storybook-preview | storybook-preview-<PR#> (cancel in-progress on PR) |
 
 Concurrency ensures one deployment per PR at a time; main pushes run independently.
@@ -292,29 +309,29 @@ Concurrency ensures one deployment per PR at a time; main pushes run independent
 
 ### GitHub Environments (Gating Points)
 
-| Environment | Used By | Secret | Purpose |
-|-------------|---------|--------|---------|
-| luau-execution | strict.yml tests | ROBLOX_API_KEY | Internal PR test runs (auto-approve) |
-| luau-execution-gated | strict.yml tests | ROBLOX_API_KEY | Fork PR test runs (require approval) |
-| roblox-creator-store | release.yml publish-plugin | ROBLOX_API_KEY | Prod asset publish (8517129161); requires approval |
-| roblox-creator-store-dev | release.yml publish-nightly | ROBLOX_API_KEY | Dev/nightly asset publish (88523969718241); requires approval |
-| storybook-preview | storybook.yml deploy | ROBLOX_STORYBOOK_PREVIEW_API_KEY | Storybook place deployment; separate API key and environment |
+| Environment              | Used By                     | Secret                           | Purpose                                                       |
+| ------------------------ | --------------------------- | -------------------------------- | ------------------------------------------------------------- |
+| luau-execution           | strict.yml tests            | ROBLOX_API_KEY                   | Internal PR test runs (auto-approve)                          |
+| luau-execution-gated     | strict.yml tests            | ROBLOX_API_KEY                   | Fork PR test runs (require approval)                          |
+| roblox-creator-store     | release.yml publish-plugin  | ROBLOX_API_KEY                   | Prod asset publish (8517129161); requires approval            |
+| roblox-creator-store-dev | release.yml publish-nightly | ROBLOX_API_KEY                   | Dev/nightly asset publish (88523969718241); requires approval |
+| storybook-preview        | storybook.yml deploy        | ROBLOX_STORYBOOK_PREVIEW_API_KEY | Storybook place deployment; separate API key and environment  |
 
 **Why separate keys?** Storybook preview is lower-risk (internal-only) than Creator Store publish; separate keys allow fine-grained permission scoping at the Roblox API level.
 
 ### Secrets (in GitHub Actions)
 
-| Secret | Scope | Value | Source |
-|--------|-------|-------|--------|
-| ROBLOX_API_KEY | org (flipbook-labs) | Open Cloud API key | Manually generated at https://create.roblox.com/dashboard/credentials |
-| WALLY_REGISTRY_TOKEN | org (flipbook-labs) | GitHub PAT for Wally registry publish | From `wally login` → `~/.wally/auth.toml` |
-| ROBLOX_STORYBOOK_PREVIEW_API_KEY | org | Open Cloud API key for storybook universe | Same process as ROBLOX_API_KEY |
+| Secret                           | Scope               | Value                                     | Source                                                                |
+| -------------------------------- | ------------------- | ----------------------------------------- | --------------------------------------------------------------------- |
+| ROBLOX_API_KEY                   | org (flipbook-labs) | Open Cloud API key                        | Manually generated at https://create.roblox.com/dashboard/credentials |
+| WALLY_REGISTRY_TOKEN             | org (flipbook-labs) | GitHub PAT for Wally registry publish     | From `wally login` → `~/.wally/auth.toml`                             |
+| ROBLOX_STORYBOOK_PREVIEW_API_KEY | org                 | Open Cloud API key for storybook universe | Same process as ROBLOX_API_KEY                                        |
 
 ### Variables (in GitHub Actions)
 
-| Variable | Scope | Value | Notes |
-|----------|-------|-------|-------|
-| ROBLOX_STORYBOOK_UNIVERSE_ID | org | 10262009842 | From project.luau; used by storybook.yml |
+| Variable                     | Scope | Value       | Notes                                    |
+| ---------------------------- | ----- | ----------- | ---------------------------------------- |
+| ROBLOX_STORYBOOK_UNIVERSE_ID | org   | 10262009842 | From project.luau; used by storybook.yml |
 
 ---
 
@@ -354,6 +371,7 @@ placeId = 84837374448022
 ```
 
 **Asset IDs (from shared brief & create.roblox.com):**
+
 - Prod: 8517129161
 - Dev (nightly): 88523969718241
 - Smoketest: (internal, not published to store)
@@ -367,6 +385,7 @@ The script `.lune/publish-plugin.luau` reads rbxasset.toml and publishes to the 
 **When needed:** If `WALLY_REGISTRY_TOKEN` expires or is compromised, update it.
 
 **Steps:**
+
 1. Run `wally login` locally; authenticate via GitHub device flow.
 2. Copy the generated token from `~/.wally/auth.toml`:
    ```toml
@@ -445,6 +464,7 @@ The script `.lune/publish-plugin.luau` reads rbxasset.toml and publishes to the 
 **Current state:** Flipbook still uses manual `lute run bump-version` + GitHub Release creation. Changewrite is adopted by other flipbook-labs repos (flipbook-cli, deploy-storybook) but not yet flipbook.
 
 **Adoption plan:** Merge `adopt-changewrite` to main (pending review); then release workflow becomes:
+
 1. Contributors add `.changes/*.md` files with semver declarations alongside code changes.
 2. Changewrite Action collects entries, bumps version, opens draft PR.
 3. Merge PR to create release (no manual GitHub Release step).
@@ -469,12 +489,12 @@ To keep this skill current and aligned with code changes:
 
 ---
 
-
 ## Provenance and Maintenance
 
 **Last verified:** 2026-07-01 (main branch, commit 78d71e8f "Embed Flipbook in the DataModel")
 
 **Verification scope:**
+
 - All six workflow files (.github/workflows/*.yml) read and command syntax verified
 - .lute/bump-version.luau manifest list verified (3 files: wally.toml, loom.config.luau, rotriever.toml)
 - rbxasset.toml asset names and environment config read
@@ -484,6 +504,7 @@ To keep this skill current and aligned with code changes:
 - .lune/publish-plugin.luau channel mapping verified (dev/beta→dev, prod→prod, smoketest→smoketest)
 
 **Known drifts to watch:**
+
 - Changewrite adoption (adopt-changewrite branch status; not yet on main)
 - Creator Store asset IDs (8517129161 prod, 88523969718241 dev) — hardcoded in CI, not in code
 - Environment secret names (ROBLOX_API_KEY vs ROBLOX_STORYBOOK_PREVIEW_API_KEY) — org settings not read-only, may change without code notice
@@ -493,10 +514,10 @@ To keep this skill current and aligned with code changes:
 
 ## Crossref to Sibling Skills
 
-- **flipbook-build-and-toolchain:** Darklua pipeline, `lute run build` flags, channel/target mechanics, Rojo, Lute/Loom.
-- **flipbook-diagnostics-and-tooling:** Measuring instead of eyeballing; logging, test filtering, sourcemap inspection.
-- **flipbook-validation-and-qa:** CI job anatomy, lint/analyze/test evidence bar, acceptance discipline.
-- **flipbook-config-and-flags:** .env vars, injected globals, channels, prod pruning, user settings.
-- **flipbook-failure-archaeology:** Detailed incident investigations with git history; cross-ref this skill's "Operational Failure History" to archaeology for deep dives.
-- **flipbook-change-control:** Git/PR/release doctrine; never-push-tags and never-push-main constraints underlying all release procedures here.
+- **build-and-toolchain:** Darklua pipeline, `lute run build` flags, channel/target mechanics, Rojo, Lute/Loom.
+- **diagnostics-and-tooling:** Measuring instead of eyeballing; logging, test filtering, sourcemap inspection.
+- **validation-and-qa:** CI job anatomy, lint/analyze/test evidence bar, acceptance discipline.
+- **config-and-flags:** .env vars, injected globals, channels, prod pruning, user settings.
+- **failure-archaeology:** Detailed incident investigations with git history; cross-ref this skill's "Operational Failure History" to archaeology for deep dives.
+- **change-control:** Git/PR/release doctrine; never-push-tags and never-push-main constraints underlying all release procedures here.
 - **AGENTS.md** (repo root): Project overview, layout, tech stack, style; this skill assumes that foundation.

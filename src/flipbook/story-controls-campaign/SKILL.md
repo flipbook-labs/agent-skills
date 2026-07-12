@@ -184,6 +184,7 @@ grep -n "TODO.*grid" workspace/flipbook-core/src/StoryControls/ControlElements/C
 **END PHASE 1 Checkpoint**
 
 You should now understand:
+
 - ✅ All 11 control types exist and work on main
 - ✅ ObjectControl + InstancePicker are extracted
 - ✅ Store uses per-control signals (re-render isolated)
@@ -203,6 +204,7 @@ Solutions are ranked by evidence, scope, and risk. Each has success criteria and
 **Scope:** ~5-line change in Storyteller package (not Flipbook). Storyteller 1.12.0 is pinned in `wally.toml`.
 
 **Evidence:**
+
 - Storyteller already defines `ObjectControl` type (ControlTypes.luau in Storyteller dist)
 - Flipbook has ObjectControl UI (InstancePicker extraction in PR #597)
 - UILabs.Advanced.Object("ModuleScript") just needs default = nil (typeclass filter is UILabs-only; Flipbook doesn't use it)
@@ -211,17 +213,19 @@ Solutions are ranked by evidence, scope, and risk. Each has success criteria and
 **Implementation Path:**
 
 1. **Locate Storyteller's migrateUILabsControl.luau:**
+
    ```bash
    MIGRATION_FILE="Packages/_Index/flipbook-labs_storyteller@1.12.0/storyteller/dist/controls/migrations/ui-labs-v2.4.2/migrateUILabsControl.luau"
    grep -n "Object" "$MIGRATION_FILE" | head -5
    ```
+
    **Expected:** Shows lines with `control.Type == "Object"` returning `nil`.
 
 2. **Cross-repo workflow (important):**
    - This fix goes in the **Storyteller repo** (`flipbook-labs/storyteller`), not Flipbook.
    - After fix in Storyteller, version bump needed (e.g., 1.12.1).
    - Flipbook updates `wally.toml` to new Storyteller version.
-   - Use `.agents/skills/test-dependencies` to verify the fix works in Flipbook before releasing.
+   - Use `test-dependencies` to verify the fix works in Flipbook before releasing.
 
 3. **The actual fix (in Storyteller, not here):**
    - Change line from `return nil` to:
@@ -237,6 +241,7 @@ Solutions are ranked by evidence, scope, and risk. Each has success criteria and
    - Write test in Storyteller validating UILabs Object → Storyteller ObjectControl round-trip.
 
 **Obligations:**
+
 - Depends on Flipbook having ObjectControl UI ✅ (exists in main)
 - Storyteller version bump + wally.toml update
 - Test in Storyteller validating migration
@@ -246,6 +251,7 @@ Solutions are ranked by evidence, scope, and risk. Each has success criteria and
 **Unverified:** Whether UILabs.Advanced.Object("ModuleScript") typeclass parameter should be stored as metadata; Flipbook doesn't use it, but storing it could enable future filtering.
 
 **Success Criteria (Phase 3):**
+
 - Storyteller fix merged; version bumped
 - Flipbook wally.toml updated to new Storyteller version
 - `lute run test` passes
@@ -259,6 +265,7 @@ Solutions are ranked by evidence, scope, and risk. Each has success criteria and
 **Scope:** Flipbook + Storyteller design decision. Not a simple feature.
 
 **Evidence:**
+
 - ControlGroup is a UILabs feature: groups controls under collapsible headers
 - Storyteller migration flattens ControlGroup intentionally (simpler for non-grouping authors)
 - Flipbook has NO ControlGroup UI at all; no grouping/collapsing
@@ -274,17 +281,20 @@ Solutions are ranked by evidence, scope, and risk. Each has success criteria and
 3. **Backward compatibility?** Migration flattening is intentional. Changing it requires coordination with Storyteller maintainers.
 
 **Candidate Design Option: Preserve Grouping (Don't Flatten):**
+
 - In Storyteller: new ControlGroup type in schema union
 - In Flipbook: render groups as Foundation.Card or collapsible section with child controls nested
 - Store: track collapse state per group
 - Migration: don't flatten; preserve nested structure
 
 **Candidate Design Option: Document Flattening (Status Quo):**
+
 - Accept that UILabs grouping is lost in translation
 - Document this as known limitation
 - Focus effort elsewhere (other control types, better UX for individual controls)
 
 **Obligations (if pursuing):**
+
 - Design spec (when to group, visual language, interaction model)
 - Storyteller schema change + version bump
 - Flipbook UI component for grouping + store state
@@ -296,6 +306,7 @@ Solutions are ranked by evidence, scope, and risk. Each has success criteria and
 **Unverified:** Whether grouping is a real need (only UILabs stories use it; no community requests found in issues/discussions).
 
 **Success Criteria (Phase 3, if pursued):**
+
 - Design spec reviewed and approved (by maintainer or team lead)
 - Storyteller PR merged with ControlGroup schema support
 - Flipbook UI component renders grouping correctly
@@ -310,6 +321,7 @@ Solutions are ranked by evidence, scope, and risk. Each has success criteria and
 **Scope:** Flipbook + Storyteller. The controls revamp spec in the Obsidian vault (unmerged `flipbook-docs` branch; list files with `git ls-tree -r --name-only flipbook-docs -- docs/obsidian-vault`, read via `git show flipbook-docs:<path>`) targets Color3, DateTime, UDim2, Vector3.
 
 **Evidence:**
+
 - Storyteller already has type definitions for these (ControlTypes.luau)
 - Flipbook has UI for Color3 (ColorControl), DateTime (DateControl) ✅
 - UDim2, Vector3 are planned but not yet implemented
@@ -317,12 +329,12 @@ Solutions are ranked by evidence, scope, and risk. Each has success criteria and
 
 **Data Types from Vault Spec:**
 
-| Type | Status | Notes |
-|------|--------|-------|
-| Color3 | ✅ Shipped (ColorControl) | Flipbook UI exists |
-| DateTime | ✅ Shipped (DateControl) | Flipbook UI exists |
-| UDim2 | ⚠ Candidate | Needs CSV input UI + validation |
-| Vector3 | ⚠ Candidate | Needs CSV input UI + validation |
+| Type     | Status                    | Notes                           |
+| -------- | ------------------------- | ------------------------------- |
+| Color3   | ✅ Shipped (ColorControl) | Flipbook UI exists              |
+| DateTime | ✅ Shipped (DateControl)  | Flipbook UI exists              |
+| UDim2    | ⚠ Candidate               | Needs CSV input UI + validation |
+| Vector3  | ⚠ Candidate               | Needs CSV input UI + validation |
 
 **Implementation Path (per type):**
 
@@ -334,6 +346,7 @@ Solutions are ranked by evidence, scope, and risk. Each has success criteria and
    - Component needed: three NumberControl inputs or CSVInput → Vector3 parser
 
 **Obligations:**
+
 - Storyteller: verify control constructors exist (createUDim2Control, createVector3Control)
 - Flipbook: add UDim2Control, Vector3Control components
 - Tests: spec for each new control type validating schema → UI → story props round-trip
@@ -342,6 +355,7 @@ Solutions are ranked by evidence, scope, and risk. Each has success criteria and
 **Risks:** MODERATE. Simple 1-to-1 component mapping (like ObjectControl → InstancePicker). Risk if Storyteller constructors don't exist or have different names.
 
 **Success Criteria (Phase 3):**
+
 - UDim2Control component added; spec written
 - Vector3Control component added; spec written
 - `lute run test` passes all new specs
@@ -355,6 +369,7 @@ Solutions are ranked by evidence, scope, and risk. Each has success criteria and
 **Scope:** Flipbook only, ~15-line change.
 
 **Evidence:**
+
 - TODO explicitly in codebase (grep `TODO: Make this a grid` in CheckControl.luau)
 - Current UI is vertical stack; many checkbox items are cramped
 - Foundation.View with grid tag (`tag="auto-y grid gap-small"` or similar) can fix it
@@ -362,28 +377,34 @@ Solutions are ranked by evidence, scope, and risk. Each has success criteria and
 **Implementation Path:**
 
 1. Change CheckControl.luau (grep `return e(Foundation.View`) from:
+
    ```luau
    return e(Foundation.View, {
        tag = "size-full-y auto-x col gap-small",
    }, checkboxes)
    ```
+
    to something like:
+
    ```luau
    return e(Foundation.View, {
        tag = "size-full-y auto-x grid gap-small",
    }, checkboxes)
    ```
+
    (Exact tag depends on Foundation's grid support; verify in Foundation.View docs.)
 
 2. Test with CheckControl story having 8+ items; verify they lay out in grid, not vertical stack.
 
 **Obligations:**
+
 - Verify Foundation grid tag syntax (read Foundation.View component)
 - Visual test: story with many CheckControl items
 
 **Risks:** LOW. Purely UI layout; no logic changes. May need to adjust padding/gaps if grid looks wrong.
 
 **Success Criteria (Phase 3):**
+
 - CheckControl renders checkboxes in grid layout (not vertical stack)
 - `lute run test` passes
 - Visual inspection: grid layout looks good with 4–12 items
@@ -393,6 +414,7 @@ Solutions are ranked by evidence, scope, and risk. Each has success criteria and
 **END PHASE 2 Checkpoint**
 
 You now have four ranked solutions:
+
 1. **A: Storyteller Object migration** (5 lines, low risk, high impact) ← **DO THIS FIRST**
 2. **B: ControlGroup UI** (design gate, high complexity, medium evidence) ← **DO ONLY IF STAKEHOLDERS DECIDE**
 3. **C: New data types UDim2/Vector3** (moderate effort, good evidence) ← **DO IF TIME**
@@ -409,11 +431,12 @@ Follow the solution menu in order: A is mandatory (closes the Object gap), B req
 **GATE A.1: Understand the cross-repo workflow**
 
 This fix lives in **Storyteller**, not Flipbook. The workflow is:
+
 1. Clone/fetch flipbook-labs/storyteller (sibling repo)
 2. Create branch in Storyteller
 3. Make the 5-line fix in Storyteller
 4. Push; open PR in Storyteller
-5. In Flipbook: use `.agents/skills/test-dependencies` to overlay the Storyteller branch and verify
+5. In Flipbook: use `test-dependencies` to overlay the Storyteller branch and verify
 6. Merge Storyteller PR; version bump (1.12.0 → 1.12.1)
 7. In Flipbook: update wally.toml to new Storyteller version
 8. `lute run install` to pull new Storyteller
@@ -424,12 +447,14 @@ This fix lives in **Storyteller**, not Flipbook. The workflow is:
 In Storyteller's `controls/migrations/ui-labs-v2.4.2/migrateUILabsControl.luau`:
 
 Replace:
+
 ```luau
 elseif control.Type == "Object" then
     return nil
 ```
 
 With:
+
 ```luau
 elseif control.Type == "Object" then
     local migrated: ObjectControl = {
@@ -457,6 +482,7 @@ expect(migratedObject.default).toBe(nil)
 **GATE A.3: Version bump Storyteller**
 
 In Storyteller's `wally.toml`, bump version:
+
 ```toml
 version = "1.12.1"
 ```
@@ -466,16 +492,19 @@ Publish to Wally registry.
 **GATE A.4: Update Flipbook's wally.toml**
 
 In Flipbook (this repo), change:
+
 ```toml
 Storyteller = "flipbook-labs/storyteller@1.12.0"
 ```
 
 To:
+
 ```toml
 Storyteller = "flipbook-labs/storyteller@1.12.1"
 ```
 
 **Run:**
+
 ```bash
 lute run install
 ```
@@ -519,12 +548,14 @@ return story
 ```
 
 **Run Flipbook manually or via studio plugin:**
+
 ```bash
 lute run build plugin --channel dev
 # Open Flipbook in Studio; navigate to UILabsObjectTest story
 ```
 
 **Expected Observation:**
+
 - Story renders
 - ObjectControl UI (InstancePicker) appears in the controls panel
 - Can click "Select an Instance..." and choose an instance from the DataModel
@@ -540,6 +571,7 @@ lute run test
 **Expected:** All tests pass. No new errors.
 
 **SUCCESS CRITERIA (A):**
+
 - ✅ Storyteller PR merged with Object migration fix
 - ✅ Storyteller version bumped and published
 - ✅ Flipbook wally.toml updated
@@ -577,6 +609,7 @@ lute run test
 **GATE C.1: Verify Storyteller has constructors**
 
 **Run:**
+
 ```bash
 grep -n "createUDim2Control\|createVector3Control" Packages/_Index/flipbook-labs_storyteller@1.12.0/storyteller/dist/controls/ControlTypes.luau
 ```
@@ -584,6 +617,7 @@ grep -n "createUDim2Control\|createVector3Control" Packages/_Index/flipbook-labs
 **Expected:** Lines showing function definitions, or "no matches" if not yet in Storyteller.
 
 **Branch Decision:**
+
 - **If functions exist:** Proceed to C.2 (implement Flipbook UI).
 - **If functions don't exist:** Storyteller needs the constructors first. (Likely they're not yet shipped in 1.12.0; check vault spec for timeline.)
 
@@ -607,17 +641,17 @@ export type Props = {
 
 local function UDim2Control(props: Props)
     local currentValue = props.controlValue or props.controlSchema.default or UDim2.new()
-    
+
     local onScaleChanged = useCallback(function(newScale: number)
         local newValue = UDim2.new(newScale, currentValue.Offset.X, 0, currentValue.Offset.Y)
         props.onChanged(newValue)
     end, { currentValue, props.onChanged } :: { unknown })
-    
+
     local onOffsetChanged = useCallback(function(newOffset: number)
         local newValue = UDim2.new(currentValue.Scale.X, newOffset, currentValue.Scale.Y, 0)
         props.onChanged(newValue)
     end, { currentValue, props.onChanged } :: { unknown })
-    
+
     return e(Foundation.View, {
         tag = "auto-y col gap-small",
     }, {
@@ -689,13 +723,13 @@ describe("UDim2Control", function()
     it("should render UDim2 input fields", function()
         local controlSchema = Storyteller.createUDim2Control(UDim2.new(0.5, 10, 0.3, 20))
         local onChanged = jest.fn()
-        
+
         local element = React.createElement(UDim2Control, {
             controlSchema = controlSchema,
             controlValue = UDim2.new(0.5, 10, 0.3, 20),
             onChanged = onChanged,
         })
-        
+
         expect(element).toBeTruthy()
     end)
 end)
@@ -706,6 +740,7 @@ end)
 Add UDim2 and Vector3 controls to the comprehensive example story.
 
 **Run tests:**
+
 ```bash
 lute run test --filter "UDim2Control|Vector3Control"
 ```
@@ -713,6 +748,7 @@ lute run test --filter "UDim2Control|Vector3Control"
 **Expected:** Specs pass.
 
 **SUCCESS CRITERIA (C):**
+
 - ✅ UDim2Control component added; spec passes
 - ✅ Vector3Control component added; spec passes
 - ✅ StoryControlRow type dispatch includes both types
@@ -726,6 +762,7 @@ lute run test --filter "UDim2Control|Vector3Control"
 **GATE D.1: Check Foundation grid support**
 
 **Run:**
+
 ```bash
 grep -n "grid" workspace/flipbook-core/src/StoryControls/ControlElements/CheckControl.luau
 ```
@@ -733,6 +770,7 @@ grep -n "grid" workspace/flipbook-core/src/StoryControls/ControlElements/CheckCo
 **Expected:** Current tag is `"size-full-y auto-x col gap-small"` (vertical column).
 
 **Read Foundation docs** (in Flipbook or Wally):
+
 ```bash
 grep -A 5 "grid" Packages/_Index/*/Foundation/src/Component.luau | head -20
 ```
@@ -742,6 +780,7 @@ grep -A 5 "grid" Packages/_Index/*/Foundation/src/Component.luau | head -20
 **GATE D.2: Update CheckControl**
 
 Change the `return e(Foundation.View` statement in CheckControl.luau from:
+
 ```luau
 return e(Foundation.View, {
     tag = "size-full-y auto-x col gap-small",
@@ -749,6 +788,7 @@ return e(Foundation.View, {
 ```
 
 To:
+
 ```luau
 return e(Foundation.View, {
     tag = "size-full-y auto-x grid gap-small cols-4",  -- 4-column grid (adjust if needed)
@@ -756,6 +796,7 @@ return e(Foundation.View, {
 ```
 
 **Verify no spec exists for CheckControl layout:**
+
 ```bash
 find . -name "*CheckControl*.spec*" -type f
 ```
@@ -796,6 +837,7 @@ return story
 ```
 
 **Build and open:**
+
 ```bash
 lute run build plugin --channel dev
 # Open Flipbook in Studio; navigate to test story
@@ -805,6 +847,7 @@ lute run build plugin --channel dev
 **Expected:** Checkboxes render in a 4-column grid (or whatever column count you set), not vertical stack.
 
 **SUCCESS CRITERIA (D):**
+
 - ✅ CheckControl renders grid layout (not vertical stack)
 - ✅ Grid is responsive; looks good with 4–12 items
 - ✅ Toggle behavior still works (clicking checkbox checks/unchecks)
@@ -824,24 +867,28 @@ Each solution has been implemented and verified against exact success criteria. 
 Never judge by eye. Every phase success is a measurable observation, not a visual assessment.
 
 **For Object Migration (Solution A):**
+
 - ✅ Specification: UILabs Object control → migrated ObjectControl with nil default
 - ✅ Evidence: UILabs Object story renders with ObjectControl UI
 - ✅ Behavior: Selecting instance updates props.controls.selectedInstance
 - ✅ Regression: `lute run test` passes (no existing tests break)
 
 **For ControlGroup (Solution B):**
+
 - ✅ Design spec reviewed by stakeholder
 - ✅ Spec: ControlGroup nesting preserved during migration or intentionally flattened
 - ✅ Evidence: UILabs ControlGroup story renders with visual grouping or flattening matches spec
 - ✅ Regression: `lute run test` passes
 
 **For New Data Types (Solution C):**
+
 - ✅ Specification: UDim2Control renders two numeric inputs; Vector3Control renders three
 - ✅ Evidence: `lute run test --filter "UDim2Control|Vector3Control"` passes
 - ✅ Behavior: Setting control value updates story props
 - ✅ Regression: `lute run test` passes
 
 **For Grid Layout (Solution D):**
+
 - ✅ Specification: CheckControl renders checkboxes in grid (not vertical stack)
 - ✅ Evidence: Visual inspection (screenshot) shows grid layout
 - ✅ Behavior: Toggling checkbox still updates control value
@@ -850,6 +897,7 @@ Never judge by eye. Every phase success is a measurable observation, not a visua
 **New Specs Required (Critical for Long-Term Maintenance):**
 
 The briefing notes that "currently uncovered per the briefing" are:
+
 1. **Re-render Isolation:** Add spec to `createStoryControlsStore.spec.luau` verifying that changing one control's signal does NOT trigger renders on others. (Currently missing; only state shape is tested.)
 2. **Migration Behavior:** Add spec in Flipbook or Storyteller validating UILabs → Storyteller schema round-trip for each control type (Object, ControlGroup, new types).
 
@@ -863,13 +911,13 @@ it("should not re-subscribe to other controls when one changes", function()
         control2 = Storyteller.createStringControl("b"),
     }
     local store = createStoryControlsStore(schema)
-    
+
     local signal1 = store.getControlValue("control1")
     local signal2 = store.getControlValue("control2")
-    
+
     -- Signals are different (per-control)
     expect(signal1 ~= signal2).toBe(true)
-    
+
     -- Changing control1 does not re-emit signal2
     store.setControl("control1", "new-a")
     expect(signal2.value).toBe("b")  -- unchanged
@@ -885,7 +933,7 @@ it("should migrate UILabs Object to Storyteller ObjectControl", function()
         Type = "Object",
     }
     local migrated = migrateUILabsControl(uiLabsObject)
-    
+
     expect(migrated).to.be.ok()
     expect(migrated.type).toBe("Object")
     expect(migrated.default).toBe(nil)
@@ -902,6 +950,7 @@ end)
 
 1. **Create branch:** `git switch -c story-controls-<solution>` (e.g., `story-controls-object-migration`)
 2. **Commit changes** (if in Flipbook, not Storyteller):
+
    ```bash
    git add workspace/flipbook-core/src/StoryControls/...
    git add wally.toml
@@ -920,6 +969,7 @@ end)
    ```
 
 3. **Open draft PR:**
+
    ```bash
    gh pr create --draft --title "Story Controls: New Data Types and Grid Layout" \
      --body "Adds UDim2 and Vector3 control types, fixes CheckControl grid layout, and adds missing re-render isolation spec."
@@ -956,6 +1006,7 @@ end)
 7. ✅ **PR body discloses AI authorship** (maintainer convention; see the `change-control` skill and fill the `.github/pull_request_template.md`)
 
 **Merge to main:**
+
 ```bash
 gh pr merge <PR_URL> --squash --delete-branch
 ```
@@ -963,6 +1014,7 @@ gh pr merge <PR_URL> --squash --delete-branch
 (Squash keeps history clean; `--delete-branch` cleans up.)
 
 **Post-merge:**
+
 1. Announce to maintainer/team (e.g., "Story Controls Phase 3 complete; Object migration landed")
 2. If cross-repo (Storyteller version bump), coordinate release timing with Storyteller maintainers
 3. Add entry to vault docs (flipbook-docs branch or main, per publication plan) documenting the new control types and ControlGroup decision
@@ -976,6 +1028,7 @@ gh pr merge <PR_URL> --squash --delete-branch
 **Symptom:** You wrote a UILabs story with Object control; after Solution A, the control still doesn't appear.
 
 **Diagnostic:**
+
 1. Verify Storyteller was bumped and Flipbook's wally.toml is updated:
    ```bash
    grep Storyteller wally.toml
@@ -995,6 +1048,7 @@ gh pr merge <PR_URL> --squash --delete-branch
    Open story in Studio. Check browser console for errors (Storyteller migration errors, React errors).
 
 **Branch decision:**
+
 - **If Storyteller doesn't have the fix:** Merge Object migration PR in Storyteller first.
 - **If wally.toml doesn't have the new version:** Update and re-run `lute run install`.
 - **If ObjectControl missing:** Don't blame the migration; ObjectControl was in main before Solution A. Verify you're on main and built correctly.
@@ -1004,6 +1058,7 @@ gh pr merge <PR_URL> --squash --delete-branch
 **Symptom:** After Solution D, CheckControl renders incorrectly (overlapping, cut off).
 
 **Diagnostic:**
+
 1. Verify Foundation's grid tag syntax:
    ```bash
    grep -C 3 "grid" Packages/_Index/*/Foundation/src/Component.luau | head -20
@@ -1017,11 +1072,11 @@ gh pr merge <PR_URL> --squash --delete-branch
    ```
 
 **Branch decision:**
+
 - **If Foundation doesn't support grid:** Use CSS Flexbox fallback or two-column layout.
 - **If grid layout is ugly:** Adjust cols count or padding/gap.
 
 ---
-
 
 ## Provenance and Maintenance
 
@@ -1030,29 +1085,35 @@ gh pr merge <PR_URL> --squash --delete-branch
 **Commands to re-verify facts:**
 
 1. **Storyteller version pinned in wally.toml:**
+
    ```bash
    grep "Storyteller = " wally.toml
    ```
 
 2. **ObjectControl component exists:**
+
    ```bash
    test -f workspace/flipbook-core/src/StoryControls/ControlElements/ObjectControl.luau && echo "✓"
    ```
 
 3. **InstancePicker was extracted (PR #597):**
+
    ```bash
    git log --oneline --all | grep "Extract InstancePicker"
    ```
 
 4. **CheckControl grid TODO exists:**
+
    ```bash
    grep "TODO.*grid" workspace/flipbook-core/src/StoryControls/ControlElements/CheckControl.luau
    ```
 
 5. **uilabs-controls-support branch is stale:**
+
    ```bash
    git log uilabs-controls-support..main --oneline | wc -l
    ```
+
    (Output > 2 = branch is behind)
 
 6. **Current main is 78d71e8f (Embed Flipbook in DataModel):**

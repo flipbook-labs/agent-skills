@@ -8,13 +8,13 @@ type: knowledge
 
 This skill documents three distinguished-engineer-level research frontiers where Flipbook has unique assets and the potential to advance the state of the art beyond web Storybook and uilabs. Each frontier includes current SOTA gaps, Flipbook's specific advantage, first-order blockers, and falsifiable milestones. **All frontiers are open/candidate** — nothing here is shipped. Ground every claim in the repo; external-world assertions (web Storybook capabilities, uilabs scope) are labeled unverified-from-repo.
 
-Sibling skills: `failure-archaeology` (dead ends), `story-controls-campaign` (hardest live problem), `flipbook-docs-and-writing` (publication). For questions about what lands when and under what conditions, see `change-control` (PR workflow) and `release-and-operations` (artifact/deployment conventions).
+Sibling skills: `failure-archaeology` (dead ends), `story-controls-campaign` (hardest live problem), `write-docs` (publication). For questions about what lands when and under what conditions, see `change-control` (PR workflow) and `release-and-operations` (artifact/deployment conventions).
 
 ## Frontier 1: In-Experience Collaboration
 
 ### Problem: Why Current SOTA Fails
 
-Web Storybook's shareable preview links (unverified-from-repo: Storybook Cloud, Netlify integration) exist as static web renderings — they are not running *inside* the Roblox runtime or the place where the UI will actually appear. Designers, product managers, and stakeholders reviewing candidate UI must either (1) ask developers to manually deploy the experience and open it in Studio (friction, latency), or (2) review flat screenshots/videos (static, no interaction). This creates a deployment-to-feedback cycle measured in minutes or hours, not seconds.
+Web Storybook's shareable preview links (unverified-from-repo: Storybook Cloud, Netlify integration) exist as static web renderings — they are not running _inside_ the Roblox runtime or the place where the UI will actually appear. Designers, product managers, and stakeholders reviewing candidate UI must either (1) ask developers to manually deploy the experience and open it in Studio (friction, latency), or (2) review flat screenshots/videos (static, no interaction). This creates a deployment-to-feedback cycle measured in minutes or hours, not seconds.
 
 ### Flipbook's Specific Asset
 
@@ -33,6 +33,7 @@ When Flipbook runs embedded in a place (not as a plugin), it loses Studio's impl
 Branch: `embedded-http-proxy` (75 commits, last activity 2026-06-19). Main commit: `7f076c51` ("Route embedded HTTP requests through a server-side proxy").
 
 Approach:
+
 - When embedded, `src/EmbeddedServerStarterScript.server.luau` creates a `RemoteFunction` tagged `FlipbookHttpProxy` (verified in branch diff on `embedded-http-proxy`; the file ships on main via #582, but the `FlipbookHttpProxy` tag is branch-only — do not expect to grep it on main).
 - Client's `workspace/flipbook-core/src/Http/requestAsync.luau` detects the proxy via `CollectionService` and invokes it server-to-server instead of calling `HttpService` directly (verified in branch diff on `embedded-http-proxy`).
 - Server-side proxy filters all requests through an allowlist (grep `ALLOWED_HOST` on the branch) + host-parsing logic to defeat spoofing (URL parsing stripping userinfo and port; grep `userinfo` in the same file on the branch).
@@ -46,11 +47,13 @@ What remains unresolved (inference from diff scope): **design review of allowlis
 File: `workspace/flipbook-core/src/Embedding/createEmbeddedFlipbookApp.luau` (verified in main, commit 78d71e8f).
 
 Questions to answer by reading:
+
 - What permission surface do embedded client and server scripts have vs. plugin code?
 - Are there shared ContextProviders (auth, permissions, theme) that assume a plugin context and will break embedded?
 - How does the story renderer (React, Roact, Fusion) behave when mounted in a place (not a plugin)?
 
 Command (read-only git, no checkout):
+
 ```bash
 git show 78d71e8f:workspace/flipbook-core/src/Embedding/createEmbeddedFlipbookApp.luau | head -100
 ```
@@ -58,6 +61,7 @@ git show 78d71e8f:workspace/flipbook-core/src/Embedding/createEmbeddedFlipbookAp
 **Step 3: Set up a test place with embedded Flipbook** (build + manual verification)
 
 Command (from main branch, `lute run build storybook` is verified in build.luau):
+
 ```bash
 lute run build storybook --channel dev
 # Creates: build/flipbook-storybook.rbxl
@@ -105,17 +109,20 @@ Web Storybook's Chromatic integration (unverified-from-repo) allows teams to sna
 Branch: `automated-story-snapshots` (commit 9e1a5923, merged with main 2026-06-28).
 
 What it ships (verified in commits):
+
 - Lute task that connects to StudioMCP WebSocket proxy (grep `ws://127.0.0.1`), calls `screen_capture` MCP tool, base64-decodes PNG response, writes to disk.
 - `.agents/skills/story-snapshot/SKILL.md` (73 lines): Skill documentation for agents; guides snapshot workflows (inference from stat: added, not verified by reading).
 - `docs/screenshots/ButtonWithControls.png` (150KB image): Sample captured story screenshot (exists in build artifacts).
 - Loom dependency upgrades: upgraded to Lute v1.0.1-nightly + FlipbookBatteries v0.11.1 to support new capture APIs.
 
 What remains speculative (not in branch commits, inference):
-- **Pixel-diff engine:** The branch captures PNGs but does not include logic to compare against a baseline or flag regressions. This is *candidate/out-of-scope* for the branch itself — the diff would live in a separate PR or tool.
+
+- **Pixel-diff engine:** The branch captures PNGs but does not include logic to compare against a baseline or flag regressions. This is _candidate/out-of-scope_ for the branch itself — the diff would live in a separate PR or tool.
 - **Story iteration in CI:** Branch does not include a `stories.spec` helper to render all stories and capture each one. This is a separate step (inference: would need to iterate `stories.spec.luau`'s test suite, render each story's function with default/candidate controls, capture each, hash/diff the results).
 - **CI gate:** No `.github/workflows/` job yet that runs visual regression tests and blocks PRs on mismatches. This is post-capture infrastructure.
 
 What the branch actually does (verified):
+
 1. Connects Lute to Studio's WebSocket MCP proxy (mechanism: JSON-RPC wrapper).
 2. Invokes `screen_capture` tool (Storybook-embedded tool provided by Flipbook's embedded runtime).
 3. Decodes base64 PNG.
@@ -124,6 +131,7 @@ What the branch actually does (verified):
 **Step 1: Run the capture task** (verify mechanism works)
 
 Command (from automated-story-snapshots branch; requires Studio with Flipbook running embedded):
+
 ```bash
 git checkout automated-story-snapshots
 lute run .lute/tasks/capture-story.luau /tmp/test-story.png MyStory
@@ -137,6 +145,7 @@ Acceptance: `/tmp/test-story.png` exists and is valid PNG, not corrupted.
 Task: Iterate `workspace/flipbook-core/src/**/*.spec.luau` to find all story files.
 
 Command (read-only grep):
+
 ```bash
 find workspace/flipbook-core/src -name "*.story.luau" | wc -l
 # Expected ~40–50 story files in main
@@ -145,6 +154,7 @@ find workspace/flipbook-core/src -name "*.story.luau" | wc -l
 Question to answer by reading a few story files: Do all stories export a Flipbook.Story type with a `story()` function and optional `controls`? Or are there renderers (Roact, Fusion, manual) with different shapes?
 
 File to read (canonical story format):
+
 ```bash
 git show main:workspace/flipbook-core/src/Storybook/stories.spec.luau | head -50
 ```
@@ -152,11 +162,13 @@ git show main:workspace/flipbook-core/src/Storybook/stories.spec.luau | head -50
 **Step 3: Design the capture workflow** (design, not build)
 
 Questions (read-only; answer from branch + flipbook-docs vault):
+
 - Should we capture stories before or after story-controls revamp? (Controls change shape; baseline snapshots will be invalidated.)
 - What is the canonical "default controls" for a story if the author did not set one? (Answer via `flipbook-docs` branch's controls API docs.)
 - How do we handle stories with non-deterministic output (animations, randomness, timestamps)? (Candidate: freeze time, set random seed in test context.)
 
 Pseudo-spec (inference from branch approach):
+
 ```
 For each Story:
   1. Open the place with Flipbook embedded (automated-story-snapshots does this via Studio boot)
@@ -180,7 +192,7 @@ For each Story:
 
 ✓ A PR changes a story's visual output (e.g., button color); the CI job detects the regression and comments on the PR with before/after images side-by-side.
 
-✓ Documentation (in `.agents/skills/` or the vault) specifies the capture environment, default controls semantics, and how to update baselines when changes are intentional.
+✓ Documentation (in the agent-skills library or the vault) specifies the capture environment, default controls semantics, and how to update baselines when changes are intentional.
 
 ---
 
@@ -201,6 +213,7 @@ Developers iterating on Roblox UI today must manually create test instances, set
 Branch: `agent-actions-registry` (commit fc2a79bc, 2026-06-06; 25 files added, 1182 lines).
 
 What it ships (verified in commit fc2a79bc --stat):
+
 - `workspace/flipbook-core/src/Actions/` (new directory, 25 files): Central registry + PluginAction + Bindable routers.
 - `createActionRegistry.luau` (54 lines): Registers action definitions and dispatches both via `PluginAction:Triggered` and `BindableFunction:Invoke`.
 - `BindableRegistry.luau` (60 lines): Exposes `__manifest` endpoint (inference: agents query this to discover available actions).
@@ -209,24 +222,28 @@ What it ships (verified in commit fc2a79bc --stat):
 - Tests: 5 spec files (BindableRegistry.spec, PluginActionMirror.spec, createActionRegistry.spec, createAppController.spec, definitions/*.spec) covering registry, dispatch, and action execution (verified in stat: 5 spec files added, ~400 LOC total).
 
 What the branch does (verified):
+
 1. Define actions in `definitions/` (id, text, statusTip, params schema, run function).
 2. `createActionRegistry` boots both routers (PluginAction for human, Bindable for agents).
 3. `BindableRegistry.__manifest` allows agents to query: "what actions exist and what do they expect?"
 4. Both routers converge on a single `dispatch` function, which runs the action's `run` callback and returns `{ ok, result, error }`.
 
 What remains speculative (not in branch):
-- **Agent integration:** The branch defines the *contract* (actions + manifest) but does not ship an agent that consumes it. Actual agent code (e.g., Studio Assistant's `execute_luau`) would need to be written.
+
+- **Agent integration:** The branch defines the _contract_ (actions + manifest) but does not ship an agent that consumes it. Actual agent code (e.g., Studio Assistant's `execute_luau`) would need to be written.
 - **Story mutation actions:** The branch includes `ListStories` and `SelectStory` but not "render a story with these controls" or "set a control value and capture screenshot." These are candidate future actions.
 - **Error recovery:** Actions return `{ ok, error }` but there is no retry/backoff logic if, say, selecting a story fails (e.g., story module has a syntax error). Agents would need to handle failures.
 
 **Step 1: Verify action manifest shape** (read-only)
 
 Command:
+
 ```bash
 git show agent-actions-registry:workspace/flipbook-core/src/Actions/types.luau | grep -A 20 "type ManifestEntry"
 ```
 
 Expected output (verified in the `agent-actions-registry` branch diff; grep `ManifestEntry` there — the type is not on main):
+
 ```luau
 export type ManifestEntry = {
     id: string,
@@ -291,7 +308,7 @@ Agent (e.g., Studio Assistant):
 8. Studio displays the story in Flipbook's viewport
 ```
 
-This is *already enabled by agent-actions-registry* on main. What's missing (candidate): more granular actions (set control value, capture screenshot, list available control types), and actual agent code that consumes this API.
+This is _already enabled by agent-actions-registry_ on main. What's missing (candidate): more granular actions (set control value, capture screenshot, list available control types), and actual agent code that consumes this API.
 
 ### Blockers & Prerequisites
 
@@ -306,7 +323,7 @@ This is *already enabled by agent-actions-registry* on main. What's missing (can
 
 ✓ A proof-of-concept agent skill or script demonstrates: discover a story via ListStories, render it by invoking a hypothetical "RenderStory" action (or the equivalent), and capture or inspect the result.
 
-✓ Design documentation (in `.agents/skills/research-frontier/` or as a branch-level design doc) specifies what "agent-driven UI development" means, what contract stories must expose, and what the first agent integration should look like.
+✓ Design documentation (in this skill or as a branch-level design doc) specifies what "agent-driven UI development" means, what contract stories must expose, and what the first agent integration should look like.
 
 ---
 
@@ -329,6 +346,7 @@ Frontiers are not independent. **Visual regression depends on stable controls.**
 Date: 2026-07-01
 
 Verify frontier branch status and commit details (read-only git):
+
 ```bash
 # Embedded HTTP proxy branch
 git log --oneline embedded-http-proxy -1
@@ -345,12 +363,14 @@ git show fc2a79bc:workspace/flipbook-core/src/Actions/types.luau
 ```
 
 Verify embedding in main:
+
 ```bash
 git show 78d71e8f --stat | grep Embedding
 git show main:src/EmbeddedServerStarterScript.server.luau | head -50
 ```
 
 Verify build commands (Darklua-deep reference):
+
 ```bash
 grep -r "build storybook" .lute/
 ```
