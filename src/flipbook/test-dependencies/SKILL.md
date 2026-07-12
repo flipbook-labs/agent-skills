@@ -21,6 +21,7 @@ lute run try-in-flipbook
 ```
 
 This invokes `.lute/try-in-flipbook.luau`, which:
+
 1. Builds Storyteller's `dist/` output.
 2. Locates Flipbook in the sibling `../flipbook` directory.
 3. Overlays the build into `flipbook/Packages/_Index/flipbook-labs_storyteller@*/dist/`.
@@ -70,6 +71,7 @@ lute run build plugin --channel dev --clean
 **Date stamped:** 2026-07-11. Migrated from Flipbook's `.agents/skills/test-dependencies-in-flipbook/`.
 
 **Re-verify these claims when this skill next loads** (run from Flipbook checkout; sibling repos at `../storyteller/` and `../module-loader/`):
+
 - `try-in-flipbook` scripts exist: `ls ../storyteller/.lute/try-in-flipbook.luau ../module-loader/.lute/try-in-flipbook.luau`
 - `try-in-storyteller` script exists: `ls ../module-loader/.lute/try-in-storyteller.luau`
 - Package directories exist: `ls Packages/_Index/ | grep -E "flipbook-labs_(storyteller|module-loader)"`

@@ -7,11 +7,12 @@ type: process
 
 # Flipbook Proof and Analysis Toolkit
 
-When you claim "the build bakes X correctly" or "fix Y actually isolates the re-render" or "this state bug is module-reload, not Charm," prove it with a mechanism, not inspection. This skill teaches six recipes, each with a worked example from Flipbook's actual failure archaeology. A claim is proven when one mechanism explains all observations, including what *didn't* happen.
+When you claim "the build bakes X correctly" or "fix Y actually isolates the re-render" or "this state bug is module-reload, not Charm," prove it with a mechanism, not inspection. This skill teaches six recipes, each with a worked example from Flipbook's actual failure archaeology. A claim is proven when one mechanism explains all observations, including what _didn't_ happen.
 
 ## When to Use This Skill
 
 Use this skill to:
+
 - Verify a build change actually reached the built artifact (don't assume Darklua processed it)
 - Prove a React re-render claim with a counter instead of eyeballing flicker
 - Isolate whether a stale-state symptom lives in ModuleLoader's registry, Storyteller's lifecycle, or Charm state
@@ -20,6 +21,7 @@ Use this skill to:
 - Read package sources (Storyteller, ModuleLoader, Charm) to verify what they actually do
 
 Do NOT use this skill for:
+
 - UI/visual verification (use `/verify` to run the app)
 - Test execution (use `lute run test` for that)
 - Lint/analyze discipline (that's in `validation-and-qa`)
@@ -42,12 +44,15 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 1. **Identify the module to trace:** pick a module you know changed (e.g., `workspace/flipbook-core/src/Http/requestAsync.luau` if you changed how the backend is called, or `workspace/flipbook-core/src/Telemetry/fireEventAsync.luau` which reads `_G.BASE_URL`).
 
 2. **Read the sourcemap:** the sourcemaps live at the repo root — `sourcemap.json` (for luau-lsp) and `sourcemap-darklua.json` (the one Darklua's `convert_require` rule consumes, per `.darklua.json`).
+
    ```bash
    jq '.. | objects | select(.filePaths? and (.filePaths | join(",") | contains("requestAsync")))' sourcemap-darklua.json
    ```
+
    Look for: the instance name and its position in the tree — that hierarchy is what require paths are rewritten against.
 
 3. **Identify the build's require statement:** In the build output for that module, find the `require()` call(s) and their argument. Darklua rewrites string requires into Roblox instance-path requires.
+
    ```bash
    # Dev plugin build output mirrors the source tree under build/<channel>/<target>/
    ls build/dev/roblox/
@@ -73,24 +78,29 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 **Investigation steps (as done in PR #479):**
 
 1. **Check the injection rule:** the backend URL is injected by Darklua as a global via an `inject_global_value` rule in `.darklua.json`. The variable is named `BASE_URL` today (it was `BACKEND_URL` at the time of PR #479):
+
    ```bash
    grep -A2 '"identifier": "BASE_URL"' .darklua.json
    # Expected: an inject_global_value rule with "env": "BASE_URL"
    ```
 
 2. **Check CI build:** The nightly build CI doesn't copy `.env.template` → `.env` before calling `darklua`. Without `.env`, BACKEND_URL is unset.
+
    ```bash
    # In .github/workflows/release.yml before build step
    cat .env.template > .env  # Missing!
    ```
 
 3. **Verify the injection path:** The build script reads the variable from the environment and passes it to Darklua. Note the naming: the variable was called `BACKEND_URL` at the time of PR #479; today it is `BASE_URL` (and Lute scripts moved from `scripts/` to `.lute/` in PR #521). Check the current chain:
+
    ```bash
    grep -n "BASE_URL" .lute/build.luau .darklua.json .env.template
    ```
+
    If `process.env.BASE_URL` is unset (missing `.env`), the injected `_G.BASE_URL` is nil in the artifact.
 
 4. **The fix that landed — an explicit guard in the build script.** This is exactly what main has today (verified 2026-07-01, in `.lute/build.luau`, grep `if not process.env.BASE_URL`):
+
    ```luau
    if not process.env.BASE_URL then
        -- build errors out instead of silently baking nil
@@ -115,6 +125,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 1. **Symptom capture:** When the bug occurs, record: (a) which story, (b) which control change or re-render triggered it, (c) the exact error and stack trace.
 
 2. **Create a minimal story file** that reproduces the symptom with the fewest moving parts:
+
    ```luau
    -- workspace/flipbook-core/example/MinimalReproduceFreeze.story.luau
    local Storyteller = require("@pkg/Storyteller")
@@ -129,7 +140,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
        render = function(props)
            local React = require("@pkg/React")
            local useState = React.useState
-           
+
            local value, setValue = useState(props.controls.toggle)
            return React.createElement("TextLabel", {
                Text = tostring(value),
@@ -145,6 +156,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
    - After re-render? → Likely Charm immutability during state update
 
 4. **Test ModuleLoader cache isolation:** Edit the story, save, and reload in Flipbook. If ModuleLoader's weak-keyed registry (the `weak()` helper in `Packages/_Index/flipbook-labs_module-loader@*/module-loader/dist/createModuleLoader.luau` — discover the installed version with `ls Packages/_Index | grep module-loader`) is working, the module should be GC'd and re-required. If not, stale closure state persists.
+
    ```luau
    -- In the story, add a module-level counter that should re-run on every reload
    _G.RELOAD_COUNT = (_G.RELOAD_COUNT or 0) + 1
@@ -153,6 +165,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
    ```
 
 5. **Test Storyteller lifecycle:** Switch to a different story, then back. If Storyteller's story state (createStorytellerStore) was not cleared, controls retain stale values.
+
    ```luau
    -- Story 1: set control to "A"
    -- Switch to Story 2
@@ -161,6 +174,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
    ```
 
 6. **Test Charm immutability:** Check if the bug manifests only when Charm.flags.frozen is true. If so, the issue is a mutation inside Storyteller or a control handler.
+
    ```luau
    -- In src/PluginStarterScript.plugin.luau, try toggling the workaround
    Charm.flags.frozen = false  -- or true
@@ -190,9 +204,11 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 3. **Minimal test:** Create a story with controls, change controls rapidly, switch stories. Crash occurs.
 
 4. **Workaround implemented (PR #509 + PluginStarterScript):**
+
    ```luau
    Charm.flags.frozen = false  -- Disable Charm's immutability check
    ```
+
    Everything works. But the comment says "evil state bug will lurk in the shadows."
 
 5. **Why it's proven but unresolved:** The mechanism is now known (Storyteller mutates state when Charm prevents it). The workaround proves the mechanism (disable immutability = no crash). But the root cause (why does Storyteller mutate?) is still in Storyteller code, not Flipbook's responsibility. Flipbook cannot ship without the workaround, and removing it would re-trigger the crash.
@@ -214,6 +230,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 1. **Identify the component:** Pick the component you claim re-renders too much (e.g., `StoryControlRow` in control changes).
 
 2. **Add a render counter at component entry:**
+
    ```luau
    -- In StoryControlRow.luau, at the top of the render function
    local renderCount = (_G.STORY_CONTROL_ROW_RENDERS or 0) + 1
@@ -228,11 +245,12 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
    - **After fix:** Only the changed control row increments its counter.
 
 4. **Collect before/after numbers:** Run a specific sequence (e.g., toggle checkbox 5 times) and record the total render count for one component.
+
    ```luau
    print("Total renders before fix:", _G.STORY_CONTROL_ROW_RENDERS)
    ```
 
-5. **Verify the mechanism:** The proof must show *why* the count dropped. Is it because:
+5. **Verify the mechanism:** The proof must show _why_ the count dropped. Is it because:
    - The component no longer subscribes to a global store? (subscribe only to its own signal)
    - The parent no longer re-renders children? (React.memo or context isolation)
    - State updates are batched instead of cascading? (Charm computed signal stability)
@@ -244,6 +262,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 **Analysis (as done in PR #576):**
 
 1. **Pre-fix architecture:** All controls subscribe to a single `StoryControlsStore` that returned the entire control map on every change. Any setControl() update triggered all consumers.
+
    ```luau
    -- Bad: global subscription
    local allControls = storyControls.getControls()  -- Returns entire dict
@@ -251,11 +270,13 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
    ```
 
 2. **Counter placement:**
+
    ```luau
    -- In StoryControlRow before fix
    local renderCount = (_G.CONTROL_ROW_RENDERS or 0) + 1
    _G.CONTROL_ROW_RENDERS = renderCount
    ```
+
    Interact: toggle one boolean control 3 times.
    - **Result:** Total render count ≈ 33 (11 control rows × 3 updates each, all re-render on every change)
 
@@ -298,23 +319,28 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 ### Recipe: Injected-Global Verification (verified 2026-07-01)
 
 1. **Check `.darklua.json` configuration:**
+
    ```bash
    jq '.process[] | select(.rule? == "inject_global_value")' .darklua.json
    ```
+
    Eight rules as of 2026-07-01: BUILD_VERSION, BUILD_CHANNEL, BUILD_HASH, BUILD_TARGET, BASE_URL, LOG_LEVEL, ENABLE_OUTPUT_LOGGING, JEST_TEST_PATH_PATTERN — each fed from the same-named env var.
 
 2. **Know where each value comes from before build:** BASE_URL, LOG_LEVEL, ENABLE_OUTPUT_LOGGING come from `.env` (copied from `.env.template`); BUILD_VERSION/BUILD_CHANNEL/BUILD_HASH/BUILD_TARGET are computed by `.lute/build.luau` (e.g. `BUILD_HASH = getCommitHash()`); JEST_TEST_PATH_PATTERN is set by `.lute/test.luau --filter`.
 
 3. **Inspect the built artifact for the substituted literal:** dev plugin builds land in `build/dev/roblox/` mirroring the source tree.
+
    ```bash
    # The dev starter script bakes the hash into the plugin name:
    grep -n "Flipbook \[" build/dev/roblox/PluginStarterScript.plugin.luau
    # Expected: local PLUGIN_NAME = 'Flipbook [<short-hash>]'
    # A nil injection shows up as a malformed name or a folded-away branch.
    ```
+
    Note the hash is the commit at BUILD time — if it differs from `git rev-parse --short HEAD`, your build is stale; rebuild with `--clean`.
 
 4. **Verify dead-code elimination did the right thing:** in a dev build, the source's `if _G.BUILD_CHANNEL == "development"` branch is folded to an unconditional `_G.__DEV__ = true` block; in a prod build that block is absent entirely.
+
    ```bash
    grep -n "__DEV__" build/dev/roblox/PluginStarterScript.plugin.luau   # present in dev
    grep -n "__DEV__" build/prod/roblox/PluginStarterScript.plugin.luau  # absent in prod
@@ -368,14 +394,16 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 
 **The problem:** Type-unsafe code can have bugs that are hard to catch with tests (nil dereference, wrong argument order, missing type conversions). Luau's strict mode type-checks the entire codebase and can rule out entire classes of bugs.
 
-**The discipline:** Understand what strict mode checks (flow-based nil analysis, type mismatch detection, unused variables) and what it misses (dynamic `:: any` casts, type assertions). Use it to prove negative properties: "X *cannot* happen here because the type checker forbids it."
+**The discipline:** Understand what strict mode checks (flow-based nil analysis, type mismatch detection, unused variables) and what it misses (dynamic `:: any` casts, type assertions). Use it to prove negative properties: "X _cannot_ happen here because the type checker forbids it."
 
 ### Recipe: Type-Level Proof via Analyzer
 
 1. **Run analysis with strict settings:**
+
    ```bash
    lute run analyze
    ```
+
    This builds type definitions and runs `luau-lsp analyze` in strict mode (as configured in `.luaurc`). Check for errors related to your claim.
 
 2. **Understand what strict mode checks:**
@@ -391,9 +419,11 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
    - **Package reflection:** Mutations to shared state across module boundaries.
 
 4. **Search for `:: any` in critical paths:**
+
    ```bash
    grep -r ":: any" workspace/flipbook-core/src/
    ```
+
    If your claim's critical path includes a `:: any` cast, the type proof is incomplete. Document this.
 
 5. **Add type annotations to strengthen the proof:** If a function currently accepts broad types, add strict type annotations:
@@ -420,23 +450,26 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 
 **Why it's there:** Luau's strict mode can't fully infer the complex return type of Charm's computed signals, especially when signals subscribe to other signals and produce nested structures. The cast lets the code compile.
 
-**What strict mode can *not* prove in this file:** 
+**What strict mode can _not_ prove in this file:**
+
 - That nodeStore's properties are correctly typed (they're hidden behind `any`)
 - That mutations through nodeStore follow the expected schema
 - That signal subscriptions have correct closure lifetimes
 
-**What strict mode *can* still prove elsewhere:**
+**What strict mode _can_ still prove elsewhere:**
+
 - Function parameter types (non-any parts)
 - Nil dereference in other modules that consume nodeStore
 
 **How to strengthen the proof:**
+
 1. Export a type alias from Charm that describes the computed signal's return type
 2. Replace `:: any` with the concrete type
 3. Re-run `lute run analyze`; strict mode now has more information
 
 **Caveat:** If you're working in strict mode, assume that `:: any` casts are intentional workarounds. The maintainer has explicitly allowed them because the alternative (rewriting Charm's types or refactoring the module) is more costly.
 
-**What makes this a proof:** By identifying the `:: any` cast, you've documented the exact boundary where the type checker's guarantees end. That's a valid proof of *what strict mode cannot verify*—not just silence, but an explicit statement of the limitation.
+**What makes this a proof:** By identifying the `:: any` cast, you've documented the exact boundary where the type checker's guarantees end. That's a valid proof of _what strict mode cannot verify_—not just silence, but an explicit statement of the limitation.
 
 ---
 
@@ -451,6 +484,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 ### Recipe: Dependency-Contract Reading
 
 1. **Locate the package source** (installed `_Index` versions drift across installs — discover them, never hardcode):
+
    ```bash
    # Example: ModuleLoader
    ML_DIR=$(ls -d Packages/_Index/flipbook-labs_module-loader@*/module-loader)
@@ -458,19 +492,23 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
    ```
 
 2. **Identify the relevant entry point:** This is usually the public API or main module:
+
    ```bash
    # ModuleLoader's main export
    head -50 "$ML_DIR"/dist/createModuleLoader.luau
    ```
+
    Look for: exported functions, class/object shape, documented contract.
 
 3. **Trace the codepath for your claim:** If you claim "ModuleLoader lets stale modules be garbage-collected," find where that happens:
+
    ```bash
    # Search for weak-table setup (indicates GC-able cache)
    grep -n "__mode" "$ML_DIR"/dist/createModuleLoader.luau
    ```
 
 4. **Read the mechanism** (verified 2026-07-01 against installed module-loader@0.10.2): a `weak()` helper wraps registry tables in weak keys:
+
    ```luau
    local function weak<K, V>(tab: { [K]: V }): { [K]: V }
        return setmetatable(tab, { __mode = "k" }) :: any
@@ -480,10 +518,12 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
    ```
 
 5. **Verify the GC behavior:** When does the weak reference get released?
+
    ```bash
    grep -n "weak(" "$ML_DIR"/dist/createModuleLoader.luau
    # Look for: which registries are weak, where entries are assigned and released
    ```
+
    Trace the lifecycle: module is loaded → tracked in weak-keyed registries → when the story changes, the old module loses its references → GC removes it → the next require re-loads source.
 
 6. **Check for mutations or side effects:** Does the package mutate global state that could violate Flipbook's assumptions?
@@ -499,18 +539,21 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 **Investigation (as discovered in story-controls briefing):**
 
 1. **Locate Storyteller migration code** (the installed `_Index` version drifts across installs — discover it, don't hardcode):
+
    ```bash
    ST_DIR=$(ls -d Packages/_Index/flipbook-labs_storyteller@*/storyteller)
    cat "$ST_DIR"/dist/controls/migrations/ui-labs-*/migrateUILabsControl.luau
    ```
 
 2. **Find the Object type case:**
+
    ```bash
    grep -n "Object" "$ST_DIR"/dist/controls/migrations/ui-labs-*/migrateUILabsControl.luau
    # Result: Line ~67 (verified 2026-07-01 against installed storyteller@1.11.0)
    ```
 
 3. **Read the migration logic:**
+
    ```luau
    -- Line 68 (verified)
    elseif control.Type == "Object" then
@@ -520,10 +563,12 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 4. **Identify the contract violation:** The migration function promises to convert UILabs controls to Storyteller controls. But for Object type, it returns nil (not an error, not a converted control). The schema author loses Object controls without feedback.
 
 5. **Check if Storyteller has ObjectControl support:** Look at ControlTypes.luau:
+
    ```bash
    grep -n "ObjectControl" "$ST_DIR"/dist/controls/ControlTypes.luau
    ```
-   Result: `ObjectControl` type is defined. Storyteller *can* handle Object controls; the migration just doesn't convert them.
+
+   Result: `ObjectControl` type is defined. Storyteller _can_ handle Object controls; the migration just doesn't convert them.
 
 6. **Conclusion:** The contract is broken: Storyteller supports ObjectControl, but the UILabs migration silently drops Object controls. The fix is in Storyteller, not Flipbook.
 
@@ -536,6 +581,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 ### Render Counter Template
 
 Store this in `scripts/rerender-counter.luau` for quick setup:
+
 ```luau
 -- Rerender counter instrumentation
 -- Add to any component's render function entry:
@@ -574,10 +620,10 @@ Before claiming a build is correct, verify:
 
 ---
 
-
 ## Provenance and Maintenance
 
 Recipes and worked examples verified against Flipbook's git history (as of 2026-07-01):
+
 - PR #479 (backend URL injection; variable now named BASE_URL) — grep `BASE_URL` in `.darklua.json`, `.lute/build.luau`, `.env.template`
 - PR #426 & PR #444 (BUILD_HASH) — grep `BUILD_HASH` in `.lute/build.luau` (fed by `getCommitHash()`), check `process.run` stdio behavior in Lute docs
 - PR #576 (rerender isolation) — read `createStoryControlsStore.luau`, `StoryControlRow.luau`, verify per-control Charm signals

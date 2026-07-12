@@ -29,6 +29,7 @@ lute run lint
 ```
 
 Runs checks in order:
+
 - **Selene:** Luau static analysis (defined in project config).
 - **StyLua `--check`:** Code formatting validation on all project folders.
 - **Luau vs. Luau extension check:** Finds `.lua` files (error; should be `.luau`).
@@ -42,6 +43,7 @@ lute run analyze
 ```
 
 Runs `luau-lsp` with two passes:
+
 1. **Scripts path (standard platform):** Runs with `--platform=standard` and `--flag:LuauSolverV2=true` on the scripts directory.
 2. **Source tree (with sourcemap):** Analyzes source and workspace with sourcemap guidance generated from Rojo project file.
 
@@ -68,6 +70,7 @@ Builds plugin with `--channel dev --clean`, generates Rocale test place, and run
 **Date stamped:** 2026-07-11. Migrated from Flipbook's `.agents/skills/run-flipbook-checks/`.
 
 **Re-verify these claims when this skill next loads** (run from Flipbook checkout):
+
 - Lint checks order and tools: `head -40 .lute/lint.luau`
 - Analyze command details: `grep "platform=standard\|LuauSolverV2" .lute/analyze.luau`
 - Test requirements and options: `grep -E "apiKey|filter" .lute/test.luau`

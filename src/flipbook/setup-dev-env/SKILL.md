@@ -15,6 +15,7 @@ For testing local dependency changes (storyteller or module-loader), see `test-d
 ## Repo Family Layout
 
 `flipbook`, `storyteller`, and `module-loader` are expected to be sibling checkouts:
+
 ```bash
 ~/git/flipbook
 ~/git/storyteller
@@ -64,6 +65,7 @@ cp .env.template .env
 **Date stamped:** 2026-07-11. Migrated from Flipbook's `.agents/skills/setup-flipbook-dev-env/`.
 
 **Re-verify these claims when this skill next loads** (run from Flipbook checkout):
+
 - `rokit.toml` presence and tool list: `grep "^\[" rokit.toml | head`
 - `.env.template` contents: `grep BASE_URL .env.template`
 - BASE_URL guard in build: `grep "if not process.env.BASE_URL" .lute/build.luau`

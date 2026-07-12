@@ -47,19 +47,23 @@ Combining two package managers (Wally + Loom) doubled directory nesting. Rotriev
 ### Evidence & Timeline
 
 **PR #518 (commit b841b0a2, 2026-03-10):** "Include a path length check"
+
 - Added non-blocking GitHub Actions detector that warns on PRs when artifact paths exceed 260 chars.
 - Detective only—did not prevent builds, merely commented.
 
 **PR #523 (commit 7a6c69b5, 2026-03-12):** "Attempt to defeat path length limit by bundling package blobs as rbxms"
+
 - **The fix that worked.** Root cause analysis: bundled `Packages/` and `RobloxPackages/` into `.rbxms` format before packaging for Rotriever.
 - Rationale: "Rotriever isn't picky about what lives in the content root."
 - Changed `compileAsync.luau` to call new `packToRbxm()` helper.
 
 **PR #529 (commit 25bd4ccc, 2026-03-18):** "Store build artifacts in a temp dir"
+
 - Complementary fix: moved intermediate artifacts (e.g., `globalDefTypes.d.luau`, `RobloxPackagesTmp`) to `system.tmpdir()` to reduce surface area.
 - Changed `.lute/analyze.luau` and `.lute/install.luau`.
 
 **PR #530 (commit 3834640a, 2026-03-18):** "Remove all the path length garbage"
+
 - Declared victory and deleted path-check logic following #523's success.
 - Removed `.github/actions/check-path-lengths/`, `.lute/check-path-lengths.luau`, and CI workflow integration (111 lines deleted).
 - Commit message: "Thanks to #523 we no longer have to worry about path limits... (Please do not make me regret saying that)"
@@ -142,6 +146,7 @@ Charm.flags.frozen = false
 **Symptom:** After state management changes (PR #509), any control modification triggered full re-render of the entire controls panel, causing visual artifacts and output window spam from React scheduler warnings.
 
 **Solution (commit 371d7752, 2026-05-30):** "Fix all control elements rerendering when one is changed"
+
 - Created dedicated Charm store (`createStoryControlsStore.luau`) for controls state.
 - Added React context (`StoryControlsContext.luau`) to isolate control updates from broader state.
 - Localized updates now propagate only to affected components.
@@ -180,10 +185,12 @@ Charm.flags.frozen = false
 **Symptom:** Build parallelization was supposed to cut build time from ~10s to ~5s but caused reliability issues on some developer machines.
 
 **PR #405 (commit 1cd83177, 2025-11-02):** "Parallelize build tasks"
+
 - Modified `scripts/lib/compile.luau` + added `waitForTasks.luau`.
 - Attempted concurrent compilation of multiple targets.
 
 **Revert #405 (commit 68b0e2f4, 2025-11-03):** "Revert 'Parallelize build tasks (#405)'"
+
 - Reverted within 1 day; no explanation in commit message.
 - Inference: race condition or process-ordering dependency.
 - Later tied to PR #437's work-laptop issues (process spawning brittleness in Lute).
@@ -195,12 +202,14 @@ Charm.flags.frozen = false
 ### BUILD_HASH Broken Twice (PRs #426 & #444)
 
 **First Breakage (commit 1863e994, 2025-11-02, PR #426):** "Fix BUILD_HASH not getting set"
+
 - After Lute migration, `BUILD_HASH` global stopped getting set at compile time.
 - Root cause: Incorrect Lute `stdio` parameter default; result.stdout not propagated.
 - Solution: Used Lute's actual default which propagates stdout, enabling hash extraction.
 - Bonus: Added pretty-printing of environment globals.
 
 **Second Breakage (commit 704fbd5b, 2025-12-15, PR #444):** "Fix the build hash not being set (again)"
+
 - Same symptom recurred 6 weeks later.
 - Root cause: Lute stdio behavior varies between versions.
 - Solution: Explicitly set stdio to `default` and added CI assertion to catch future regressions.
@@ -220,6 +229,7 @@ Charm.flags.frozen = false
 **Root Cause:** CI didn't copy `.env.template` → `.env` before build; BACKEND_URL undefined at compile time (Darklua's build-time globals).
 
 **Solution:**
+
 1. Updated CI to copy `.env.template` to `.env` before build.
 2. Added assertion in the build script (then `scripts/build.luau`; today the guard lives at `.lute/build.luau` (grep `if not process.env.BASE_URL`), after the scripts moved in #521 and the variable was renamed).
 3. Duplicate fix in release.yml.
@@ -245,16 +255,19 @@ Charm.flags.frozen = false
 ### Nightly Build Failures (PRs #432, #433, #535)
 
 **First Attempt (commit 0dc71327, 2025-11-11, PR #432):** "Try to fix publishing the nightly plugin"
+
 - Symptom: `publish-nightly-plugin` job fails on ubuntu-latest.
 - Root cause: Lute process-spawning bug #440 specific to Ubuntu.
 - Solution: Switched CI job to macos-latest (workaround, not root fix).
 
 **Second Fix (commit 6dc6d490, 2025-11-18, PR #433):** "Upgrade Lute to a newer nightly version"
+
 - Upgraded Lute to newer nightly version.
 - Removed `analysis.project.json`, simplified setup.
 - Status: Attempted fix; unclear if nightly builds stabilized after.
 
 **Third Breakage & Fix (commit 8c386f75, 2026-03-20, PR #535):** "Fix broken nightly build"
+
 - Symptom: Darklua failing to resolve string requires with absolute paths (from sourcemap).
 - Root cause: Darklua behavior sensitivity to path format.
 - Solution: Massaged SOURCE_PATH into relative path before passing to Darklua.
@@ -267,10 +280,12 @@ Charm.flags.frozen = false
 ### Smoketest & Deployment Orchestration (PRs #561–562)
 
 **Parallel Cancellation (commit 64ed0047, 2026-04-18, PR #562):** "Fix smoketest deployments cancelling each other"
+
 - Symptom: Concurrency config for smoketest + approval gates interact badly; multiple plugin deployments interfere.
 - Solution: Removed smoketest from Release workflow, moved to CI/tests job (end-to-end test role); consolidated pull_request_target logic.
 
 **Dev Deployment Leakage (commit b89c5adb, 2026-04-18, PR #561):** "Fix dev deployments triggering for all PRs"
+
 - Symptom: After fork-workflow switch (#559), dev build deployed from every PR.
 - Root cause: Condition changed from "run from main" to "always true" (pull_request_target always runs).
 - Solution: Flipped logic to "deploy for non-PR events only."
@@ -282,11 +297,13 @@ Charm.flags.frozen = false
 ### Fork Workflow Support Saga (PRs #559–563)
 
 **PR #559 (commit 6896cca5, 2026-04-18):** "Try to support fork workflows"
+
 - Symptom: Fork-based contributions fail in CI (permissions issues).
 - Solution: Switched to `pull_request_target` event + added environment gating for ROBLOX_API_KEY.
 - Trade-off: Broader permissions (pull_request_target) mitigate fork isolation at cost of security surface.
 
 **PR #563 (commit 5c997592, 2026-05-21):** "Isolate the surface area of pull_request_target"
+
 - Reduced blast radius by constraining pull_request_target usage to specific CI jobs only.
 - Inference: PR #559's blanket pull_request_target was overly broad; narrowed in #563.
 
@@ -303,6 +320,7 @@ Charm.flags.frozen = false
 **Root Cause:** DockWidgetPluginGuiInfo had `initEnabled=true`; Studio layout resets lose state and trigger widget reload.
 
 **Solution:**
+
 - Set `initEnabled=false` (only open on toolbar button click).
 - Changed initial mount from Top to Float with default sizing (UX improvement).
 - Verified via manual testing: deleted .rbxm, rebuilt, checked widget sizing.
@@ -328,9 +346,11 @@ Charm.flags.frozen = false
 ### Rotriever Iteration Loop Fix & Revert (commits 389a0891 & 2626cdae)
 
 **Commit 389a0891 (2026-05-15):** "Fix iteration loop with Rotriever"
+
 - Made unspecified changes to `compileAsync.luau` + `rotriever.toml`.
 
 **Revert 2626cdae (2026-05-30):** "Revert 'Fix iteration loop with Rotriever'"
+
 - Reverted within 15 days; no explanation in commit message.
 - Inference: fix introduced regression or wasn't needed.
 
@@ -341,6 +361,7 @@ Charm.flags.frozen = false
 ### Deploy-Storybook Rollback (commit 7436205f, 2026-06-13)
 
 **Message:** "Revert deploy-storybook back to v0.2.0"
+
 - v0.2.1 tag was deleted — fix will ship through proper release workflow.
 - Inference: v0.2.1 pre-release was broken; rolled back to stable v0.2.0.
 
@@ -351,6 +372,7 @@ Charm.flags.frozen = false
 ### Beta Build Channel Naming (commit e9a1dbff, 2026-06-15)
 
 **Context:** Related to PR #596; beta→dev routing still had edge cases.
+
 - Updated `.lune/publish-plugin.luau` with additional routing logic (11 lines).
 
 **Verdict:** Channel routing is fragile; test all channels before merge.
@@ -524,7 +546,6 @@ Sixteen branches with work-in-progress status. Last activity ranges from 3 days 
 6. **Stalled branches indicate deprioritization or design uncertainty.** `uilabs-controls-support` is STALE (predates #576/#579/#597 refactors; story-controls-campaign owns the plan). `upgrade-loom-dependencies` is abandoned ("nightmare" fixes). `flipbook-docs` is actively maintained.
 
 ---
-
 
 ## Provenance and Maintenance
 

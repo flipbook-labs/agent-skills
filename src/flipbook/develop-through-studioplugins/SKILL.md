@@ -66,6 +66,7 @@ When StudioPlugins is configured to use the local rotriever output, its watcher 
 **Date stamped:** 2026-07-11. Migrated from Flipbook's `.agents/skills/develop-through-studioplugins/`.
 
 **Re-verify these claims when this skill next loads** (run from Flipbook checkout):
+
 - Build targets and flags: `grep "target.*rotriever" .lute/build.luau`
 - Output path for rotriever: `grep "flipbook-core-rotriever" .lute/build.luau`
 - Plugin build command exists: ask engineer to confirm StudioPlugins build command and watcher are documented

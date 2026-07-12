@@ -42,6 +42,7 @@ export type Pluginlike = {
 ```
 
 **Four required methods:**
+
 - `GetMouse()` — Needed for cursor icon (dev only); embedded mode provides a stub returning `{ Icon = "" }`.
 - `GetSetting() / SetSetting()` — User settings persistence (sidebar width, pinned storybooks, opt-in telemetry status). Both modes support this via `Plugin.GetSetting` or `LocalStorageStore` wrapper.
 - `OpenScript()` — Click-to-open story file in Editor (plugin mode only); embedded mode is a no-op.
@@ -63,6 +64,7 @@ export type Options = {
 Returns: `{ mount, unmount, destroy }` lifecycle functions.
 
 **Key design:** `createFlipbookApp` is mode-agnostic. It:
+
 1. Creates a React root in the container
 2. Wraps the app in `ContextProviders` (passing `plugin` and `overlayGui`)
 3. Renders `FlipbookApp` component with the mode
@@ -73,6 +75,7 @@ Returns: `{ mount, unmount, destroy }` lifecycle functions.
 Location: `workspace/flipbook-core/src/Plugin/createFlipbookPlugin.luau`
 
 Adds:
+
 - Toolbar button toggle (maps button clicks to widget visibility)
 - Lazy mount/unmount on widget visibility changes (performance optimization)
 - Connection cleanup on plugin unload
@@ -82,6 +85,7 @@ Adds:
 Location: `workspace/flipbook-core/src/Embedding/createEmbeddedFlipbookApp.luau`
 
 Adds:
+
 - No toolbar or dock widget (uses ScreenGui directly)
 - Immediately mounts (no lazy loading)
 - No toggleable visibility (always-on once deployed)
@@ -89,6 +93,7 @@ Adds:
 ### Invariant: Pluginlike Contract Must Hold
 
 Any code accessing plugin functionality must:
+
 1. Use only the four Pluginlike methods (never `plugin.CreateDockWidgetPluginGui`, `plugin.Name`, etc.)
 2. Handle the plugin being nil gracefully (defaultPlugin stub in `workspace/flipbook-core/src/createFlipbookApp.luau`; grep `defaultPlugin: Pluginlike = {`)
 
@@ -127,16 +132,19 @@ Any code accessing plugin functionality must:
 ### Layer Ownership
 
 **ModuleLoader layer:**
+
 - Owns: Module source caching, hot-reload detection, fresh require evaluation
 - Must provide: `ModuleLoader.new(fsService)`, `load(moduleName)`, `unload(moduleName)`, change subscription
 - Constraint: Must NOT know about story format, control schemas, or rendering
 
 **Storyteller layer:**
+
 - Owns: Story/Storybook file format parsing, story discovery, renderer dispatch, rendering lifecycle
 - Must provide: `loadStoryModule(loader, module)`, `loadStorybookModule(loader, module)`, `render(story, container)`
 - Constraint: Must NOT know about Flipbook UI panels, control panel state, or plugin-specific features. Must NOT bypass ModuleLoader to access source.
 
 **Flipbook layer:**
+
 - Owns: Story selection UI, sidebar tree, control state management, telemetry
 - Must provide: UI components, navigation, settings persistence
 - Constraint: Must NOT modify Storyteller's story format or discovery logic. Must NOT call ModuleLoader directly. Must NOT modify story source (read-only to user code).
@@ -148,6 +156,7 @@ Any code accessing plugin functionality must:
 **Anti-pattern 3:** Flipbook mutating Storyteller's internal state (should use getters/subscriptions).
 
 **Verification command:** Search for layer violations:
+
 ```bash
 grep -r "ModuleLoader" workspace/flipbook-core/src --include="*.luau" | grep -v "packages\|Wally" | wc -l
 # Should be 0 (ModuleLoader only used by Storyteller, which is a Wally dep)
@@ -164,6 +173,7 @@ grep -r "ModuleLoader" workspace/flipbook-core/src --include="*.luau" | grep -v 
 **Background:** Flipbook originally used Roblox Signals; PR #509 migrated to Charm (community signal library).
 
 **Rationale for Charm:**
+
 - **Computed signals** — derived state auto-updates when dependencies change
 - **Untracked access** — read state without triggering subscriptions (useful in loops or destructors)
 - **Minimal API surface** — simpler than Roact/Redux, no boilerplate
@@ -205,6 +215,7 @@ local StoryControlsContext = React.createContext(nil)
 ```
 
 **Verification command:** Check store creation is centralized:
+
 ```bash
 grep -r "Charm.signal\|Charm.computed" workspace/flipbook-core/src --include="*.luau" | wc -l
 # Should be ~20–30 (concentrated in store files, not components)
@@ -230,6 +241,7 @@ local Common = require("@workspace/flipbook-core/src/Common")
 ```
 
 Aliases defined in `.luaurc`:
+
 - `@pkg/` → Wally packages in `Packages/`
 - `@workspace/` → workspace members (e.g., flipbook-core)
 - `@root/` → workspace/flipbook-core/src/
@@ -258,11 +270,13 @@ Flipbook.rbxm or rotriever bundle
 ### Invariant: Never Hand-Edit Build Output
 
 The build cache (`build/build-cache.json`) tracks workspace-member hashes. If you edit `build/` directly:
+
 1. Incremental builds won't detect changes (cache thinks file hasn't changed)
 2. Next rebuild overwrites your changes
 3. If build cache is deleted, all files rebuild from source (no way to preserve hand-edits)
 
 **Verification command:** Confirm no stale build artifacts exist:
+
 ```bash
 ls -la build/build-cache.json && echo "Cache found (expected)"
 grep '"hash":' build/build-cache.json | wc -l
@@ -286,6 +300,7 @@ end
 **Dev build:** Story file included; tests run.
 
 **Configuration:** `project.luau` `PROD_CONFIG.prunedDirs` and `prunedFiles` define what Darklua strips. Currently prunes:
+
 - `workspace/code-samples/`, `workspace/example/`, `workspace/template/`, `workspace/test-runner/` (entire dirs)
 - `*.spec.lua*`, `*.story.lua*`, `*.storybook.lua*`, `jest.config.lua*` (file patterns)
 
@@ -355,10 +370,10 @@ Verify: `grep "FLIPBOOK_RUNTIME_TAG" workspace/flipbook-core/src/constants.luau`
 
 ### Channels
 
-| Channel | Keeps Dev Files? | Use Case |
-|---------|------------------|----------|
-| `dev` | ✓ Tests, stories, code samples | Plugin development, CI integration tests |
-| `prod` | ✗ Strips per PROD_CONFIG | Creator Store release, nightly plugin |
+| Channel | Keeps Dev Files?               | Use Case                                 |
+| ------- | ------------------------------ | ---------------------------------------- |
+| `dev`   | ✓ Tests, stories, code samples | Plugin development, CI integration tests |
+| `prod`  | ✗ Strips per PROD_CONFIG       | Creator Store release, nightly plugin    |
 
 **Default:** `lute run build` defaults to `prod` (use `--channel dev` for dev).
 
@@ -387,10 +402,10 @@ Darklua's dead-code elimination combines with Rojo: if a file is excluded from t
 
 ### Targets
 
-| Target | Output | Use |
-|--------|--------|-----|
-| `roblox` | `.rbxm` (binary, Rojo-packaged) | Plugin, embedding |
-| `rotriever` | Flat Luau + metadata | Internal Rotriever package registry |
+| Target      | Output                          | Use                                 |
+| ----------- | ------------------------------- | ----------------------------------- |
+| `roblox`    | `.rbxm` (binary, Rojo-packaged) | Plugin, embedding                   |
+| `rotriever` | Flat Luau + metadata            | Internal Rotriever package registry |
 
 ---
 
@@ -549,23 +564,27 @@ grep -B 5 "CollectionService:GetTagged(constants.FLIPBOOK_RUNTIME_TAG)" \
 **Re-verification steps:**
 
 1. **Pluginlike contract integrity** (quarterly):
+
    ```bash
    grep "type Pluginlike" workspace/flipbook-core/src/Common/types.luau && \
    grep "Pluginlike\|plugin:" src/PluginStarterScript.plugin.luau | head -5
    ```
 
 2. **Charm.frozen workaround still present** (never remove without resolving storyteller/issues/100):
+
    ```bash
    grep "Charm.flags.frozen = false" src/PluginStarterScript.plugin.luau
    ```
 
 3. **Build channels & prod pruning active** (before each release):
+
    ```bash
    lute run build --channel prod && \
    find build/prod/roblox -name "*.spec.lua*" | wc -l  # must be 0
    ```
 
 4. **Embedding route still works** (before embedding-related PRs):
+
    ```bash
    grep "embedFlipbookRuntime\|createEmbeddedFlipbookApp" workspace/flipbook-core/src --include="*.luau" | wc -l
    # Expected: 3+ (EmbedIntoExperienceDialog, createEmbeddedFlipbookApp, init)

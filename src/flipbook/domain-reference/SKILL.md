@@ -13,6 +13,7 @@ This skill covers the storybook domain concepts you need to debug, extend, or va
 A **story** is a ModuleScript whose filename ends in `.story.luau` that exports a table with a `story` function. A **storybook** is a ModuleScript with filename ending in `.storybook.luau` that tells Flipbook where to find stories and what packages to make available.
 
 Discovery patterns (from `wally.toml`-pinned Storyteller 1.12.0; as of 2026-07-01, `Packages/_Index/` contains built cache with 1.11.0):
+
 - Story pattern: `%.story$` (file ends with `.story.luau`)
 - Storybook pattern: `%.storybook$` (file ends with `.storybook.luau`)
 
@@ -32,6 +33,7 @@ return {
 ```
 
 The `story` function receives a `props` object and must return one of six supported UI types (see "Story Formats by Framework" below). The `props` object contains:
+
 - `props.container: Instance` — parent GuiObject or Folder to render into (reserved by Storyteller)
 - `props.controls: StoryControls?` — current control values after user interaction (reserved by Storyteller)
 - `props.theme: string` — "Light" or "Dark" (from Flipbook's theme setting)
@@ -196,7 +198,7 @@ return {
       local label = Instance.new("TextLabel")
       label.Text = "Manual render"
       label.Parent = container
-      
+
       return function()
         label:Destroy()
       end
@@ -258,6 +260,7 @@ Each renderer (React, Roact, Fusion) implements this interface. Custom renderers
 ### Control Schema and Hydration
 
 When a story declares a `controls` field, Storyteller validates it against the schema (type `Storyteller.StoryControlsSchema`), a dict mapping control names to control definitions. Control definitions are either:
+
 - A control object: `{ type = "Boolean", default = true }` (struct with `type` and optional `default`)
 - A primitive value: `true`, `"text"`, `42`, `Color3.new(1, 0, 0)` (inferred as a control)
 
@@ -268,51 +271,61 @@ Storyteller's `hydrateControls(schema, overrides)` function merges schema defaul
 Flipbook supports 11 control types (on main as of 2026-07-01). Each is a discriminated union keyed on `type`:
 
 1. **Boolean** — toggle on/off
+
    ```luau
    Storyteller.createBooleanControl(default: boolean?) -> BooleanControl
    ```
 
 2. **String** — text input
+
    ```luau
    Storyteller.createStringControl(default: string?) -> StringControl
    ```
 
 3. **Number** — numeric input with optional step
+
    ```luau
    Storyteller.createNumberControl(default: number?, options: {step: number?}?) -> NumberControl
    ```
 
 4. **Slider** — range slider (Number with implicit UI hint)
+
    ```luau
    Storyteller.createSliderControl(default: number?, range: NumberRange?) -> SliderControl
    ```
 
 5. **Color** — color picker
+
    ```luau
    Storyteller.createColorControl(default: Color3?) -> ColorControl
    ```
 
 6. **Date** — date/datetime picker
+
    ```luau
    Storyteller.createDateControl(default: DateTime?) -> DateControl
    ```
 
 7. **Select** — dropdown (single choice from items list)
+
    ```luau
    Storyteller.createSelectControl(items: { T }, options: {default: T?, tostring: (T) -> string?, sort: (T, T) -> bool?}?) -> SelectControl
    ```
 
 8. **Radio** — radio group (single choice, all visible)
+
    ```luau
    Storyteller.createRadioControl(items: { T }, options: {...}?) -> RadioControl
    ```
 
 9. **MultiSelect** — multiselect list (multiple choices)
+
    ```luau
    Storyteller.createMultiSelectControl(items: { T }, options: {default: { T }?, ...}?) -> MultiSelectControl
    ```
 
 10. **Check** — checkbox list (multiple boolean flags)
+
     ```luau
     Storyteller.createCheckControl(items: { T }, options: {...}?) -> CheckControl
     ```
@@ -378,6 +391,7 @@ Flipbook runs in two contexts: **Studio plugin** and **embedded in an experience
 ### Studio Plugin Context
 
 When Flipbook loads as a Studio plugin (the default):
+
 - The plugin runs in the plugin's own thread with elevated APIs: `plugin:OpenScript()`, `plugin:GetSetting()`, `plugin:SetSetting()`, etc.
 - The `props.plugin` is a real Plugin object (or Pluginlike mock)
 - The `props.widget` is the Studio widget container
@@ -387,6 +401,7 @@ When Flipbook loads as a Studio plugin (the default):
 ### Embedded in an Experience Context
 
 When Flipbook is embedded in a running experience (via the "Embed into Experience" dialog or deploy-storybook):
+
 - Flipbook runs as a client-side LocalScript or in the player's PlayerGui
 - The plugin has no elevated APIs; it uses only client-side APIs
 - Stories run in the LocalPlayer's thread, subject to the same sandboxing as any game script
@@ -438,7 +453,6 @@ When Flipbook opens a story with controls, it uses an internal control store (in
 The store is wrapped in a React context (`StoryControlsContext`) and consumed by individual control UI components. Each control subscribes only to its own value via `useSignalState()`, so changing one control does not re-render siblings. This isolation prevents visual flicker and performance issues.
 
 The 11 control UI components live in `workspace/flipbook-core/src/StoryControls/ControlElements/`. Each one reads its value from the store, renders the appropriate Foundation or custom UI, and calls `setControl()` on user interaction.
-
 
 ## Provenance and Maintenance
 

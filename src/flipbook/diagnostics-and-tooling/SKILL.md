@@ -8,9 +8,9 @@ type: process
 
 Measure Flipbook behavior instead of eyeballing. This skill teaches how to instrument and inspect the Flipbook system at runtime and build time: the logging system, test filtering and output interpretation, build-cache introspection, sourcemap inspection for require-path debugging, and rerender measurement for performance regression detection. Includes runnable scripts for automated analysis.
 
-**Scope:** This skill is for observability and measurement. **Use this when:** you need to measure/instrument to *find* a bug, verify build inclusion, or validate that instrumentation is working correctly.
+**Scope:** This skill is for observability and measurement. **Use this when:** you need to measure/instrument to _find_ a bug, verify build inclusion, or validate that instrumentation is working correctly.
 
-**Do NOT use this skill when:** you need to *prove* a fix is correct (→ `validation-and-qa`), understand architecture (→ `architecture-contract`), debug build/Darklua mechanics (→ `build-and-toolchain`), or triage a runtime symptom (→ `debugging-playbook`).
+**Do NOT use this skill when:** you need to _prove_ a fix is correct (→ `validation-and-qa`), understand architecture (→ `architecture-contract`), debug build/Darklua mechanics (→ `build-and-toolchain`), or triage a runtime symptom (→ `debugging-playbook`).
 
 ## The Logging System
 
@@ -39,6 +39,7 @@ Set `ENABLE_OUTPUT_LOGGING=true` in `.env` (or via Darklua override) to enable O
 ### Log Enrichers and Filtering
 
 The logger applies two enrichers to every log event (grep `LogLevelEnricher\|DynSourceEnricher`):
+
 - `LogLevelEnricher()`: adds human-readable level name to each event
 - `DynSourceEnricher(true)`: adds source file + line number where the log call originated (expensive; the `true` flag enables dynamic source tracking)
 
@@ -143,6 +144,7 @@ Example entries. The path segment of each key is the absolute path to the worksp
 ```
 
 The keys show:
+
 - `dev` or `prod` channel (dev keeps stories/specs, prod prunes them)
 - Target: `roblox` (in-Studio) or `rotriever` (package format)
 - The absolute path to the workspace member (machine-specific; do not treat the literal hash values or the path prefix above as canonical — read your own `build/build-cache.json` after a build)
@@ -291,6 +293,7 @@ return {
 ```
 
 When you preview this story and interact with the text control, you should see:
+
 - `TextControl renders: 2` (or higher, initial mount + user edit)
 - `NumberControl renders: 1` (unchanged; only mounted once)
 
@@ -317,11 +320,13 @@ These scripts live in the installed AgentSkills package. After Flipbook runs `lu
 Lists the count of stories and specs per workspace member.
 
 **Usage:**
+
 ```bash
 lute run <skills>/inventory-stories.luau
 ```
 
 **Output (verified 2026-07-02):**
+
 ```
 === Flipbook Story & Spec Inventory ===
 
@@ -344,11 +349,13 @@ TOTAL                                  49         16
 Scans source code (`workspace/` and `.lute/`) for `process.env.VAR_NAME` reads and compares them against variables declared in `.env.template`.
 
 **Usage:**
+
 ```bash
 lute run <skills>/detect-env-drift.luau
 ```
 
 **Output (verified 2026-07-02):**
+
 ```
 === Environment Variable Drift Detection ===
 
@@ -376,11 +383,13 @@ Note the two known findings above are expected as of 2026-07-02: `JEST_TEST_PATH
 Compares each sourcemap's modification time against the newest `.luau` source file it covers.
 
 **Usage:**
+
 ```bash
 lute run <skills>/check-sourcemap-freshness.luau
 ```
 
 **Output:**
+
 ```
 === Sourcemap Freshness Check ===
 
@@ -420,7 +429,6 @@ When diagnosing a runtime issue in Flipbook:
 6. **Measure performance**: Use a render counter in the story to verify controls aren't re-rendering excessively.
 7. **Check env drift**: Run `detect-env-drift.luau` to rule out missing configuration.
 8. **Inventory coverage**: Run `inventory-stories.luau` before and after adding a feature to track test growth.
-
 
 ## Provenance and Maintenance
 

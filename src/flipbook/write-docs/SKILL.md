@@ -85,28 +85,30 @@ A PR body exists to orient the human who has to review an ever-growing diff. Its
 
 ## Key Files and Paths
 
-| File | Purpose |
-|------|---------|
-| `docs/docusaurus.config.ts` | Docusaurus config (site title, URLs, plugins, nav) |
-| `docs/sidebars.ts` | Sidebar structure and section organization |
-| `docs/package.json` | Node dependencies for Docusaurus |
-| `docs/docs/` | Markdown/MDX content root |
-| `.github/workflows/docs.yml` | CI workflow: build on PR, deploy on release |
-| `.lute/serve-docs.luau` | Task runner for local dev server |
-| `docs/obsidian-vault/` | Institutional knowledge vault |
-| `workspace/code-samples/` | Real example code embedded in docs |
-| `.github/pull_request_template.md` | PR template (docs sections in Problem/Solution) |
+| File                               | Purpose                                            |
+| ---------------------------------- | -------------------------------------------------- |
+| `docs/docusaurus.config.ts`        | Docusaurus config (site title, URLs, plugins, nav) |
+| `docs/sidebars.ts`                 | Sidebar structure and section organization         |
+| `docs/package.json`                | Node dependencies for Docusaurus                   |
+| `docs/docs/`                       | Markdown/MDX content root                          |
+| `.github/workflows/docs.yml`       | CI workflow: build on PR, deploy on release        |
+| `.lute/serve-docs.luau`            | Task runner for local dev server                   |
+| `docs/obsidian-vault/`             | Institutional knowledge vault                      |
+| `workspace/code-samples/`          | Real example code embedded in docs                 |
+| `.github/pull_request_template.md` | PR template (docs sections in Problem/Solution)    |
 
 ## Common Patterns
 
 ### Linking Between Pages
 
 **In Obsidian vault:** Use wikilinks:
+
 ```markdown
 See [[creating-stories/writing-stories]] for the full guide.
 ```
 
 **In Docusaurus site:** Use root-relative paths with `/docs/` prefix:
+
 ```markdown
 See [Writing Stories](/docs/creating-stories/writing-stories) for the full guide.
 ```
@@ -118,11 +120,13 @@ See [Writing Stories](/docs/creating-stories/writing-stories) for the full guide
 **When the sample is long or lives in the repo:** Reference via code-sample syntax (Obsidian) or raw-loader (Docusaurus) so it auto-updates if source changes.
 
 **Obsidian code-sample syntax:**
-```
+
+````
 ```code-sample
 workspace/code-samples/src/React/ReactButton.luau#L4-L13
-```
-```
+````
+
+````
 
 ### Callout Boxes
 
@@ -140,11 +144,12 @@ Callout syntax for both Obsidian and Docusaurus:
 
 > [!seealso]
 > Related links (use for cross-reference blocks at page bottom)
-```
+````
 
 ### Sidebars and Navigation
 
 Sidebar structure is in `docs/sidebars.ts` for Docusaurus. Obsidian sidebar comes from `index.md` link lists in each folder. Add new pages by:
+
 1. Create `.md` file under appropriate section in `docs/obsidian-vault/`.
 2. Add to that folder's `index.md` link list (or update `docs/sidebars.ts` for Docusaurus).
 3. Set `sidebar_position` in frontmatter to control sort order (Docusaurus only).
