@@ -446,8 +446,16 @@ rokit list
 
 ---
 
+
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-11. Migrated from Flipbook's `.agents/skills/flipbook-debugging-playbook/`.
+**Commands to re-verify when context drifts:**
 
-**Re-verify these claims when this skill next loads** (run from Flipbook checkout):
+- `lute run build plugin --channel dev --clean` — verify help output still shows --channel, --target, --clean flags: `lute run build plugin --help`
+- `cat .darklua.json` — confirm inject_global_value rules still include BUILD_HASH, BUILD_VERSION, BASE_URL, LOG_LEVEL, ENABLE_OUTPUT_LOGGING, JEST_TEST_PATH_PATTERN
+- `ls build/sourcemap-darklua.json` — after any rebuild; if file missing, Rojo step failed
+- `grep "Charm.flags.frozen" src/PluginStarterScript.plugin.luau` — this line is permanent (storyteller#100); if absent, add it back immediately
+- `cat .env.template | grep -E "BASE_URL|LOG_LEVEL|ENABLE_OUTPUT|ROBLOX"` — verify env template still defines these vars
+- `rokit.toml` pinned versions — check if Lute, Darklua, Rojo versions have known issues; consult GitHub releases if build behavior changes
+
+**Last verified:** 2026-07-01 against commit 78d71e8f. Sourcemap paths, build cache format, logger routing (PR #484), Charm workaround (story#100), Logs panel structure all confirmed current.

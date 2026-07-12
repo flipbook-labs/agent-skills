@@ -279,8 +279,5 @@ When authoring docs, blog posts, or release notes:
 
 ---
 
-## Provenance and Maintenance (Re-Verification Commands)
 
-**Date stamped:** 2026-07-11. Migrated from Flipbook's `.agents/skills/flipbook-community-and-positioning/`.
 
-**Re-verify these claims when this skill next loads** (run from Flipbook checkout):

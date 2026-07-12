@@ -469,8 +469,34 @@ To keep this skill current and aligned with code changes:
 
 ---
 
+
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-11. Migrated from Flipbook's `.agents/skills/flipbook-release-and-operations/`.
+**Last verified:** 2026-07-01 (main branch, commit 78d71e8f "Embed Flipbook in the DataModel")
 
-**Re-verify these claims when this skill next loads** (run from Flipbook checkout):
+**Verification scope:**
+- All six workflow files (.github/workflows/*.yml) read and command syntax verified
+- .lute/bump-version.luau manifest list verified (3 files: wally.toml, loom.config.luau, rotriever.toml)
+- rbxasset.toml asset names and environment config read
+- project.luau universe/place IDs verified (10262009842, 139676401890813)
+- docs/docs/contributing/creating-releases.md release procedure confirmed
+- deploy-storybook action.yml inputs and defaults confirmed (v0.4.0 pinned in storybook.yml)
+- .lune/publish-plugin.luau channel mapping verified (dev/beta→dev, prod→prod, smoketest→smoketest)
+
+**Known drifts to watch:**
+- Changewrite adoption (adopt-changewrite branch status; not yet on main)
+- Creator Store asset IDs (8517129161 prod, 88523969718241 dev) — hardcoded in CI, not in code
+- Environment secret names (ROBLOX_API_KEY vs ROBLOX_STORYBOOK_PREVIEW_API_KEY) — org settings not read-only, may change without code notice
+- Rokit version pinned in workflows (v1.2.0 typical) — minor bumps in action inputs
+
+---
+
+## Crossref to Sibling Skills
+
+- **flipbook-build-and-toolchain:** Darklua pipeline, `lute run build` flags, channel/target mechanics, Rojo, Lute/Loom.
+- **flipbook-diagnostics-and-tooling:** Measuring instead of eyeballing; logging, test filtering, sourcemap inspection.
+- **flipbook-validation-and-qa:** CI job anatomy, lint/analyze/test evidence bar, acceptance discipline.
+- **flipbook-config-and-flags:** .env vars, injected globals, channels, prod pruning, user settings.
+- **flipbook-failure-archaeology:** Detailed incident investigations with git history; cross-ref this skill's "Operational Failure History" to archaeology for deep dives.
+- **flipbook-change-control:** Git/PR/release doctrine; never-push-tags and never-push-main constraints underlying all release procedures here.
+- **AGENTS.md** (repo root): Project overview, layout, tech stack, style; this skill assumes that foundation.

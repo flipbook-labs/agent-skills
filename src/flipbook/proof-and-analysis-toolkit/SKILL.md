@@ -574,8 +574,15 @@ Before claiming a build is correct, verify:
 
 ---
 
+
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-11. Migrated from Flipbook's `.agents/skills/flipbook-proof-and-analysis-toolkit/`.
+Recipes and worked examples verified against Flipbook's git history (as of 2026-07-01):
+- PR #479 (backend URL injection; variable now named BASE_URL) — grep `BASE_URL` in `.darklua.json`, `.lute/build.luau`, `.env.template`
+- PR #426 & PR #444 (BUILD_HASH) — grep `BUILD_HASH` in `.lute/build.luau` (fed by `getCommitHash()`), check `process.run` stdio behavior in Lute docs
+- PR #576 (rerender isolation) — read `createStoryControlsStore.luau`, `StoryControlRow.luau`, verify per-control Charm signals
+- storyteller#100 (Charm.flags.frozen) — read `src/PluginStarterScript.plugin.luau` (comment block above `Charm.flags.frozen = false`), verify workaround in place
+- ModuleLoader weak-keyed registry — read `Packages/_Index/flipbook-labs_module-loader@*/module-loader/dist/createModuleLoader.luau` (the `weak()` helper; installed version drifts, discover with `ls Packages/_Index | grep module-loader`)
+- UILabs Object migration — read `Packages/_Index/flipbook-labs_storyteller@*/storyteller/dist/controls/migrations/ui-labs-*/migrateUILabsControl.luau` (the `control.Type == "Object"` branch returning nil; grep `"Object"` in installed 1.11.0 as of 2026-07-01)
 
-**Re-verify these claims when this skill next loads** (run from Flipbook checkout):
+To re-verify, run: `git log --oneline | grep -E "479|426|444|576|509"` and inspect each PR's commits. Then spot-check one recipe by building and running a minimal reproduction. If recipes or worked examples drift from the repo, update them here and re-date.

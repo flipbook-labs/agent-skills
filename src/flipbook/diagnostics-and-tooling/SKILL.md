@@ -419,8 +419,12 @@ When diagnosing a runtime issue in Flipbook:
 7. **Check env drift**: Run `detect-env-drift.luau` to rule out missing configuration.
 8. **Inventory coverage**: Run `inventory-stories.luau` before and after adding a feature to track test growth.
 
+
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-11. Migrated from Flipbook's `.agents/skills/flipbook-diagnostics-and-tooling/`.
-
-**Re-verify these claims when this skill next loads** (run from Flipbook checkout):
+- Log levels and sinks: Read `workspace/flipbook-core/src/logger.luau` annually. Change log level defaults if performance needs shift.
+- Test filtering: Verify with `lute run test --filter "test" --help` and `.lute/test.luau` that the filter parameter is still injected as `JEST_TEST_PATH_PATTERN`.
+- Build cache: Check `build/build-cache.json` structure in `.lute/lib/build-system/compileAsync.luau` (hashing logic).
+- Sourcemaps: Rojo generates these; verify path with `.darklua.json` field `"rojo_sourcemap"`.
+- Rerender behavior: Verify PR #576's per-control store isolation still exists in `workspace/flipbook-core/src/StoryControls/createStoryControlsStore.luau` and `StoryControlsContext.luau`.
+- Scripts: Re-run the three `scripts/*.luau` via `lute run <path>` after any Lute version bump (the `@std/fs` API has changed across Lute versions) to confirm they still run; they are read-only and safe to run anytime.

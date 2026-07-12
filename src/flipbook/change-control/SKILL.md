@@ -411,8 +411,33 @@ Quick reference for determining what CI gates a change needs.
 
 ---
 
+
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-11. Migrated from Flipbook's `.agents/skills/flipbook-change-control/`.
+**Last verified:** 2026-07-01 (against shared-brief.md, archaeology, flipbook-docs branch, repo files).
 
-**Re-verify these claims when this skill next loads** (run from Flipbook checkout):
+**Re-verification commands:**
+```bash
+# Confirm PR template exists and is current
+cat .github/pull_request_template.md
+
+# Confirm CI/strict/storybook workflows exist
+ls -la .github/workflows/{ci,strict,storybook}.yml
+
+# Confirm Charm.flags.frozen workaround in place
+grep -n "Charm.flags.frozen = false" src/PluginStarterScript.plugin.luau
+
+# Confirm build output not in git
+git status | grep "build/" || echo "build/ correctly ignored"
+
+# Confirm lute run bump-version command
+grep -r "bump-version" .lute/ | head -2
+
+# Confirm test-dependencies-in-flipbook skill exists
+ls .agents/skills/test-dependencies-in-flipbook/SKILL.md
+```
+
+**Known drift risks:**
+- Release workflow changes (rbxasset.toml, Creator Store asset IDs): re-check release.yml every quarter.
+- CI environment gating (fork vs. internal): re-check strict.yml if fork-workflow issues resurface.
+- Storyteller/ModuleLoader APIs: if those skills advance, confirm change-control gates still align.

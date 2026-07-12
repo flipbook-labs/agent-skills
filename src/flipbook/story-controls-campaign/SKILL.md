@@ -1022,8 +1022,48 @@ gh pr merge <PR_URL> --squash --delete-branch
 
 ---
 
+
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-11. Migrated from Flipbook's `.agents/skills/flipbook-story-controls-campaign/`.
+**Last verified:** 2026-07-01
 
-**Re-verify these claims when this skill next loads** (run from Flipbook checkout):
+**Commands to re-verify facts:**
+
+1. **Storyteller version pinned in wally.toml:**
+   ```bash
+   grep "Storyteller = " wally.toml
+   ```
+
+2. **ObjectControl component exists:**
+   ```bash
+   test -f workspace/flipbook-core/src/StoryControls/ControlElements/ObjectControl.luau && echo "✓"
+   ```
+
+3. **InstancePicker was extracted (PR #597):**
+   ```bash
+   git log --oneline --all | grep "Extract InstancePicker"
+   ```
+
+4. **CheckControl grid TODO exists:**
+   ```bash
+   grep "TODO.*grid" workspace/flipbook-core/src/StoryControls/ControlElements/CheckControl.luau
+   ```
+
+5. **uilabs-controls-support branch is stale:**
+   ```bash
+   git log uilabs-controls-support..main --oneline | wc -l
+   ```
+   (Output > 2 = branch is behind)
+
+6. **Current main is 78d71e8f (Embed Flipbook in DataModel):**
+   ```bash
+   git log -1 --oneline
+   ```
+
+**Re-verification schedule:** Quarterly. If any command returns unexpected output, update the skill.
+
+---
+
+## Summary: Why This Campaign Exists
+
+Flipbook's story controls are the hardest live problem because they require coordinated changes across two repos (Storyteller + Flipbook), resolve a silent data loss bug (Object migration), and involve a design decision (ControlGroup). The campaign front-loads characterization (Phase 1) so you understand what's broken, ranks solutions by evidence (Phase 2) so you fix high-impact items first, provides exact implementation gates (Phase 3) so you don't guess, and enforces measurement-based validation (Phase 4) so you know when you're done. Follow the phases in order. Do not skip to implementation.

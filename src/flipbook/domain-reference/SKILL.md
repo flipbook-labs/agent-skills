@@ -439,8 +439,35 @@ The store is wrapped in a React context (`StoryControlsContext`) and consumed by
 
 The 11 control UI components live in `workspace/flipbook-core/src/StoryControls/ControlElements/`. Each one reads its value from the store, renders the appropriate Foundation or custom UI, and calls `setControl()` on user interaction.
 
+
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-11. Migrated from Flipbook's `.agents/skills/flipbook-domain-reference/`.
+Re-verify these commands before trusting them:
 
-**Re-verify these claims when this skill next loads** (run from Flipbook checkout):
+```bash
+# Verify story/storybook patterns from Storyteller
+find Packages/_Index -path "*storyteller*" -name "constants.luau" -exec cat {} \;
+
+# Verify story and storybook type contracts
+find Packages/_Index -path "*storyteller*" -name "types.luau" | head -1 | xargs cat
+
+# Verify control type enum
+find Packages/_Index -path "*storyteller*" -name "ControlType.luau" -exec cat {} \;
+
+# Verify ModuleLoader README (wally.toml pins 0.11.0)
+ls Packages/_Index | grep module-loader
+
+# Verify plugin/widget types (ExtraStoryProps FIXME)
+cat workspace/flipbook-core/src/Storybook/types.luau
+
+# Verify embedded context entry point
+cat src/EmbeddedClientStarterScript.client.luau
+
+# Verify story examples by framework
+cat workspace/code-samples/src/React/ReactButton.story.luau
+cat workspace/code-samples/src/Roact/RoactButton.story.luau
+cat workspace/code-samples/src/Fusion/FusionButton.story.luau
+cat workspace/code-samples/src/Default/Button.story.luau
+```
+
+**Last verified:** 2026-07-01. Story patterns, control types, and core Storyteller APIs from wally-pinned Storyteller 1.12.0, ModuleLoader 0.11.0 (per `wally.toml` ground truth; `Packages/_Index/` contains built cache which may be stale until `lute run install` re-runs). Examples from /workspace/code-samples/. Types from source.

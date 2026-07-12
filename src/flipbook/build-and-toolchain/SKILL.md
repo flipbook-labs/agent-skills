@@ -522,8 +522,25 @@ lute run build plugin --channel dev 2>&1 | grep -i "BUILD_VERSION"
 
 ---
 
+
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-11. Migrated from Flipbook's `.agents/skills/flipbook-build-and-toolchain/`.
+Re-verify these facts against the repo before relying on them for a high-stakes decision:
 
-**Re-verify these claims when this skill next loads** (run from Flipbook checkout):
+- **Darklua version and features:** Check the `darklua` pin in `rokit.toml` (grep `darklua =`; currently 0.17.1). Run `darklua --help` to see available rules.
+- **Lute version and API:** Check the `lute` pin in `rokit.toml` (grep `lute =`; currently 1.0.0). If bumped, re-test all build subcommands.
+- **Environment variable injection:** Verify the env-global injection rules in `.darklua.json` (grep `inject_global_value`) match the 8 globals documented above. Count them to ensure all 8 are present.
+- **Studio plugins path:** `getStudioPluginsPath.luau` resolves OS-specific paths. Run `lute run build --help` to see default output path.
+- **Path-length mitigation:** Verify `.lute/lib/build-system/compileAsync.luau` still calls `packToRbxm()` for Rotriever target (grep `packToRbxm`). If missing, Windows CI and the internal Rotriever consumption pipeline will hit MAX_PATH errors.
+- **Channels and targets:** Check the channel parser in `.lute/build.luau` (grep `channel == "dev"`; validates dev/beta/prod) and target parser (grep `target == "roblox"`; validates roblox/rotriever).
+- **Prod pruning rules:** Verify `PROD_CONFIG` in `project.luau` (grep `PROD_CONFIG`; defines prunedDirs and prunedFiles) match the actual directories/patterns you want stripped.
+
+---
+
+## Related Documentation
+
+- **Setup onboarding (no duplication):** `.agents/skills/setup-flipbook-dev-env` — walks through rokit, lute, .env, and VSCode config.
+- **Test running:** `flipbook-validation-and-qa` skill — covers `lute run test`, Jest filtering, CI test matrix.
+- **Architecture:** `flipbook-architecture-contract` skill — load-bearing design decisions (Darklua choice, why string requires matter, Storyteller contracts).
+- **Debugging:** `flipbook-debugging-playbook` skill — when builds fail, traps with stories, discriminating experiments.
+- **Release pipeline:** `flipbook-release-and-operations` skill — nightly/smoketest/Creator Store publish, artifact naming.

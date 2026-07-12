@@ -512,8 +512,17 @@ return story
 
 ---
 
+
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-11. Migrated from Flipbook's `.agents/skills/flipbook-validation-and-qa/`.
+**Re-verification commands (run these if docs drift):**
 
-**Re-verify these claims when this skill next loads** (run from Flipbook checkout):
+- Test count: `find workspace/flipbook-core/src -name "*.spec.luau" | wc -l` (should be 16 or more)
+- Story count: `find workspace -name "*.story.luau" | wc -l` (should be 49 or more)
+- Jest config: `cat workspace/flipbook-core/src/jest.config.luau` (verify `testMatch` and `testPathIgnorePatterns`)
+- Test runner: `cat workspace/test-runner/src/init.luau` (verify Jest is invoked with `testPathPattern`)
+- Lint: `lute run lint` (verify it runs Selene, StyLua, Prettier)
+- Analyze: `lute run analyze` (verify it runs luau-lsp in strict mode)
+- Test: `lute run test --filter "usePrevious"` (verify tests build and run)
+
+Last verified: 2026-07-01. Darklua 0.17.1, lute 1.0.0, Jest 3.10.0 (jsdotlua), Rocale via Luau Execution.

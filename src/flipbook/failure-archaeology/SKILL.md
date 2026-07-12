@@ -525,8 +525,28 @@ Sixteen branches with work-in-progress status. Last activity ranges from 3 days 
 
 ---
 
+
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-11. Migrated from Flipbook's `.agents/skills/flipbook-failure-archaeology/`.
+This document was authored 2026-07-01 with commit verification via git log and show. Re-verify key claims before updating:
 
-**Re-verify these claims when this skill next loads** (run from Flipbook checkout):
+```bash
+# Verify path-length fixes
+git show 7a6c69b5 --stat | grep -E "compileAsync|packToRbxm"
+git show 3834640a --stat | grep -E "check-path-lengths"
+
+# Verify Charm.flags.frozen workaround location
+grep -r "Charm.flags.frozen" src/
+
+# Verify PR #576 control re-render fix
+git show 371d7752 --stat | grep -E "StoryControlsContext|createStoryControlsStore"
+
+# Check branch status
+git branch --list -a | grep -E "uilabs-controls-support|upgrade-loom-dependencies|flipbook-docs"
+git log -1 --format="%ai %s" uilabs-controls-support
+
+# Verify stalled branches by activity
+git log -1 --format="%ai" embedded-http-proxy upgrade-loom-dependencies docs-in-studio
+```
+
+Update this skill whenever: a major incident is resolved and merged to main, a stalled branch is merged or abandoned, or upstream issues (e.g., storyteller#100) are fixed.
