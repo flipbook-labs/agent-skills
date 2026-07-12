@@ -24,11 +24,39 @@ Scopes:
 Each entry declares a genre. `type: process` is a runbook (what to do next) and
 `type: knowledge` is reference (how the system is and why). See CONTRIBUTING.md.
 
+## Using these skills while you work here
+
+This repo runs on its own library. An agent editing a skill, doc, or script here
+is governed by the same skills it ships, so route to them the way a consumer repo
+does. Because the skills are the source files under `src/`, there is no install or
+resolve step: read them directly.
+
+Before you write any skill, doc, code, or PR prose:
+
+1. Read the **Project Skills** index below in full, so you know what exists. This
+   read is unconditional.
+2. When your task matches a trigger, open that `src/<scope>/<name>/SKILL.md` and
+   read it before doing the work it covers.
+
+Several skills govern the work itself: `org/writing-style` and `org/code-comments`
+for prose, `org/write-luau-code` and `org/write-luau-tests` for Luau,
+`org/reviewable-changes` and `org/review-pass` for scoping and reviewing the change,
+and `org/changelog-entries` for the `.changes/` entry. Read the ones your task
+touches before you start.
+
+### Forward this to subagents
+
+The Task tool spawns subagents in a fresh context that does not include this guide,
+so they never see the gate unless you hand it to them. Whenever you delegate,
+include in the subagent's prompt (1) the read-the-index gate above and (2) the
+concrete `src/<scope>/<name>/SKILL.md` path(s) relevant to its task. Never assume a
+subagent will find the skills on its own.
+
 ## Project Skills
 
 > Scaffold: no skills seeded yet. Entries land here (in the same commit as each
 > skill) as the library is populated. Format per line:
-> `` - `<scope>/<name>`: <trigger-rich one-liner>. ``
+> ``- `<scope>/<name>`: <trigger-rich one-liner>.``
 
 ### Cross-cutting (`org/`)
 
