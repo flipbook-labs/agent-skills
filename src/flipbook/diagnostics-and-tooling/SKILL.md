@@ -308,7 +308,9 @@ This validates that the store subscription model (per-control signals via `useSi
 
 ## Diagnostic Scripts
 
-The `scripts/` directory in this skill contains three read-only Lute analysis scripts. They only read the repo — none of them modify it. They are Lute scripts (`.luau`) because Lute is guaranteed present after `rokit install`; there is no shell fallback to keep in sync. Each script resolves the repo root from its own location by walking up to `rokit.toml`, so you can run it from any working directory. Invoke with `lute run <path>` (the argument is a path to the script file, not a `.lute/` task name):
+The `scripts/` directory in this skill contains three read-only Lute analysis scripts. They only read the repo — none of them modify it. They are Lute scripts (`.luau`) because Lute is guaranteed present after `rokit install`; there is no shell fallback to keep in sync. Each script resolves the repo root from its own location by walking up to `rokit.toml`, so you can run it from any working directory. Invoke with `lute run <path>` (the argument is a path to the script file, not a `.lute/` task name).
+
+These scripts live in the installed AgentSkills package. After Flipbook runs `lute run install`, they are available at `~/.loom/store/AgentSkills@<version>/src/flipbook/diagnostics-and-tooling/scripts/<name>.luau` (where `<version>` is the pinned version in your `loom.config.luau`). For brevity below, we write `<skills>` to mean that resolved path — e.g., `lute run <skills>/inventory-stories.luau`.
 
 ### inventory-stories.luau
 
@@ -316,7 +318,7 @@ Lists the count of stories and specs per workspace member.
 
 **Usage:**
 ```bash
-lute run .agents/skills/diagnostics-and-tooling/scripts/inventory-stories.luau
+lute run <skills>/inventory-stories.luau
 ```
 
 **Output (verified 2026-07-02):**
@@ -343,7 +345,7 @@ Scans source code (`workspace/` and `.lute/`) for `process.env.VAR_NAME` reads a
 
 **Usage:**
 ```bash
-lute run .agents/skills/diagnostics-and-tooling/scripts/detect-env-drift.luau
+lute run <skills>/detect-env-drift.luau
 ```
 
 **Output (verified 2026-07-02):**
@@ -375,7 +377,7 @@ Compares each sourcemap's modification time against the newest `.luau` source fi
 
 **Usage:**
 ```bash
-lute run .agents/skills/diagnostics-and-tooling/scripts/check-sourcemap-freshness.luau
+lute run <skills>/check-sourcemap-freshness.luau
 ```
 
 **Output:**
@@ -402,7 +404,7 @@ Or if a rebuild is needed:
 **Typical Workflow:**
 
 1. Pull new changes or edit source files
-2. Run: `lute run .agents/skills/diagnostics-and-tooling/scripts/check-sourcemap-freshness.luau`
+2. Run: `lute run <skills>/check-sourcemap-freshness.luau`
 3. If stale, rebuild: `lute run build plugin --channel dev --clean`
 4. Re-run the script to confirm freshness
 

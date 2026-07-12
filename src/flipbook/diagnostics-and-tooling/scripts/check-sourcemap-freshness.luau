@@ -1,6 +1,6 @@
 #!/usr/bin/env lute
 -- Check whether sourcemaps are fresh relative to their source files.
--- Run from the repo root: lute run .agents/skills/flipbook-diagnostics-and-tooling/scripts/check-sourcemap-freshness.luau
+-- Run from the Flipbook repo: lute run ~/.loom/store/AgentSkills@*/src/flipbook/diagnostics-and-tooling/scripts/check-sourcemap-freshness.luau
 -- Reports whether each sourcemap is newer than the newest source file it covers.
 
 local fs = require("@std/fs")

@@ -1,6 +1,6 @@
 #!/usr/bin/env lute
 -- Inventory all stories and specs in the workspace.
--- Run from the repo root: lute run .agents/skills/flipbook-diagnostics-and-tooling/scripts/inventory-stories.luau
+-- Run from the Flipbook repo: lute run ~/.loom/store/AgentSkills@*/src/flipbook/diagnostics-and-tooling/scripts/inventory-stories.luau
 -- Outputs a summary of story/spec counts per workspace member.
 
 local fs = require("@std/fs")

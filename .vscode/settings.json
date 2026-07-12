@@ -2,6 +2,6 @@
   "luau-lsp.platform.type": "standard",
   "luau-lsp.ignoreGlobs": [
     "**/.lute/typedefs/**",
-    "**/scripts/**"
+    "src/flipbook/diagnostics-and-tooling/scripts/**"
   ]
 }
