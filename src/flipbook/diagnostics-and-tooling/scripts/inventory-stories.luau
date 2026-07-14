@@ -1,4 +1,3 @@
-#!/usr/bin/env lute
 -- Inventory all stories and specs in the workspace.
 -- Run from the Flipbook repo: lute run ~/.loom/store/AgentSkills@*/src/flipbook/diagnostics-and-tooling/scripts/inventory-stories.luau
 -- Outputs a summary of story/spec counts per workspace member.
@@ -46,14 +45,16 @@ end
 
 local members = {}
 
-for _, entry in fs.listDirectory(WORKSPACE_ROOT) do
-	if entry.type == "dir" and not string.match(entry.name, "^%.") then
-		local memberPath = path.join(WORKSPACE_ROOT, entry.name)
-		table.insert(members, {
-			name = entry.name,
-			stories = countMatching(memberPath, "%.story%.luau$"),
-			specs = countMatching(memberPath, "%.spec%.luau$"),
-		})
+if fs.exists(WORKSPACE_ROOT) then
+	for _, entry in fs.listDirectory(WORKSPACE_ROOT) do
+		if entry.type == "dir" and not string.match(entry.name, "^%.") then
+			local memberPath = path.join(WORKSPACE_ROOT, entry.name)
+			table.insert(members, {
+				name = entry.name,
+				stories = countMatching(memberPath, "%.story%.luau$"),
+				specs = countMatching(memberPath, "%.spec%.luau$"),
+			})
+		end
 	end
 end
 

@@ -1,4 +1,3 @@
-#!/usr/bin/env lute
 -- Detect environment-variable drift by scanning source files.
 -- Run from the Flipbook repo: lute run ~/.loom/store/AgentSkills@*/src/flipbook/diagnostics-and-tooling/scripts/detect-env-drift.luau
 -- Compares process.env reads in code against .env.template declarations.

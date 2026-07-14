@@ -1,4 +1,3 @@
-#!/usr/bin/env lute
 -- Check whether sourcemaps are fresh relative to their source files.
 -- Run from the Flipbook repo: lute run ~/.loom/store/AgentSkills@*/src/flipbook/diagnostics-and-tooling/scripts/check-sourcemap-freshness.luau
 -- Reports whether each sourcemap is newer than the newest source file it covers.
