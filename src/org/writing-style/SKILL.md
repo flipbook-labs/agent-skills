@@ -8,7 +8,7 @@ type: process
 
 The house voice for anything you write or edit in this org. The point is to make agent output predictable so a human can steer it the rest of the way, not to police prose a person already wrote.
 
-## Scope: this constrains what *you* generate
+## Scope: this constrains what _you_ generate
 
 It is not a linter to run against existing text. So:
 
@@ -37,11 +37,11 @@ Where you would reach for a semicolon, default to a period and a new sentence. A
 
 ## Soft-wrap prose, never hard-wrap
 
-Let prose reflow. Do not insert manual line breaks to wrap a paragraph at some column in Markdown, a README, a doc, or a PR body. One sentence or paragraph is one line; the renderer wraps it. Hard breaks fossilize a width and produce ragged diffs when the text is later edited. Marin: *"Don't hard wrap lines, rely on soft wrapping. Apply this generally, and apply to the PR body too."* This governs the prose you emit; leave a human's existing hard wraps alone, per the scope note above.
+Let prose reflow. Do not insert manual line breaks to wrap a paragraph at some column in Markdown, a README, a doc, or a PR body. One sentence or paragraph is one line; the renderer wraps it. Hard breaks fossilize a width and produce ragged diffs when the text is later edited. Marin: _"Don't hard wrap lines, rely on soft wrapping. Apply this generally, and apply to the PR body too."_ This governs the prose you emit; leave a human's existing hard wraps alone, per the scope note above.
 
 ## Avoid parenthetical asides
 
-Prefer a direct sentence to a thought tucked in parentheses. When you catch yourself adding a parenthetical, either promote it to its own sentence because it matters, or cut it because it does not. Marin trims these in review: *"We can skip the parenthetical."* A short clarifying parenthetical is not a crime, but a paragraph carrying several is a sign the sentences want restructuring.
+Prefer a direct sentence to a thought tucked in parentheses. When you catch yourself adding a parenthetical, either promote it to its own sentence because it matters, or cut it because it does not. Marin trims these in review: _"We can skip the parenthetical."_ A short clarifying parenthetical is not a crime, but a paragraph carrying several is a sign the sentences want restructuring.
 
 ## Capitalize our product names
 
@@ -76,7 +76,7 @@ When you catch yourself reaching for one of these, the fix is almost always to s
 
 ## The self-critic pass
 
-Before declaring any prose done, re-read the text *you* wrote or edited with one job: find (a) any claim not backed by something you verified, and (b) any phrase matching the banned patterns above. Fix those. Running this as a separate pass catches far more than self-checking while you draft. It applies only to text you generated (see the scope note).
+Before declaring any prose done, re-read the text _you_ wrote or edited with one job: find (a) any claim not backed by something you verified, and (b) any phrase matching the banned patterns above. Fix those. Running this as a separate pass catches far more than self-checking while you draft. It applies only to text you generated (see the scope note).
 
 ---
 

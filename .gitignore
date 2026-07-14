@@ -8,6 +8,9 @@ LuauPackages
 /Packages
 /DevPackages
 
+# Node
+/node_modules
+
 # Environment
 .env
 

@@ -10,17 +10,17 @@ How to write the README and getting-started docs a person reads when they pick u
 
 ## Center the product, not its implementation
 
-Write from the perspective of the product being the thing the reader wants. What it is built on is an implementation detail they should not have to care about by default. Marin, on an action that shells out to another tool: *"The use of flipbook-cli should be an implementation detail. Write the readme from the perspective of deploy-storybook being the primary product."* Mention the internals only lightly, for the power user who needs the escape hatch, never as the main narrative.
+Write from the perspective of the product being the thing the reader wants. What it is built on is an implementation detail they should not have to care about by default. Marin, on an action that shells out to another tool: _"The use of flipbook-cli should be an implementation detail. Write the readme from the perspective of deploy-storybook being the primary product."_ Mention the internals only lightly, for the power user who needs the escape hatch, never as the main narrative.
 
 ## Apply the end-user utility filter
 
-Before a section earns a place in the README, ask: **is this useful to someone using the package?** Marin: *"Ask yourself: Is this useful to an end-user? This section is a definite No."* Internal development notes, "this repository is in early setup," CLI-installation minutiae, and process docs fail the filter. They belong in `AGENTS.md`, a skill, or the wiki. Trim the README to what a user needs to install and use the thing.
+Before a section earns a place in the README, ask: **is this useful to someone using the package?** Marin: _"Ask yourself: Is this useful to an end-user? This section is a definite No."_ Internal development notes, "this repository is in early setup," CLI-installation minutiae, and process docs fail the filter. They belong in `AGENTS.md`, a skill, or the wiki. Trim the README to what a user needs to install and use the thing.
 
 ## Ship a concrete, runnable example
 
 Public API docs need at least one real example before release, and the example must actually work.
 
-- **Real, not placeholder.** Use a real build command and realistic names (*"Let's use a real rojo build example"*; a display name like `Flipbook Stories`, not `my-input-here`). Users copy-paste, so a synthetic or wrong example breaks their first run.
+- **Real, not placeholder.** Use a real build command and realistic names (_"Let's use a real rojo build example"_; a display name like `Flipbook Stories`, not `my-input-here`). Users copy-paste, so a synthetic or wrong example breaks their first run.
 - **Watch for characters that break in practice.** Marin hit trouble using `#` in a Roblox place name and cut it from the example. When a value has environment constraints, keep the example inside them and note the constraint.
 
 ## Nudge setup toward the right primitives

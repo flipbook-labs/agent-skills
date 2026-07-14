@@ -9,12 +9,12 @@ deliberate, changelog-reviewed bump — exactly like any other package in the or
 Skills are plain, vendor-neutral `SKILL.md` files (usable by Claude Code, Fable,
 Cursor, or any agent tool), organized by scope under `src/`:
 
-| Scope | What lives here |
-| --- | --- |
-| `src/org/` | Cross-cutting doctrine that applies to any repo (test discipline, change control, research methodology, writing style). |
-| `src/family/` | The Flipbook ↔ Storyteller ↔ ModuleLoader repo family (dev-env setup, checks, dependency testing, the domain contract). |
-| `src/flipbook/` | Flipbook-specific knowledge and runbooks. |
-| `src/agent-gateway/` | AgentGateway protocol and workflows. |
+| Scope                | What lives here                                                                                                         |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `src/org/`           | Cross-cutting doctrine that applies to any repo (test discipline, change control, research methodology, writing style). |
+| `src/family/`        | The Flipbook ↔ Storyteller ↔ ModuleLoader repo family (dev-env setup, checks, dependency testing, the domain contract). |
+| `src/flipbook/`      | Flipbook-specific knowledge and runbooks.                                                                               |
+| `src/agent-gateway/` | AgentGateway protocol and workflows.                                                                                    |
 
 See [`AGENTS.md`](AGENTS.md) for the routing index and [`CONTRIBUTING.md`](CONTRIBUTING.md)
 for the authoring doctrine.

@@ -6,11 +6,11 @@ type: knowledge
 
 # Use an AgentGateway
 
-Plugins built on [AgentGateway](https://github.com/flipbook-labs/agent-gateway) expose their actions to in-Studio agents through a single `BindableFunction`. This skill covers everything generic: connecting to Studio, finding gateways, and speaking the protocol. What each gateway can *do* is self-served: its manifest carries descriptions, input schemas, and usage instructions, so prefer asking the gateway over reading plugin source.
+Plugins built on [AgentGateway](https://github.com/flipbook-labs/agent-gateway) expose their actions to in-Studio agents through a single `BindableFunction`. This skill covers everything generic: connecting to Studio, finding gateways, and speaking the protocol. What each gateway can _do_ is self-served: its manifest carries descriptions, input schemas, and usage instructions, so prefer asking the gateway over reading plugin source.
 
 ## When not to use
 
-This skill is for *consuming* a gateway from inside Studio. To build the AgentGateway example plugin and validate the gateway itself end-to-end, see the `e2e` skill in the `flipbook-labs/agent-gateway` repo (it will move here as `agent-gateway/e2e` once seeded).
+This skill is for _consuming_ a gateway from inside Studio. To build the AgentGateway example plugin and validate the gateway itself end-to-end, see the `e2e` skill in the `flipbook-labs/agent-gateway` repo (it will move here as `agent-gateway/e2e` once seeded).
 
 ## Connect to Roblox Studio
 

@@ -52,7 +52,7 @@ The cross-repo issue link and the in-progress-PR aside both go, because a user c
 ## Category and bump
 
 - **Keep category names consistent, in the present tense.** Use the same headings across entries so the assembled changelog reads uniformly: `Features`, `Fixes`, `Changes`, `Dependencies`, not a mix like `Add`/`Added`/`Fixed`. Match whatever set the repo already uses.
-- **Use `patch` as the catch-all when the tool offers no "skip".** Changewrite requires a bump on every entry and has no internal or skip level, so a change with no user-facing effect (CI, tooling, a pure refactor) takes `patch`. Marin: *"We're essentially using patch as a catch-all for actual patches and anything else a PR could possibly do since there's no skip option."* Reserve `minor` and `major` for changes a consumer would actually notice.
+- **Use `patch` as the catch-all when the tool offers no "skip".** Changewrite requires a bump on every entry and has no internal or skip level, so a change with no user-facing effect (CI, tooling, a pure refactor) takes `patch`. Marin: _"We're essentially using patch as a catch-all for actual patches and anything else a PR could possibly do since there's no skip option."_ Reserve `minor` and `major` for changes a consumer would actually notice.
 
 ## Voice
 
