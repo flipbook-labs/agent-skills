@@ -53,3 +53,9 @@ padded to fill a heading: the two whys land under `Solution`, the secret depende
 a natural `Notes for reviewers`, and `Testing` gets one honest line ("No automated
 coverage; exercised by dispatching the workflow") instead of a checklist. Same
 discipline, fitted to the house structure so it reads next to human-written PRs.
+
+That this progression reaches the template only at draft 4 is itself the mistake to
+learn from. The author wrote drafts 1 through 3 from a blank page and reformatted at
+the end. The template should have framed draft 1: fetch it first (see the skill's
+"Start from the template, not a blank page"), fill its sections, and apply the cutting
+tests inside them — collapsing four drafts toward one.

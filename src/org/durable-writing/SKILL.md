@@ -10,6 +10,12 @@ The recurring failure in prose an agent attaches to a change is describing the _
 
 Hold this frame: you are writing for the reader who arrives later with the artifact but not your session. They have the merged code, the diff, and the blame. They do not have your branch, your task history, or the bug you just chased. Write for them, not for the reviewer watching this one change land.
 
+## Start from the template, not a blank page
+
+The first move is not writing — it is fetching the template. Agents reach for a blank page and invent their own headings, but the house already has them, and a body that ignores them reads as off-pattern next to every human PR. So before you draft a PR body, find the template and fill _its_ sections. Look in order: the repo's own `.github/pull_request_template.md`, then the org fallback `flipbook-labs/.github/pull_request_template.md`. The repo template wins when both exist, but many repos carry none and rely on the org default — and that org-level file is the one agents habitually fail to look up a level to find. Then skim a few recent merged, human-authored PRs filled against that template, so what you write sits uniformly beside theirs and you can see how they use each section.
+
+Everything below governs what goes _inside_ those sections. `Problem` and `Solution` hold the non-derivable why; `Notes for reviewers` holds blast radius and the calls you are unsure about. A `Testing` section is for verification a reader cannot get from CI — real manual steps — not a checklist that restates the pipeline (`- [x] ran the unit tests` is noise; CI already reports that). When the honest answer is "nothing beyond CI," say so in a line rather than padding the section to fill the heading.
+
 ## Two things rot, and you can catch both without foresight
 
 You cannot predict what a future reader will need, and you do not have to. The two failure modes here are mechanical.
@@ -38,12 +44,6 @@ When you have none of it, a short true body beats a long derivable one. "Add the
 ## Reframe, do not just delete
 
 Some transient facts are genuinely useful. A change split from a larger one is worth noting. The move is to phrase it so it survives, not to lead with it. "Stacked on #2, review that first" is session-state and dies on merge. "Builds on #2" is the same fact in artifact-state and stays true afterward. Give legitimately transient context its most durable phrasing, or an explicit expiry, rather than letting it read as permanent and quietly go stale.
-
-## Fit the house template
-
-Before writing a PR body, find the template and fill _its_ sections rather than inventing your own headings. Look in order: the repo's own `.github/pull_request_template.md`, then the org fallback `flipbook-labs/.github/pull_request_template.md`. The repo template wins when both exist, but many repos carry none and rely on the org default — and that org-level file is the one agents habitually fail to look up a level to find. Then skim a few recent merged, human-authored PRs filled against that template, so what you write sits uniformly beside theirs and you can see how they use each section.
-
-The tests above apply _inside_ each section, not instead of it. `Problem` and `Solution` hold the non-derivable why; `Notes for reviewers` holds blast radius and the calls you are unsure about. A `Testing` section is for verification a reader cannot get from CI — real manual steps — not a checklist that restates the pipeline (`- [x] ran the unit tests` is noise; CI already reports that). When the honest answer is "nothing beyond CI," say so in a line rather than padding the section to fill the heading.
 
 ## Worked example
 
