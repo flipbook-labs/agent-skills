@@ -16,16 +16,16 @@ The routing index (the library's `AGENTS.md`) is an entry point, not the whole r
 
 Take the files the change touches and pull each into the skills that govern it. Run each skill over its files before you finish.
 
-| A change that touches… | Runs through… |
-| --- | --- |
-| Luau source (`*.luau`) | `org/write-luau-code`, `org/code-comments` |
-| Luau tests (`*.spec.luau`) | `org/write-luau-tests` |
-| Workflows and actions (`.github/workflows/*.yml`, `action.yml`) | `org/github-actions`, `org/repo-conventions` |
-| Repo setup, CI policy, `.lute/` scripts | `org/repo-conventions` |
-| A `.changes/` entry or `CHANGELOG.md` | `org/changelog-entries` |
-| A README or getting-started doc | `org/user-facing-docs` |
-| Any prose you generate (PR body, commit message, comments, docs) | `org/writing-style` |
-| The shape and scope of the change itself | `org/reviewable-changes` |
+| A change that touches…                                           | Runs through…                                |
+| ---------------------------------------------------------------- | -------------------------------------------- |
+| Luau source (`*.luau`)                                           | `org/write-luau-code`, `org/code-comments`   |
+| Luau tests (`*.spec.luau`)                                       | `org/write-luau-tests`                       |
+| Workflows and actions (`.github/workflows/*.yml`, `action.yml`)  | `org/github-actions`, `org/repo-conventions` |
+| Repo setup, CI policy, `.lute/` scripts                          | `org/repo-conventions`                       |
+| A `.changes/` entry or `CHANGELOG.md`                            | `org/changelog-entries`                      |
+| A README or getting-started doc                                  | `org/user-facing-docs`                       |
+| Any prose you generate (PR body, commit message, comments, docs) | `org/writing-style`                          |
+| The shape and scope of the change itself                         | `org/reviewable-changes`                     |
 
 Treat the map as a floor. If a change touches something no row names, find the skill in the index that fits and run it too.
 

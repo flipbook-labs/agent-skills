@@ -28,7 +28,7 @@ Each entry declares a genre. `type: process` is a runbook (what to do next) and
 
 > Scaffold: no skills seeded yet. Entries land here (in the same commit as each
 > skill) as the library is populated. Format per line:
-> `` - `<scope>/<name>`: <trigger-rich one-liner>. ``
+> ``- `<scope>/<name>`: <trigger-rich one-liner>.``
 
 ### Cross-cutting (`org/`)
 
