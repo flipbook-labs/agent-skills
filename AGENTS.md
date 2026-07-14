@@ -91,11 +91,11 @@ _none yet_
 - `flipbook/config-and-flags`: environment variables, injected globals, build channels/targets, and user settings in Flipbook. Use when: configuring build behavior, understanding global state, or setting user options. `type: knowledge`.
 - `flipbook/community-and-positioning`: community-first doctrine, telemetry/privacy posture, and ecosystem claims for Flipbook. Use when: understanding Flipbook's positioning or community commitments. `type: knowledge`.
 - `flipbook/domain-reference`: story/storybook contracts, Storyteller, module reload, control types, React-in-Roblox, and domain concepts. Use when: understanding Flipbook's conceptual model or story format. `type: knowledge`.
-- `flipbook/diagnostics-and-tooling`: measurement, logging, test output parsing, build-cache inspection, and rerender accounting in Flipbook. Use when: debugging test failures, analyzing performance, or inspecting build state. `type: knowledge`.
+- `flipbook/diagnostics-and-tooling`: measurement, logging, test output parsing, build-cache inspection, and rerender accounting in Flipbook. Use when: debugging test failures, analyzing performance, or inspecting build state. `type: process`.
 - `flipbook/failure-archaeology`: past investigations, dead ends, reverted features, and unresolved bugs in Flipbook. Use when: investigating a behavior, checking if a "new" fix has been attempted before. `type: knowledge`.
-- `flipbook/validation-and-qa`: evidence bar for proving a fix, test anatomy, spec writing, and QA standards for Flipbook. Use when: writing tests, proving a fix is correct, or understanding what evidence is required. `type: knowledge`.
-- `flipbook/proof-and-analysis-toolkit`: prove claims via mechanism: require-graph, reload isolation, build determinism, and type-level proof. Use when: proving correctness, validating build behavior, or analyzing system properties. `type: knowledge`.
-- `flipbook/story-controls-campaign`: story-controls work: reproducing gaps, ranked solutions, validation gates, and controls-related changes. Use when: implementing controls features or understanding the controls design. `type: knowledge`.
+- `flipbook/validation-and-qa`: evidence bar for proving a fix, test anatomy, spec writing, and QA standards for Flipbook. Use when: writing tests, proving a fix is correct, or understanding what evidence is required. `type: process`.
+- `flipbook/proof-and-analysis-toolkit`: prove claims via mechanism: require-graph, reload isolation, build determinism, and type-level proof. Use when: proving correctness, validating build behavior, or analyzing system properties. `type: process`.
+- `flipbook/story-controls-campaign`: story-controls work: reproducing gaps, ranked solutions, validation gates, and controls-related changes. Use when: implementing controls features or understanding the controls design. `type: process`.
 - `flipbook/research-frontier`: open research problems, blockers, milestones, and the future direction of Flipbook. Use when: exploring new capabilities or understanding long-term direction. `type: knowledge`.
 
 ### AgentGateway (`agent-gateway/`)

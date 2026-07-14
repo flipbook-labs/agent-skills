@@ -4,11 +4,13 @@
 
 local fs = require("@std/fs")
 local path = require("@std/path")
+local process = require("@std/process")
 
--- Resolve the repo root from this script's own location (walk up to the rokit.toml
--- marker) so the script works from any working directory and any clone.
-local function findRepoRoot()
-	local dir = path.dirname(debug.info(1, "s"))
+-- The script lives in the installed AgentSkills package, so its own path is not
+-- the repo root. Resolve from the working directory instead, walking up to the
+-- rokit.toml marker, so this runs from anywhere inside the Flipbook checkout.
+local function findRepoRoot(): string
+	local dir = path.format(process.cwd())
 	for _ = 1, 12 do
 		if fs.exists(path.join(dir, "rokit.toml")) then
 			return dir
@@ -19,7 +21,7 @@ local function findRepoRoot()
 		end
 		dir = parent
 	end
-	error("could not locate repo root (no rokit.toml found above this script)")
+	error("could not locate repo root (no rokit.toml found above the current directory)")
 end
 
 local WORKSPACE_ROOT = path.join(findRepoRoot(), "workspace")

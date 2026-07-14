@@ -311,7 +311,7 @@ This validates that the store subscription model (per-control signals via `useSi
 
 ## Diagnostic Scripts
 
-The `scripts/` directory in this skill contains three read-only Lute analysis scripts. They only read the repo — none of them modify it. They are Lute scripts (`.luau`) because Lute is guaranteed present after `rokit install`; there is no shell fallback to keep in sync. Each script resolves the repo root from its own location by walking up to `rokit.toml`, so you can run it from any working directory. Invoke with `lute run <path>` (the argument is a path to the script file, not a `.lute/` task name).
+The `scripts/` directory in this skill contains three read-only Lute analysis scripts. They only read the repo — none of them modify it. They are Lute scripts (`.luau`) because Lute is guaranteed present after `rokit install`; there is no shell fallback to keep in sync. Because a script runs from its install location (see below) rather than from your checkout, it resolves the repo root by walking up from your current directory to `rokit.toml`, so run it from anywhere inside your Flipbook checkout. Invoke with `lute run <path>` (the argument is a path to the script file, not a `.lute/` task name).
 
 These scripts live in the installed AgentSkills package. After Flipbook runs `lute run install`, they are available at `~/.loom/store/AgentSkills@<version>/src/flipbook/diagnostics-and-tooling/scripts/<name>.luau` (where `<version>` is the pinned version in your `loom.config.luau`). For brevity below, we write `<skills>` to mean that resolved path — e.g., `lute run <skills>/inventory-stories.luau`.
 
