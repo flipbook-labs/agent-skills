@@ -39,6 +39,16 @@ When you have none of it, a short true body beats a long derivable one. "Add the
 
 Some transient facts are genuinely useful. A change split from a larger one is worth noting. The move is to phrase it so it survives, not to lead with it. "Stacked on #2, review that first" is session-state and dies on merge. "Builds on #2" is the same fact in artifact-state and stays true afterward. Give legitimately transient context its most durable phrasing, or an explicit expiry, rather than letting it read as permanent and quietly go stale.
 
+## Fit the house template
+
+Before writing a PR body, find the template and fill _its_ sections rather than inventing your own headings. Look in order: the repo's own `.github/pull_request_template.md`, then the org fallback `flipbook-labs/.github/pull_request_template.md`. The repo template wins when both exist, but many repos carry none and rely on the org default — and that org-level file is the one agents habitually fail to look up a level to find. Then skim a few recent merged, human-authored PRs filled against that template, so what you write sits uniformly beside theirs and you can see how they use each section.
+
+The tests above apply _inside_ each section, not instead of it. `Problem` and `Solution` hold the non-derivable why; `Notes for reviewers` holds blast radius and the calls you are unsure about. A `Testing` section is for verification a reader cannot get from CI — real manual steps — not a checklist that restates the pipeline (`- [x] ran the unit tests` is noise; CI already reports that). When the honest answer is "nothing beyond CI," say so in a line rather than padding the section to fill the heading.
+
+## Worked example
+
+[`examples/`](examples/README.md) walks one real PR body from an agent's default draft down to a slim, template-fitted final: four versions of the same change, with each cut mapped to the test that catches it. It also shows why the deepest cut comes from a pass that is not attached to the words it is cutting.
+
 ## When not to use
 
 This skill is the cross-cutting root. For the surface rules, read the matching skill: [`org/code-comments`](../code-comments/SKILL.md) for when a comment earns its place, [`org/changelog-entries`](../changelog-entries/SKILL.md) for release notes read in isolation, [`org/reviewable-changes`](../reviewable-changes/SKILL.md) for scoping the diff itself. For voice and banned patterns in any of them, [`org/writing-style`](../writing-style/SKILL.md). This skill governs what to capture and for whom. Those govern the surface and the sound.
