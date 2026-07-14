@@ -1,19 +1,16 @@
--- Checks Markdown formatting with Prettier. Prettier is a Node tool fetched on
--- demand with npx (Node is present on CI runners and in local dev), so the repo
--- carries no package.json. The version is pinned here so a contributor and CI
--- format against the same rules. Pass --write to reformat in place; the default
--- --check is what CI runs. Run via `lute run format`.
+-- Checks Markdown formatting with Prettier. Prettier is a Node tool pinned in
+-- package.json and installed with `npm ci`, so a contributor and CI format
+-- against the same version. Run `npm ci` once before using this locally. Pass
+-- --write to reformat in place; the default --check is what CI runs. Run via
+-- `lute run format`.
 
 local process = require("@std/process")
-
-local PRETTIER = "prettier@3.9.5"
 
 local write = table.find(process.args, "--write") ~= nil
 
 local result = process.run({
 	"npx",
-	"--yes",
-	PRETTIER,
+	"prettier",
 	if write then "--write" else "--check",
 	"**/*.md",
 }, {
