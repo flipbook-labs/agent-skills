@@ -5,12 +5,12 @@ weekly "Upgrade Roblox Packages" job ([flipbook#611](https://github.com/flipbook
 an illustration rather than a live anchor). The diff never changed between drafts;
 only the prose did. Read them in order and watch what gets cut.
 
-| Draft | File | What it shows |
-| ----- | ---------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| 1     | [`1-default.md`](1-default.md)                       | The default: one sentence per diff hunk, transition narration, a CI-echoing test plan |
-| 2     | [`2-durable-self-applied.md`](2-durable-self-applied.md) | This skill applied by the author to their own draft — better, but still padded      |
-| 3     | [`3-adversarial-cut.md`](3-adversarial-cut.md)       | A fresh pass, not attached to the words, cutting to the non-derivable core           |
-| 4     | [`4-template-fitted.md`](4-template-fitted.md)       | Draft 3 reflowed into the repo's PR template                                         |
+| Draft | File                                                     | What it shows                                                                         |
+| ----- | -------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| 1     | [`1-default.md`](1-default.md)                           | The default: one sentence per diff hunk, transition narration, a CI-echoing test plan |
+| 2     | [`2-durable-self-applied.md`](2-durable-self-applied.md) | This skill applied by the author to their own draft — better, but still padded        |
+| 3     | [`3-adversarial-cut.md`](3-adversarial-cut.md)           | A fresh pass, not attached to the words, cutting to the non-derivable core            |
+| 4     | [`4-template-fitted.md`](4-template-fitted.md)           | Draft 3 reflowed into the repo's PR template                                          |
 
 ## Draft 1 → 2: name the why
 
