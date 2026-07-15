@@ -28,24 +28,24 @@ maintenance norm) and therefore the strictest re-verification requirements.
 
 Every skill declares `type: process` or `type: knowledge` in its frontmatter. Both
 genres load the same way (trigger description → read on demand); the split governs
-*form* and *how they rot*, not where they live:
+_form_ and _how they rot_, not where they live:
 
 - **Process** (`type: process`) — imperative, "do this next": runbooks, campaigns,
   review discipline. Keep them short — commands, expected output, gates. When a
   process skill grows a background section beyond a few lines, that is the smell:
   extract the background into a knowledge skill and link it. Process links to
-  knowledge for the *why*; it never inlines it.
+  knowledge for the _why_; it never inlines it.
 - **Knowledge** (`type: knowledge`) — declarative, "how the system is and why":
   architecture contracts, domain reference, failure archaeology. The long reference layer.
 
 They drift differently, so they re-verify differently. Process skills are nearly
 self-testing — run the command and drift fails loudly; their re-verify blocks are
-commands to run. Knowledge skills fail *silently* — which is exactly why the anchor
+commands to run. Knowledge skills fail _silently_ — which is exactly why the anchor
 convention and provenance footers below matter most there; their re-verify blocks are
 greps and anchors to confirm.
 
-Filing rule for new content: tells you *what to do next* → process; tells you *how or
-why the system is* → knowledge; user-facing rather than agent-facing → it belongs on
+Filing rule for new content: tells you _what to do next_ → process; tells you _how or
+why the system is_ → knowledge; user-facing rather than agent-facing → it belongs on
 the docs site, not in a skill (the library must not duplicate the docs of record).
 
 ## The two-altitude trust model
@@ -53,12 +53,12 @@ the docs site, not in a skill (the library must not duplicate the docs of record
 Every skill mixes two kinds of content, and they earn different amounts of trust:
 
 - **Durable layer — authoritative.** Doctrine, invariants, mechanisms, architecture
-  contracts, failure archaeology, the *why* behind a decision. This ages slowly. It is
+  contracts, failure archaeology, the _why_ behind a decision. This ages slowly. It is
   the reason the library is worth having, and you can rely on it.
 - **Volatile layer — convenience, re-verify before you lean on it.** Anything a routine
   code change can invalidate: exact versions, config values, place/universe IDs,
   "currently…" claims, command output, and any pointer into source. Treat these as a
-  *snapshot with a timestamp*, never as ground truth. If a decision is high-stakes,
+  _snapshot with a timestamp_, never as ground truth. If a decision is high-stakes,
   re-derive the fact from the repo first.
 
 When the two disagree, the repo wins over the skill, and the durable layer wins over
@@ -78,7 +78,7 @@ constant, type, setting key, or a short distinctive string or comment.
 Before you write an anchor, open the file and confirm the token exists and is
 distinctive enough to locate. Never invent one. If nothing stable marks the spot, name
 the file and the symbol/section and say what to look for — still no line number. The one
-exception: line references *into a code or output block printed inside the skill itself*
+exception: line references _into a code or output block printed inside the skill itself_
 are self-contained and fine.
 
 **Paths are relative to the repo the skill is about, never absolute.** A skill in
@@ -87,7 +87,7 @@ are self-contained and fine.
 machine-specific prefix (`/Users/you/…`) — it fails or silently misleads on every other
 clone. In scripts, derive the root at runtime (e.g. `path.dirname(debug.info(1, "s"))`,
 not a literal). If you paste real command output containing an absolute path, redact the
-prefix to `<REPO_ROOT>`. Remember these skills are *installed into a package store* on
+prefix to `<REPO_ROOT>`. Remember these skills are _installed into a package store_ on
 the consumer's machine — never write a path relative to this repo's own layout; write it
 relative to the repo the reader is working in.
 
@@ -106,7 +106,7 @@ Two cases, because this is a versioned package:
 - **You are editing this repo directly** — fix the skill in the same PR as your other
   work here, with a changelog entry. Reviewers treat the skill edit as part of the
   change, the same way a public API change expects a doc change.
-- **You noticed the drift while working in a *consumer* repo** (the common case for
+- **You noticed the drift while working in a _consumer_ repo** (the common case for
   `flipbook/` skills, whose anchors point into another repo's source) — you can't fix it
   in that repo's PR across the package boundary. Instead propose the fix here immediately
   (don't let the observation evaporate) by opening a PR against agent-skills with a
@@ -143,7 +143,7 @@ drift fastest and heal slowest.
 - [ ] Zero line-number pointers into source — anchors only, each verified present in the repo.
 - [ ] Zero absolute/machine-specific paths — relative to the repo the skill is about,
       `../sibling` for sibling repos, runtime-derived in scripts.
-- [ ] Frontmatter `description` says exactly *when to load* (trigger-rich "Use when:") and
+- [ ] Frontmatter `description` says exactly _when to load_ (trigger-rich "Use when:") and
       `type:` declares the genre.
 - [ ] Project Skills index in AGENTS.md updated if the skill is new, renamed, or retired.
 - [ ] "When not to use" links sibling skills so the right one wins.

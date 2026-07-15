@@ -24,11 +24,39 @@ Scopes:
 Each entry declares a genre. `type: process` is a runbook (what to do next) and
 `type: knowledge` is reference (how the system is and why). See CONTRIBUTING.md.
 
+## Using these skills while you work here
+
+This repo runs on its own library. An agent editing a skill, doc, or script here
+is governed by the same skills it ships, so route to them the way a consumer repo
+does. Because the skills are the source files under `src/`, there is no install or
+resolve step: read them directly.
+
+Before you write any skill, doc, code, or PR prose:
+
+1. Read the **Project Skills** index below in full, so you know what exists. This
+   read is unconditional.
+2. When your task matches a trigger, open that `src/<scope>/<name>/SKILL.md` and
+   read it before doing the work it covers.
+
+Several skills govern the work itself: `org/writing-style` and `org/code-comments`
+for prose, `org/write-luau-code` and `org/write-luau-tests` for Luau,
+`org/reviewable-changes` and `org/review-pass` for scoping and reviewing the change,
+and `org/changelog-entries` for the `.changes/` entry. Read the ones your task
+touches before you start.
+
+### Forward this to subagents
+
+The Task tool spawns subagents in a fresh context that does not include this guide,
+so they never see the gate unless you hand it to them. Whenever you delegate,
+include in the subagent's prompt (1) the read-the-index gate above and (2) the
+concrete `src/<scope>/<name>/SKILL.md` path(s) relevant to its task. Never assume a
+subagent will find the skills on its own.
+
 ## Project Skills
 
 > Scaffold: no skills seeded yet. Entries land here (in the same commit as each
 > skill) as the library is populated. Format per line:
-> `` - `<scope>/<name>`: <trigger-rich one-liner>. ``
+> ``- `<scope>/<name>`: <trigger-rich one-liner>.``
 
 ### Cross-cutting (`org/`)
 
@@ -51,6 +79,25 @@ _none yet_
 ### Flipbook (`flipbook/`)
 
 - `flipbook/write-docs`: authoring Flipbook's docs (the Obsidian vault and Docusaurus site). The workflow, the site mechanics (wikilinks, callouts, sidebar, code samples), and conventions. Defers to `org/writing-style` for voice. `type: process`.
+- `flipbook/setup-dev-env`: set up or repair the Flipbook, Storyteller, or ModuleLoader development environment. Use when: first-time setup, installing dependencies, managing .env files, troubleshooting rokit/wally/lute, or repairing stale tooling. `type: process`.
+- `flipbook/run-checks`: run validation checks (lint, analyze, test) in Flipbook, Storyteller, or ModuleLoader. Use when: running tests, lint, analyze, CI checks, quality checks, or verifying changes. `type: process`.
+- `flipbook/test-dependencies`: verify local Storyteller or ModuleLoader changes inside Flipbook by overlaying built binaries. Use when: you changed storyteller or module-loader and need to test in Flipbook, or verifying a dependency change. `type: process`.
+- `flipbook/develop-through-studioplugins`: special workflow for testing FlipbookCore changes through the StudioPlugins Flipbook plugin. Use only when: the engineer explicitly asks to verify changes through StudioPlugins. `type: process`.
+- `flipbook/change-control`: PR workflow, version gating, CI gates, review discipline, and non-negotiables for Flipbook. Use when: preparing a PR, navigating release gates, or understanding the PR merge workflow. `type: process`.
+- `flipbook/debugging-playbook`: symptom→solution runbook for runtime issues in Flipbook (stale plugin, hot-reload, re-renders, crashes, test failures). Use when: troubleshooting Flipbook runtime behavior. `type: process`.
+- `flipbook/release-and-operations`: release runbooks, deployment orchestration, CI/CD operations, and the public release workflow for Flipbook. Use when: preparing a release, deploying Flipbook, or managing CI/CD. `type: process`.
+- `flipbook/research-methodology`: hypothesis/evidence protocol for experiments, PR readiness, documenting dead ends, and proving claims via mechanism. Use when: designing an investigation, validating a fix, or documenting research. `type: process`.
+- `flipbook/architecture-contract`: load-bearing design decisions, architectural invariants, and known weak points of Flipbook's architecture. Use when: understanding or extending system design, debugging architectural mismatches, or validating deep changes. `type: knowledge`.
+- `flipbook/build-and-toolchain`: source→rbxm pipeline, Darklua transforms, env-global injection, build channels/targets, dead-code elimination, and the complete toolchain for building Flipbook. Use when: understanding the build process or modifying build output. `type: knowledge`.
+- `flipbook/config-and-flags`: environment variables, injected globals, build channels/targets, and user settings in Flipbook. Use when: configuring build behavior, understanding global state, or setting user options. `type: knowledge`.
+- `flipbook/community-and-positioning`: community-first doctrine, telemetry/privacy posture, and ecosystem claims for Flipbook. Use when: understanding Flipbook's positioning or community commitments. `type: knowledge`.
+- `flipbook/domain-reference`: story/storybook contracts, Storyteller, module reload, control types, React-in-Roblox, and domain concepts. Use when: understanding Flipbook's conceptual model or story format. `type: knowledge`.
+- `flipbook/diagnostics-and-tooling`: measurement, logging, test output parsing, build-cache inspection, and rerender accounting in Flipbook. Use when: debugging test failures, analyzing performance, or inspecting build state. `type: process`.
+- `flipbook/failure-archaeology`: past investigations, dead ends, reverted features, and unresolved bugs in Flipbook. Use when: investigating a behavior, checking if a "new" fix has been attempted before. `type: knowledge`.
+- `flipbook/validation-and-qa`: evidence bar for proving a fix, test anatomy, spec writing, and QA standards for Flipbook. Use when: writing tests, proving a fix is correct, or understanding what evidence is required. `type: process`.
+- `flipbook/proof-and-analysis-toolkit`: prove claims via mechanism: require-graph, reload isolation, build determinism, and type-level proof. Use when: proving correctness, validating build behavior, or analyzing system properties. `type: process`.
+- `flipbook/story-controls-campaign`: story-controls work: reproducing gaps, ranked solutions, validation gates, and controls-related changes. Use when: implementing controls features or understanding the controls design. `type: process`.
+- `flipbook/research-frontier`: open research problems, blockers, milestones, and the future direction of Flipbook. Use when: exploring new capabilities or understanding long-term direction. `type: knowledge`.
 
 ### AgentGateway (`agent-gateway/`)
 
