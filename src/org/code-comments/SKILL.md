@@ -8,6 +8,8 @@ type: process
 
 The discipline for comments in code you write or edit. The bar: a comment earns its place by stating something true and load-bearing that the code itself cannot show. Everything else is noise that rots.
 
+The "change-log talk" this skill bans is the comment-local face of a wider failure. [`org/durable-writing`](../durable-writing/SKILL.md) names the root and covers its PR-body and changelog siblings.
+
 ## The test
 
 Before writing a comment, ask: **if a competent reader deleted the code below it and rewrote it from scratch, would this comment have stopped them from reintroducing a bug or removing something load-bearing?**
@@ -65,6 +67,6 @@ The comments worth keeping most often explain a constraint from _outside_ the fi
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-07. Doctrine written for the exemplar from storyteller#132, which the maintainer flagged as the house bar for code comments. Updated 2026-07-07 with the refactor "how it used to be" tell, deleting generated comment slop, and naming off-site constraints, from recurring corrections across Changewrite, ModuleLoader, deploy-storybook, and flipbook-cli reviews.
+**Date stamped:** 2026-07-07. Doctrine written for the exemplar from storyteller#132, which the maintainer flagged as the house bar for code comments. Updated 2026-07-07 with the refactor "how it used to be" tell, deleting generated comment slop, and naming off-site constraints, from recurring corrections across Changewrite, ModuleLoader, deploy-storybook, and flipbook-cli reviews. Updated 2026-07-13 to cross-link `org/durable-writing`, the cross-cutting root this skill applies to comments.
 
 **Re-verify these claims when this skill next loads:** nothing. This `org/` skill carries no single-repo anchors — the exemplar above is a frozen snapshot quoted for illustration, deliberately _not_ a live pointer into Storyteller source (broader-scope skills must avoid single-repo anchors; see CONTRIBUTING.md). It stands on its own even if that file later changes. The doctrine has no volatile layer.

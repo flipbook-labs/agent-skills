@@ -1,6 +1,6 @@
 ---
 name: writing-style
-description: "The house voice for prose you generate: skills, docs, PR descriptions and titles, commit messages, changelog entries, comments. Use when: writing or editing any prose in a flipbook-labs repo, naming a commit or PR, or running a critic pass over your own draft for AI tells. Covers the voice, the no-conventional-commits rule for commit and PR titles, the banned patterns (antithesis framing, hype words, em dashes, semicolon overuse), and the self-critic pass."
+description: "The house voice for prose you generate: skills, docs, PR descriptions and titles, commit messages, changelog entries, comments. Use when: writing or editing any prose in a flipbook-labs repo, naming a commit or PR, or running a critic pass over your own draft for AI tells. Covers the voice, the no-conventional-commits rule for commit and PR titles, the AI-authorship disclosure line on generated PR bodies, the banned patterns (antithesis framing, hype words, em dashes, semicolon overuse), and the self-critic pass."
 type: process
 ---
 
@@ -55,6 +55,14 @@ Write them as a plain imperative summary. Do not use conventional-commit prefixe
 - Keep the subject to one line with no trailing period. Detail belongs in the body or the PR description.
 - State what the change does. Which bucket it falls into is not information the reader needs.
 
+## Disclose AI authorship
+
+The account opening a pull request is the user's, so a reviewer assumes a person wrote the body unless you tell them otherwise. Tell them. Every PR body you generate ends with a disclosure line naming the tool that wrote it, so the reviewer reads it with the right expectations:
+
+> 🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Swap in the marker for whatever agent authored the change (Cursor, Fable, and the rest). This holds even when you fill a repo's PR template: the disclosure is the body's closing line, below the last section. It is also the one line you never cut when slimming a body (see [`org/durable-writing`](../durable-writing/SKILL.md)). Trim derivable and rotted prose, never the disclosure.
+
 ## Banned patterns
 
 **Antithesis / negation framing** (the most important one to catch):
@@ -82,6 +90,6 @@ Before declaring any prose done, re-read the text _you_ wrote or edited with one
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-08. The voice, banned-patterns list, and critic pass generalized from Flipbook's `write-docs` skill. The commit-message and PR-title convention (no conventional-commit prefixes) was added from the maintainer's direction that this org does not use conventional commits. The em-dash ban was extended to spell out that a double hyphen (`--`) used as sentence punctuation counts as an em dash, after agents reached for `--` to slip past the `—` ban. Soft-wrapping, avoiding parentheticals, and capitalizing product names were added from recurring corrections across agent-gateway, Storyteller, and Changewrite reviews. The Flipbook and Obsidian docs-site mechanics stay in `flipbook/write-docs`, which defers here for voice.
+**Date stamped:** 2026-07-08. The voice, banned-patterns list, and critic pass generalized from Flipbook's `write-docs` skill. The commit-message and PR-title convention (no conventional-commit prefixes) was added from the maintainer's direction that this org does not use conventional commits. The em-dash ban was extended to spell out that a double hyphen (`--`) used as sentence punctuation counts as an em dash, after agents reached for `--` to slip past the `—` ban. Soft-wrapping, avoiding parentheticals, and capitalizing product names were added from recurring corrections across agent-gateway, Storyteller, and Changewrite reviews. The AI-authorship disclosure rule was promoted to org doctrine on 2026-07-16 from the maintainer's direction that an agent opens PRs as the user's account, so the body must set reviewer expectations. It consolidates the per-repo "disclose AI assistance" conventions the `flipbook/` skills already carried. The Flipbook and Obsidian docs-site mechanics stay in `flipbook/write-docs`, which defers here for voice.
 
 **Re-verify these claims when this skill next loads:** this skill is pure doctrine and makes no claims about any repo's source, so it has no volatile layer to re-derive. When a repo's own writing or docs skill drifts from this voice, fix it there, and if the voice itself changes, update this skill and add a `.changes/` entry.
