@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 
 
+## v0.5.0
+
+### Changes
+
+- Upgrade the Changewrite release action to `v0.7.0` and adopt its `publish-lock` check.
+
+- Format all Markdown with Prettier and add a `format` CI job that keeps it enforced.
+
+### Features
+
+- Add `org/durable-writing`, the root for writing PR bodies, comments, and changelog entries to the durable why rather than narrating the change, and tighten two conventions it leans on: an AI-authorship disclosure line is required on agent-generated PR bodies, and each PR carries a single changelog entry.
+
+- Add the `flipbook/` skill scope and route agents working in this repo through the same Project Skills index the library ships.
+
+
 ## v0.4.0
 
 ### Changes
