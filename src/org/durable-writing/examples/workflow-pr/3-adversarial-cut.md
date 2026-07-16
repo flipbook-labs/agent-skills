@@ -6,3 +6,5 @@ Two decisions the diff doesn't explain:
 - **Commit on top instead of rebuilding from base:** these bumps stay open for weeks while we adapt Flipbook to the new packages, and rebuilding each run would discard that work.
 
 Requires `FLIPBOOK_BACKEND_APP_ID` / `FLIPBOOK_BACKEND_APP_PRIVATE_KEY` to be granted to this repo.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)

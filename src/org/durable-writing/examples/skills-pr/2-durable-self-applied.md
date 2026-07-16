@@ -10,3 +10,5 @@ The code excerpts are frozen illustrations edited down from real components, not
 ## Checks
 
 `lute test` passes, including the index-agreement case that fails if a skill lacks its AGENTS.md entry, and the changed files are Prettier-clean.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)

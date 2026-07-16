@@ -13,3 +13,5 @@ Docs only, so nothing to exercise beyond CI, which runs the index-agreement test
 ## Notes for reviewers
 
 The scope is the call to weigh. Every example comes from Flipbook, yet both skills sit at `org/`. If they read as Flipbook-specific rather than general react-lua doctrine, the fix is to move them to `flipbook/`, not to rewrite them.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)

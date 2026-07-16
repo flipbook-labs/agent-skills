@@ -17,7 +17,7 @@ The sharpest line is the last one: "AGENTS.md has a pre-existing formatting warn
 
 ## Draft 1 → 2: name the why, drop the rot
 
-Draft 2 leads with the one durable decision, that the skills are filed at `org/` even though every example comes from Flipbook, and drops both the stale #28 note and the tool footer. That is most of the win. But it was edited by the author of draft 1, and self-editing defends its own sentences: it keeps two bullets that re-narrate the index entries, a "frozen illustrations" line that restates each skill's own provenance section, and a "Checks" section that echoes what CI already runs.
+Draft 2 leads with the one durable decision, that the skills are filed at `org/` even though every example comes from Flipbook, and drops the stale #28 note. That is most of the win. It keeps the disclosure footer, which is never a cut: an agent opens the PR as the user's account, so the body has to tell a reviewer a person did not write it (see [`org/writing-style`](../../../writing-style/SKILL.md)). But draft 2 was edited by the author of draft 1, and self-editing defends its own sentences: it keeps two bullets that re-narrate the index entries, a "frozen illustrations" line that restates each skill's own provenance section, and a "Checks" section that echoes what CI already runs.
 
 ## Draft 2 → 3: the adversarial pass
 

@@ -19,3 +19,5 @@ The weekly RobloxPackages upgrade updates the in-flight upgrade PR in place, inc
 - Dispatch with no `upgrade-roblox-packages` branch → branch and PR created, CI runs without approval.
 - Add a commit to the branch, then dispatch with a newer Studio version available → version bumped on top, the added commit intact, no second PR.
 - Dispatch when the branch already holds the latest version → nothing pushed.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)

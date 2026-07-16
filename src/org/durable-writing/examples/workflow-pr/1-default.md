@@ -14,3 +14,5 @@ Replaces the `peter-evans/create-pull-request` step, whose default force-push-fr
 - [ ] Manually dispatch the workflow when no `upgrade-roblox-packages` branch exists → new branch + PR created, CI runs without approval.
 - [ ] Add a local change to the branch, then dispatch again with a newer Studio version available → version bumped in place, prior commit preserved, no new PR opened.
 - [ ] Dispatch when the branch is already at the latest version → no-op (nothing pushed).
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
