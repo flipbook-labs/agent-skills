@@ -3,4 +3,4 @@ bump: minor
 category: Features
 ---
 
-Add `org/durable-writing`, the root for writing PR bodies, comments, and changelogs to the durable why rather than narrating the change, with guidance on fitting the repo or org PR template and two worked before/after examples (a workflow PR and a docs PR).
+Add `org/durable-writing`, the root for writing PR bodies, comments, and changelog entries to the durable why rather than narrating the change, and tighten two conventions it leans on: an AI-authorship disclosure line is required on agent-generated PR bodies, and each PR carries a single changelog entry.
