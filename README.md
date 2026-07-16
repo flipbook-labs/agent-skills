@@ -1,3 +1,6 @@
+> [!WARNING]
+> 🚧 **SLOP ALERT** 🚧: This repository is largely AI-generated. We make a concerted effort to rein in the agent PRs before merging, but bugs can still slip through.
+
 # agent-skills
 
 The single hub for **agent skills across the flipbook-labs org**. Instead of each
