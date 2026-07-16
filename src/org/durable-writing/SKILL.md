@@ -45,9 +45,9 @@ When you have none of it, a short true body beats a long derivable one. "Add the
 
 Some transient facts are genuinely useful. A change split from a larger one is worth noting. The move is to phrase it so it survives, not to lead with it. "Stacked on #2, review that first" is session-state and dies on merge. "Builds on #2" is the same fact in artifact-state and stays true afterward. Give legitimately transient context its most durable phrasing, or an explicit expiry, rather than letting it read as permanent and quietly go stale.
 
-## Worked example
+## Worked examples
 
-[`examples/`](examples/README.md) walks one real PR body from an agent's default draft down to a slim, template-fitted final: four versions of the same change, with each cut mapped to the test that catches it. It also shows why the deepest cut comes from a pass that is not attached to the words it is cutting.
+[`examples/`](examples/README.md) walks two real PR bodies from an agent's default draft down to a slim, template-fitted final, with each cut mapped to the test that catches it. The [workflow PR](examples/workflow-pr/README.md) carries technical whys, and shows why the deepest cut comes from a pass that is not attached to the words it is cutting. The [skills PR](examples/skills-pr/README.md) is a docs-only change where almost everything is derivable from the diff, so the honest body is short and one scope judgment is all that survives. It also catches a line that had already rotted: a reference to another PR as still in flight, written after that PR merged.
 
 ## When not to use
 
