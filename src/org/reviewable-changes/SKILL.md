@@ -10,7 +10,7 @@ How to shape a change so a reviewer can actually follow it. These are the scope 
 
 ## Keep the diff small, and do not move code you do not have to
 
-A large diff full of shifted-around code is expensive to review even when every line is correct, because the reviewer cannot tell a real change from a relocation. Marin: *"Try not to rewrite the components unless you have to. It makes the review process easier if things don't get shifted around too much."* Touch what the change needs and leave the rest where it is. When a diff gets big enough that a reviewer says *"there are too many file changes for me to review here,"* it needed to be split.
+A large diff full of shifted-around code is expensive to review even when every line is correct, because the reviewer cannot tell a real change from a relocation. Marin: _"Try not to rewrite the components unless you have to. It makes the review process easier if things don't get shifted around too much."_ Touch what the change needs and leave the rest where it is. When a diff gets big enough that a reviewer says _"there are too many file changes for me to review here,"_ it needed to be split.
 
 ## Separate refactoring from features
 
@@ -18,21 +18,21 @@ Structural work (extracting, moving, renaming, deleting) goes in its own PR, apa
 
 ## When you must reorganize, make the diff tell its story
 
-If a reorganization is unavoidable, shape it so the reason is visible. Order the change so the diff reads in a logical flow, and state why code moved. Marin: *"I want to rework this so the diff makes more sense,"* and, on an extraction: *"Ripping these out to `src/loading-strategies` since I need `requireWithLoadstring` for `createProxyModuleLoader`."* A one-line rationale in the PR or commit turns an unexplained move into a reviewable decision.
+If a reorganization is unavoidable, shape it so the reason is visible. Order the change so the diff reads in a logical flow, and state why code moved. Marin: _"I want to rework this so the diff makes more sense,"_ and, on an extraction: _"Ripping these out to `src/loading-strategies` since I need `requireWithLoadstring` for `createProxyModuleLoader`."_ A one-line rationale in the PR or commit turns an unexplained move into a reviewable decision.
 
 ## Do not get ahead of the change
 
-- **Do not expose public API prematurely.** Keep a new capability internal until the PR that deliberately exposes it. If a change touches the public surface as a side effect, revert that part. On a v0 library the public surface should stay small and you should be critical of every export, since breaking changes are still cheap. Marin: *"We'll expose everything off the public API in a follow-up PR."*
+- **Do not expose public API prematurely.** Keep a new capability internal until the PR that deliberately exposes it. If a change touches the public surface as a side effect, revert that part. On a v0 library the public surface should stay small and you should be critical of every export, since breaking changes are still cheap. Marin: _"We'll expose everything off the public API in a follow-up PR."_
 - **Do not add a dependency before the feature that uses it.** No new `wally.toml` / manifest entry until the code that needs it lands in the same PR.
 - **Expose an internal effect as a documented method rather than letting consumers scrape it.** When another repo needs to observe internal state (a lock, a tag), add a small public accessor for it instead of having the consumer reach into internals.
 
 ## Defer discovered rework to a follow-up
 
-When review turns up a larger problem (a vestigial code path, a design that wants reworking), do not balloon the current PR to fix it. Note it and split it out. Marin: *"Let's rip out the surfaces in a new PR. This is vestigial."* The current PR stays focused; the follow-up gets its own review.
+When review turns up a larger problem (a vestigial code path, a design that wants reworking), do not balloon the current PR to fix it. Note it and split it out. Marin: _"Let's rip out the surfaces in a new PR. This is vestigial."_ The current PR stays focused; the follow-up gets its own review.
 
 ## Leave nothing temporary behind
 
-Remove debug code, scaffolding, and temporary config before merge (*"Remember to remove this before merging"*). If something must stay in temporarily, say why in the PR rather than letting it slip in silently.
+Remove debug code, scaffolding, and temporary config before merge (_"Remember to remove this before merging"_). If something must stay in temporarily, say why in the PR rather than letting it slip in silently.
 
 ## When not to use
 

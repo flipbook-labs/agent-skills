@@ -6,7 +6,7 @@ type: process
 
 # GitHub Actions
 
-The craft of writing workflows and actions the way they get reviewed into shape. This skill is the *authoring* companion to [`org/repo-conventions`](../repo-conventions/SKILL.md): that one sets the policies a repo is configured against (pin actions by trust boundary, ~5-minute timeouts, keep check logic in `.lute/` scripts). This one is how the YAML itself should read.
+The craft of writing workflows and actions the way they get reviewed into shape. This skill is the _authoring_ companion to [`org/repo-conventions`](../repo-conventions/SKILL.md): that one sets the policies a repo is configured against (pin actions by trust boundary, ~5-minute timeouts, keep check logic in `.lute/` scripts). This one is how the YAML itself should read.
 
 ## Bash steps are strict and symmetric
 
@@ -20,7 +20,7 @@ Remove anything the workflow does not actually use. Unused inputs, a `workflow_d
 
 ## Structure jobs so a condition is written once
 
-Do not tack the same `if:` onto step after step. When a whole section runs only under a condition, lift it into its own job with one job-level `if:`, so downstream jobs can `needs:` it and skip cleanly. Marin: *"I really don't like that we have to tack a condition onto practically every step... Can we restructure things so that we do not need to keep repeating the same condition?"* A dedicated `detect-changes` job that gates the rest is the usual shape. While you are there, make `concurrency` deliberate: a group on its own serializes overlapping runs by queueing them, which is what a deploy wants. Add `cancel-in-progress: true` only where a newer run should supersede one already in flight (preview builds on a busy PR), never on a job mid-deploy.
+Do not tack the same `if:` onto step after step. When a whole section runs only under a condition, lift it into its own job with one job-level `if:`, so downstream jobs can `needs:` it and skip cleanly. Marin: _"I really don't like that we have to tack a condition onto practically every step... Can we restructure things so that we do not need to keep repeating the same condition?"_ A dedicated `detect-changes` job that gates the rest is the usual shape. While you are there, make `concurrency` deliberate: a group on its own serializes overlapping runs by queueing them, which is what a deploy wants. Add `cancel-in-progress: true` only where a newer run should supersede one already in flight (preview builds on a busy PR), never on a job mid-deploy.
 
 ## Name jobs and steps for a reader scanning logs
 
@@ -34,7 +34,7 @@ Workflow `env:` names are all-caps snake case (`VERSION`, `RELEASE_URL`), which 
 
 ## Keep every platform in the matrix, even a broken one
 
-Do not drop a platform from the build matrix because it currently fails. Keep the job and mark the failure as tolerated with `continue-on-error` (or a scoped `if`), so the breakage stays visible and gets re-enabled deliberately. Marin: *"Stop excluding windows. The job is broken right now but that doesn't mean we omit it."* Pair the toleration with a comment that says why the failure is accepted and what still must pass.
+Do not drop a platform from the build matrix because it currently fails. Keep the job and mark the failure as tolerated with `continue-on-error` (or a scoped `if`), so the breakage stays visible and gets re-enabled deliberately. Marin: _"Stop excluding windows. The job is broken right now but that doesn't mean we omit it."_ Pair the toleration with a comment that says why the failure is accepted and what still must pass.
 
 ## Bot-authored PRs announce themselves
 

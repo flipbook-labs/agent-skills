@@ -1,6 +1,6 @@
 ---
 name: changelog-entries
-description: "What goes in a changelog / .changes entry and who it is for: release notes read by a user with no PR context, tailored to the project's audience. Use when: writing or editing a Changewrite `.changes/` entry or any CHANGELOG body in a flipbook-labs repo. Covers reading in isolation, dropping PR-process references, cutting length, and matching a library vs plugin audience. Defers to org/writing-style for voice."
+description: "What goes in a changelog / .changes entry and who it is for: release notes read by a user with no PR context, tailored to the project's audience. Use when: writing or editing a Changewrite `.changes/` entry or any CHANGELOG body in a flipbook-labs repo. Covers reading in isolation, dropping PR-process references, one entry per PR (split the PR, not the entry), cutting length, and matching a library vs plugin audience. Defers to org/writing-style for voice."
 type: process
 ---
 
@@ -16,6 +16,14 @@ The reader has no branch, no diff, no PR thread. The entry has to stand on its o
 
 - Drop references to PRs, branches, and in-progress work. "gains the same support in its own PR" tells a user nothing, and it rots the moment that PR merges or stalls.
 - Describe what the released version does, in the present tense. Leave out the development story ("previously", "used to", "as part of this change"). That framing is you talking to the reviewer, and it belongs in the PR body. Dev narrative goes in the PR, never in the shipped artifact.
+
+Reading in isolation is the changelog case of writing for the later reader. [`org/durable-writing`](../durable-writing/SKILL.md) is the cross-cutting root.
+
+## One entry per PR
+
+Write one `.changes` entry per PR. Agents reach for a second when a PR seems to carry more than one distinct change, but a second entry doubles down on the sprawl instead of resolving it. How many changes a PR holds is a fact about the PR, not the changelog: if it genuinely bundles unrelated changes, the fix is to split it into separate PRs ([`org/reviewable-changes`](../reviewable-changes/SKILL.md)), each with one entry, rather than keep the bundle and describe it twice.
+
+Most of the time the PR is simply large, and one entry is still right. Collapse to a single entry and rework it with [`org/durable-writing`](../durable-writing/SKILL.md): name the change at the altitude the reader cares about and stop, the same move as "Cut the length" below. When the additions share a theme, one sentence names the theme. When they do not, that is the split signal again.
 
 ## Cut the length
 
@@ -52,7 +60,7 @@ The cross-repo issue link and the in-progress-PR aside both go, because a user c
 ## Category and bump
 
 - **Keep category names consistent, in the present tense.** Use the same headings across entries so the assembled changelog reads uniformly: `Features`, `Fixes`, `Changes`, `Dependencies`, not a mix like `Add`/`Added`/`Fixed`. Match whatever set the repo already uses.
-- **Use `patch` as the catch-all when the tool offers no "skip".** Changewrite requires a bump on every entry and has no internal or skip level, so a change with no user-facing effect (CI, tooling, a pure refactor) takes `patch`. Marin: *"We're essentially using patch as a catch-all for actual patches and anything else a PR could possibly do since there's no skip option."* Reserve `minor` and `major` for changes a consumer would actually notice.
+- **Use `patch` as the catch-all when the tool offers no "skip".** Changewrite requires a bump on every entry and has no internal or skip level, so a change with no user-facing effect (CI, tooling, a pure refactor) takes `patch`. Marin: _"We're essentially using patch as a catch-all for actual patches and anything else a PR could possibly do since there's no skip option."_ Reserve `minor` and `major` for changes a consumer would actually notice.
 
 ## Voice
 
@@ -62,6 +70,6 @@ Everything in [`org/writing-style`](../writing-style/SKILL.md) applies to the bo
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-07. Written from the maintainer's guidance on a Storyteller changelog review: entries should read in isolation, drop in-progress-PR references, cut length by about half, and match the project's audience (developer-facing detail for a library, high-level summaries for a plugin like Flipbook). The length rule was tightened on 2026-07-07 from reviews of agent-skills#14 and agent-skills#18: one short sentence with a ceiling of about 140 characters, because an entry that enumerates a change's every part stops being scannable. Consistent present-tense category names and the `patch` catch-all bump were added the same day, from agent-gateway, Storyteller, and ModuleLoader reviews.
+**Date stamped:** 2026-07-07. Written from the maintainer's guidance on a Storyteller changelog review: entries should read in isolation, drop in-progress-PR references, cut length by about half, and match the project's audience (developer-facing detail for a library, high-level summaries for a plugin like Flipbook). The length rule was tightened on 2026-07-07 from reviews of agent-skills#14 and agent-skills#18: one short sentence with a ceiling of about 140 characters, because an entry that enumerates a change's every part stops being scannable. Consistent present-tense category names and the `patch` catch-all bump were added the same day, from agent-gateway, Storyteller, and ModuleLoader reviews. Updated 2026-07-13 to cross-link `org/durable-writing`, the cross-cutting root this skill applies to changelog bodies. The one-entry-per-PR rule was added 2026-07-16, from the maintainer's observation that agents write a second entry when a PR feels like more than one change. The resolution is to split the PR or collapse to one reworked entry, not to add the second.
 
 **Re-verify these claims when this skill next loads:** nothing. This `org/` skill is pure doctrine with no single-repo anchors. The before/after above is a frozen snapshot quoted for illustration, not a live pointer into Storyteller source. The audience examples (Storyteller as a library, Flipbook as a plugin) are stable facts about the org. When the house approach to changelogs changes, update this skill and add a `.changes/` entry.
