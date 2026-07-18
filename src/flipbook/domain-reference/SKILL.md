@@ -19,7 +19,7 @@ Discovery patterns from Storyteller:
 
 ### Story Format (The Return Value)
 
-A story module returns a table (type `Storyteller.Story<T>`) with this shape:
+A single-Story module returns a `Storyteller.Story<T>` table with this shape:
 
 ```luau
 return {
@@ -35,7 +35,7 @@ return {
 
 ### Multiple Stories per Module
 
-A story module can export `stories` instead of `story`. Arrays preserve their declared order. Dictionaries sort Stories alphabetically by key.
+A `Storyteller.StoryGroup<T>` can export `stories` instead of `story`. Arrays preserve their declared order. Dictionaries sort Stories alphabetically by key. `Storyteller.StoryModule<T>` is the union of the single-Story and grouped formats.
 
 ```luau
 local function createButton(isDisabled, text)
@@ -70,7 +70,7 @@ return {
 }
 ```
 
-Module-level `summary`, `controls`, `packages`, and `props` values become defaults for every Story. Dictionary fields merge with per-Story overrides. Each Story should declare a stable `id`. Storyteller falls back to the Story name, dictionary key, or array position when no ID is present. Duplicate IDs, empty groups, and modules that define both `story` and `stories` are rejected.
+Module-level `summary`, `controls`, `packages`, and `props` values become defaults for every Story. Story-level `controls`, `packages`, and `props` shallow-merge over their module defaults. Each Story should declare a stable `id`. A single definition falls back to its name or `"default"`. An array entry falls back to its name or one-based position, while a dictionary entry falls back to its key. Duplicate IDs, empty groups, and modules that define both `story` and `stories` are rejected.
 
 The `story` function receives a `props` object and must return one of six supported UI types (see "Story Formats by Framework" below). The `props` object contains:
 
@@ -275,8 +275,8 @@ Storyteller exports these key discovery and loading functions (verify the instal
 - `loadStorybookModule(storybookModule: ModuleScript, loader: ModuleLoader?) -> LoadedStorybook`: validate and return a Storybook
 - `loadStoryModule(storyModule: ModuleScript, storybook: LoadedStorybook, loader: ModuleLoader?) -> LoadedStory<T>`: load the first Story for compatibility
 - `loadStoriesFromModule(storyModule: ModuleScript, storybook: LoadedStorybook, loader: ModuleLoader?) -> { LoadedStory<T> }`: load every Story in a module
-- `useStory(storyModule: ModuleScript, storybook: LoadedStorybook, storyId: string?)`: subscribe to one selected Story and report a problem when the ID does not exist
-- `useStoryModuleSnapshots(targets)`: subscribe to sidebar metadata keyed first by Story module, then by Storybook source
+- `useStory(storyModule: ModuleScript, storybook: LoadedStorybook, storyId: string?) -> (LoadedStory<unknown>?, string?)`: subscribe to one selected Story and report a problem when the ID does not exist
+- `useStoryModuleSnapshots(targets: { StoryModuleTarget }) -> StoryModuleSnapshots`: subscribe to sidebar metadata keyed first by Story module, then by Storybook source
 
 The `loader` is a ModuleLoader instance (see "ModuleLoader" section below). Storyteller calls `loader:require(moduleScript)` instead of the built-in `require()` to bypass Roblox's cache.
 
