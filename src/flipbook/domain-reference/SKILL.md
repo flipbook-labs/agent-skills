@@ -278,6 +278,34 @@ Storyteller exports these key discovery and loading functions (verify the instal
 - `useStory(storyModule: ModuleScript, storybook: LoadedStorybook, storyId: string?) -> (LoadedStory<unknown>?, string?)`: subscribe to one selected Story and report a problem when the ID does not exist
 - `useStoryModuleSnapshots(targets: { StoryModuleTarget }) -> StoryModuleSnapshots`: subscribe to sidebar metadata keyed first by Story module, then by Storybook source
 
+`useStory` and `useStoryModuleSnapshots` are React hooks. Call them only while rendering a React component or another hook under `StorytellerProvider`. Their snapshot request and return types are:
+
+```luau
+type StoryModuleTarget = {
+  storyModule: ModuleScript,
+  storybook: LoadedStorybook,
+}
+
+type StorySnapshot = {
+  id: string,
+  name: string,
+  summary: string?,
+}
+
+type StoryModuleSnapshot = {
+  name: string,
+  source: ModuleScript,
+  stories: { StorySnapshot },
+  problem: string?,
+}
+
+type StoryModuleSnapshots = {
+  [ModuleScript]: {
+    [ModuleScript]: StoryModuleSnapshot, -- Keyed by Storybook source.
+  },
+}
+```
+
 The `loader` is a ModuleLoader instance (see "ModuleLoader" section below). Storyteller calls `loader:require(moduleScript)` instead of the built-in `require()` to bypass Roblox's cache.
 
 ### Render Lifecycle
@@ -508,10 +536,11 @@ find Packages/_Index -path "*storyteller*" -name "constants.luau" -exec cat {} \
 # Verify story and storybook type contracts
 find Packages/_Index -path "*storyteller*" -name "types.luau" | head -1 | xargs cat
 
-# Verify multi-story normalization and public exports from a sibling Storyteller checkout
-rg "StoryGroup|StoryModuleSnapshot|StoryModuleTarget" ../storyteller/src/types.luau
-rg "loadStoriesFromModule|useStoryModuleSnapshots" ../storyteller/src/init.luau
-rg "cannot define both|must contain at least one|duplicated" ../storyteller/src/loadStoryModuleData.luau
+# Verify multi-story normalization and public exports from the installed Storyteller package
+STORYTELLER_SRC="$(find Packages/_Index -path "*storyteller*" -type d -name src | head -1)"
+rg "StoryGroup|StoryModuleSnapshot|StoryModuleTarget" "$STORYTELLER_SRC/types.luau"
+rg "loadStoriesFromModule|useStoryModuleSnapshots" "$STORYTELLER_SRC/init.luau"
+rg "cannot define both|must contain at least one|duplicated" "$STORYTELLER_SRC/loadStoryModuleData.luau"
 
 # Verify control type enum
 find Packages/_Index -path "*storyteller*" -name "ControlType.luau" -exec cat {} \;
