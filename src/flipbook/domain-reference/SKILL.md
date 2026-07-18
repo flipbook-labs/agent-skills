@@ -10,20 +10,21 @@ This skill covers the storybook domain concepts you need to debug, extend, or va
 
 ## Stories and Storybooks: The Contract
 
-A **story** is a ModuleScript whose filename ends in `.story.luau` that exports a table with a `story` function. A **storybook** is a ModuleScript with filename ending in `.storybook.luau` that tells Flipbook where to find stories and what packages to make available.
+A **story** is a ModuleScript whose filename ends in `.story.luau` that exports one Story definition, a legacy Story function, or a `stories` group. A **storybook** is a ModuleScript with filename ending in `.storybook.luau` that tells Flipbook where to find stories and what packages to make available.
 
-Discovery patterns (from `wally.toml`-pinned Storyteller 1.12.0; as of 2026-07-01, `Packages/_Index/` contains built cache with 1.11.0):
+Discovery patterns from Storyteller:
 
 - Story pattern: `%.story$` (file ends with `.story.luau`)
 - Storybook pattern: `%.storybook$` (file ends with `.storybook.luau`)
 
 ### Story Format (The Return Value)
 
-A story module returns a table (type `Storyteller.Story<T>`) with this shape:
+A single-Story module returns a `Storyteller.Story<T>` table with this shape:
 
 ```luau
 return {
   story = function(props: Storyteller.StoryProps) -> T end,  -- Required.
+  id = string?,          -- Optional stable selection identity.
   name = string?,        -- Optional; display name (defaults to module name)
   summary = string?,     -- Optional; brief description
   controls = Storyteller.StoryControlsSchema?,  -- Optional; control definitions
@@ -31,6 +32,45 @@ return {
   props = { [string]: any }?,                   -- Optional; static props merged before controls
 }
 ```
+
+### Multiple Stories per Module
+
+A `Storyteller.StoryGroup<T>` can export `stories` instead of `story`. Arrays preserve their declared order. Dictionaries sort Stories alphabetically by key. `Storyteller.StoryModule<T>` is the union of the single-Story and grouped formats.
+
+```luau
+local function createButton(isDisabled, text)
+  local button = Instance.new("TextButton")
+  button.Active = not isDisabled
+  button.Text = text
+  return button
+end
+
+return {
+  name = "Buttons",
+  summary = "Shared by every Story in the module.",
+  controls = {
+    disabled = false,
+  },
+  stories = {
+    {
+      id = "primary",
+      name = "Primary",
+      story = function(props)
+        return createButton(props.controls.disabled, "Primary")
+      end,
+    },
+    {
+      id = "secondary",
+      name = "Secondary",
+      story = function(props)
+        return createButton(props.controls.disabled, "Secondary")
+      end,
+    },
+  },
+}
+```
+
+Module-level `summary`, `controls`, `packages`, and `props` values become defaults for every Story. Story-level `controls`, `packages`, and `props` shallow-merge over their module defaults. Each Story should declare a stable `id`. A single definition falls back to its name or `"default"`. An array entry falls back to its name or one-based position, while a dictionary entry falls back to its key. Duplicate IDs, empty groups, and modules that define both `story` and `stories` are rejected.
 
 The `story` function receives a `props` object and must return one of six supported UI types (see "Story Formats by Framework" below). The `props` object contains:
 
@@ -227,13 +267,44 @@ Support exists for backward compatibility. New stories should use the `story` ke
 
 ### Discovery and Loading
 
-Storyteller exports these key discovery functions (wally.toml pins Storyteller 1.12.0; verify installed version with `ls Packages/_Index | grep storyteller`):
+Storyteller exports these key discovery and loading functions (verify the installed version under `Packages/_Index`):
 
-- `isStorybookModule(instance: Instance) -> boolean` — test if an Instance is a `.storybook.luau` module
-- `isStoryModule(instance: Instance) -> boolean` — test if an Instance is a `.story.luau` module
-- `findStorybookModules(parent: Instance) -> { ModuleScript }` — recursive search for storybooks under `parent`
-- `loadStorybookModule(loader: ModuleLoader, storybookModule: ModuleScript) -> Storybook` — validate and return storybook table
-- `loadStoryModule(loader: ModuleLoader, storyModule: ModuleScript, storybook: Storybook?) -> LoadedStory<T>` — validate and return story table
+- `isStorybookModule(instance: Instance) -> boolean`: test if an Instance is a `.storybook.luau` module
+- `isStoryModule(instance: Instance) -> boolean`: test if an Instance is a `.story.luau` module
+- `findStorybookModules(parent: Instance) -> { ModuleScript }`: recursively search for Storybooks under `parent`
+- `loadStorybookModule(storybookModule: ModuleScript, loader: ModuleLoader?) -> LoadedStorybook`: validate and return a Storybook
+- `loadStoryModule(storyModule: ModuleScript, storybook: LoadedStorybook, loader: ModuleLoader?) -> LoadedStory<T>`: load the first Story for compatibility
+- `loadStoriesFromModule(storyModule: ModuleScript, storybook: LoadedStorybook, loader: ModuleLoader?) -> { LoadedStory<T> }`: load every Story in a module
+- `useStory(storyModule: ModuleScript, storybook: LoadedStorybook, storyId: string?) -> (LoadedStory<unknown>?, string?)`: subscribe to one selected Story and report a problem when the ID does not exist
+- `useStoryModuleSnapshots(targets: { StoryModuleTarget }) -> StoryModuleSnapshots`: subscribe to sidebar metadata keyed first by Story module, then by Storybook source
+
+`useStory` and `useStoryModuleSnapshots` are React hooks. Call them only while rendering a React component or another hook under `StorytellerProvider`. Their snapshot request and return types are:
+
+```luau
+type StoryModuleTarget = {
+  storyModule: ModuleScript,
+  storybook: LoadedStorybook,
+}
+
+type StorySnapshot = {
+  id: string,
+  name: string,
+  summary: string?,
+}
+
+type StoryModuleSnapshot = {
+  name: string,
+  source: ModuleScript,
+  stories: { StorySnapshot },
+  problem: string?,
+}
+
+type StoryModuleSnapshots = {
+  [ModuleScript]: {
+    [ModuleScript]: StoryModuleSnapshot, -- Keyed by Storybook source.
+  },
+}
+```
 
 The `loader` is a ModuleLoader instance (see "ModuleLoader" section below). Storyteller calls `loader:require(moduleScript)` instead of the built-in `require()` to bypass Roblox's cache.
 
@@ -465,6 +536,12 @@ find Packages/_Index -path "*storyteller*" -name "constants.luau" -exec cat {} \
 # Verify story and storybook type contracts
 find Packages/_Index -path "*storyteller*" -name "types.luau" | head -1 | xargs cat
 
+# Verify multi-story normalization and public exports from the installed Storyteller package
+STORYTELLER_SRC="$(find Packages/_Index -path "*storyteller*" -type d -name src | head -1)"
+rg "StoryGroup|StoryModuleSnapshot|StoryModuleTarget" "$STORYTELLER_SRC/types.luau"
+rg "loadStoriesFromModule|useStoryModuleSnapshots" "$STORYTELLER_SRC/init.luau"
+rg "cannot define both|must contain at least one|duplicated" "$STORYTELLER_SRC/loadStoryModuleData.luau"
+
 # Verify control type enum
 find Packages/_Index -path "*storyteller*" -name "ControlType.luau" -exec cat {} \;
 
@@ -484,4 +561,4 @@ cat workspace/code-samples/src/Fusion/FusionButton.story.luau
 cat workspace/code-samples/src/Default/Button.story.luau
 ```
 
-**Last verified:** 2026-07-01. Story patterns, control types, and core Storyteller APIs from wally-pinned Storyteller 1.12.0, ModuleLoader 0.11.0 (per `wally.toml` ground truth; `Packages/_Index/` contains built cache which may be stale until `lute run install` re-runs). Examples from /workspace/code-samples/. Types from source.
+**Last verified:** 2026-07-17. Story patterns, multi-story types, and loading APIs from Storyteller source. Control types and Storybook behavior from Flipbook source. ModuleLoader behavior from the installed package.
