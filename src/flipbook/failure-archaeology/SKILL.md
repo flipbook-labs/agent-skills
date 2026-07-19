@@ -26,6 +26,8 @@ Every entry is dated, cited to commits/PRs, and includes root cause analysis and
 
 **When a fix recurs:** Example: BUILD_HASH broke twice in 6 weeks (PRs #426 and #444). This indicates Lute's stdio behavior is version-sensitive. The second fix added CI assertions to catch future regressions.
 
+**When adding a new incident:** Write it as a standalone file in [`incidents/`](incidents/README.md) following the arc symptom → dead theories (and what killed each) → root cause → fix → verdicts, and add it to that directory's index table. The inline sections below predate this structure and stay where they are; new entries go in files so each can be read whole.
+
 ---
 
 ## A. WINDOWS PATH-LENGTH SAGA (PRs #518→#523→#529→#530)
