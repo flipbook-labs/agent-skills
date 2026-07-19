@@ -406,6 +406,39 @@ Darklua injects these globals at compile time. They are available in any module 
 
 **Mitigation:** `src/PluginStarterScript.plugin.luau` sets `Charm.flags.frozen = false` at startup. This is a known trade-off. **Do not remove this line** — tests pass, but stories will crash at runtime.
 
+### 9. Cross-Channel Build Contamination (Prune Cache-Skip)
+
+**Trap:** Incremental step-caching can skip the ✂️ prune steps when `build/` already carries artifacts from another channel, so a `--channel prod` build ships `*.story.luau` and `*.storybook.luau` files inside the plugin rbxm.
+
+**Symptom:** A dev place that also Rojo-syncs the Flipbook codebase suddenly has *two* FlipbookCore storybooks (the plugin's embedded copy plus the synced one); story/storybook pairings can cross between them and crash React with instance mismatches.
+
+**Fix:** `lute run clean` before any channel switch, and verify: `find build/prod -name "*.story.luau" -o -name "*.storybook.luau"` must return nothing after a prod build. A clean prod build strips correctly; only contaminated incremental builds don't.
+
+### 10. `lute run clean` Deletes More Than You Think
+
+**Trap:** `clean` removes the entire `build/` tree **and** the installed Studio plugin rbxm.
+
+**Symptom:** A running `rojo serve` of `build/dev` starts erroring mid-session; Studio loses the plugin until the next build installs it.
+
+**Fix:** Rebuild every artifact someone is actively serving after a clean (`lute run build workspace --channel dev` for the served workspace, plus the plugin build). Warn the engineer before cleaning while their serve is up.
+
+### 11. Overlay Builds: Verify Branch and Content Before Handing Over
+
+**Trap:** `try-in-flipbook` (in the storyteller repo) overlays whatever branch is currently checked out, and it only resolves when invoked bare-name from the storyteller repo root (`lute run try-in-flipbook` — a path argument or foreign cwd breaks its self-location).
+
+**Symptom:** A test build silently carries the wrong branch's Storyteller; every conclusion drawn from testing it is attributed to the wrong code.
+
+**Fix:** Before building for someone: `git branch --show-current`, then after overlaying, grep the flipbook-side `Packages/_Index/**/storyteller/dist` for a marker unique to the intended branch. State the branch and timestamp when handing over the build.
+
+## Dev-Place Topology: Two Flipbooks
+
+The standard dev loop (plugin installed in Studio + `rojo serve` syncing the Flipbook codebase into a place) puts **two complete Flipbooks in one DataModel**:
+
+- `PluginDebugService.user_Flipbook.rbxm.…` — the installed plugin: native modules, stories/storybooks stripped by the prod prune.
+- `ReplicatedStorage.Flipbook.…` — the synced codebase ("user-level Flipbook"): full source including `init.storybook.luau` and every story, plus its own `Packages` and `RobloxPackages` copies.
+
+The plugin's Storyteller discovers and loads the *synced* copy's storybooks and stories through ModuleLoader sandboxes. Consequences: identically-named modules exist at both paths; stack frames and logs must be attributed to a copy before they mean anything; and any module evaluated by a loader is a *third* copy (see the `moduleloader-sandboxing` skill). When debugging, enumerate which copy a given path belongs to before reasoning about it.
+
 ---
 
 ## Build Cache Internals: Hash, Incremental, Watch
