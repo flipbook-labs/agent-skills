@@ -1,6 +1,6 @@
 ---
 name: durable-writing
-description: "Write PR bodies, commit bodies, code comments, and changelog entries for the reader who arrives later with the artifact but not your session: capture the durable why the diff cannot show, and cut prose that narrates the change itself. Use when: writing or editing a PR description, commit body, code comment, or changelog entry in any flipbook-labs repo, or reviewing a draft that reads like a play-by-play of the diff. Names the transition-versus-destination root that org/code-comments and org/changelog-entries each cover one slice of. Defers to org/writing-style for voice."
+description: "Write PR bodies, commit bodies, code comments, and changelog entries for the reader who arrives later with the artifact but not your session: capture the durable why the diff cannot show, cut prose that narrates the change itself, and keep tense in the present so a section describes the artifact rather than the act of changing it. Use when: writing or editing a PR description, commit body, code comment, or changelog entry in any flipbook-labs repo, reviewing a draft that reads like a play-by-play of the diff, or deciding what tense a Problem or Solution section should take. Names the transition-versus-destination root that org/code-comments and org/changelog-entries each cover one slice of. Defers to org/writing-style for voice."
 type: process
 ---
 
