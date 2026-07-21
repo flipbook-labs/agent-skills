@@ -14,7 +14,7 @@ The house style for Luau you write or edit anywhere in the org. These are the co
 - **Type the public contract.** Give function signatures and exported data structures explicit types rather than leaning on inference. A missing type is a review comment waiting to happen.
 - **Name a reusable type instead of repeating an inline union.** `export type BumpKind = "major" | "minor" | "patch"` once, then annotate with it (`local kind: BumpKind = ...`), rather than writing the union at each site.
 - **Keep generics sound for every instantiation.** Do not assume a generic `T` has a property just because it is not some other type. Marin: _"we can't assume that any generic value `T` will be a StoryControlValue only because it's not a StoryControl."_
-- **Name the arguments in function types.** Write `getStoryModuleRecords: (storyModule: ModuleScript) -> StoryModuleRecord?`, not `getStoryModuleRecords: (ModuleScript) -> StoryModuleRecord?`. The names carry meaning a bare type list loses, so the type reads as a signature. Marin: _"we should define the parameters too […] Apply this generally across the type changes in this PR."_
+- **Name the arguments in function types.** Write `getStoryModuleRecords: (storyModule: ModuleScript) -> StoryModuleRecord?`, not `getStoryModuleRecords: (ModuleScript) -> StoryModuleRecord?`. The names carry meaning a bare type list loses, so the type reads as a signature.
 
 ## Table formatting
 
