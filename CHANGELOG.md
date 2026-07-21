@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 
 
+## v0.5.1
+
+### Changes
+
+- `org/durable-writing` now covers tense, framing it as a surface of the destination-versus-transition root: describe states that are true of the merged artifact, which lands you in present tense, and reserve past tense for real completed events like verification or a rejected alternative.
+
+- `org/write-luau-code` now says Luau function types carry parameter names, reversing its earlier no-names rule.
+
+
 ## v0.5.0
 
 ### Changes
