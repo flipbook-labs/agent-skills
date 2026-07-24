@@ -35,6 +35,25 @@ local SHARED_SKILL: Skill = {
 	skillPath = `{SKILL_DIRECTORY}/SKILL.md`,
 }
 
+local function withFrontmatter(name: string, description: string): string
+	return table.concat({
+		"---",
+		`name: {name}`,
+		`description: "{description}"`,
+		"type: process",
+		"---",
+		"",
+	}, "\n")
+end
+
+local function withName(name: string): string
+	return withFrontmatter(name, "Does a thing. Use when: you need the thing.")
+end
+
+local function withDescription(description: string): string
+	return withFrontmatter("example", description)
+end
+
 local function countSkillViolations(ruleId: string, contents: string): number
 	for _, rule in doctrineRules.skill do
 		if rule.id == ruleId then
@@ -79,6 +98,52 @@ test.suite("doctrine rules", function(suite)
 
 		local narrowed = string.gsub(clean, "Use when:", "Use only when:")
 		assert.eq(countSkillViolations("frontmatter-trigger", narrowed), 0, "a narrowing form still triggers")
+	end)
+
+	suite:case("name-format accepts kebab-case and names the constraint that broke", function(assert)
+		assert.eq(countSkillViolations("name-format", clean), 0, '"example" is kebab-case')
+		assert.eq(countSkillViolations("name-format", withName("write-luau-code")), 0, "so are hyphenated segments")
+		assert.eq(countSkillViolations("name-format", withName("use-udim2-v3")), 0, "digits inside a segment are fine")
+
+		assert.eq(countSkillViolations("name-format", withName("Write-Luau-Code")), 1, "an uppercase letter is not")
+		assert.eq(countSkillViolations("name-format", withName("write_luau_code")), 1, "an underscore is not")
+		assert.eq(countSkillViolations("name-format", withName("write luau code")), 1, "a space is not")
+		assert.eq(countSkillViolations("name-format", withName("-leading-hyphen")), 1, "a leading hyphen is not")
+		assert.eq(countSkillViolations("name-format", withName("trailing-hyphen-")), 1, "a trailing hyphen is not")
+		assert.eq(countSkillViolations("name-format", withName("double--hyphen")), 1, "a double hyphen is not")
+		assert.eq(countSkillViolations("name-format", withName("")), 1, "and an empty name is not a name")
+
+		assert.eq(countSkillViolations("name-format", withName("-Bad-")), 3, "each broken constraint is reported")
+	end)
+
+	suite:case("name-length holds the 64-character limit exactly", function(assert)
+		assert.eq(countSkillViolations("name-length", clean), 0, "the fixture name is short")
+
+		local atLimit = withName(string.rep("a", 64))
+		assert.eq(countSkillViolations("name-length", atLimit), 0, "exactly 64 characters fits")
+
+		local overLimit = withName(string.rep("a", 65))
+		assert.eq(countSkillViolations("name-length", overLimit), 1, "65 does not")
+	end)
+
+	suite:case("description-length holds the 1024-character limit exactly", function(assert)
+		assert.eq(countSkillViolations("description-length", clean), 0, "the fixture is one short sentence")
+
+		local atLimit = withDescription(string.rep("a", 1024))
+		assert.eq(countSkillViolations("description-length", atLimit), 0, "exactly 1024 characters loads")
+
+		local overLimit = withDescription(string.rep("a", 1025))
+		assert.eq(countSkillViolations("description-length", overLimit), 1, "1025 does not")
+
+		local multibyte = withDescription(string.rep("→", 1024))
+		assert.eq(countSkillViolations("description-length", multibyte), 0, "the limit counts characters, not bytes")
+
+		local missing = string.gsub(clean, 'description: "[^"]*"\n', "")
+		assert.eq(
+			countSkillViolations("description-length", missing),
+			0,
+			"a missing description is another rule's finding"
+		)
 	end)
 
 	suite:case("provenance-footer rejects a skill that ends without one", function(assert)

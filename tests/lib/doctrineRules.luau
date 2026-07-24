@@ -24,6 +24,35 @@ local Genre = table.freeze({
 	Knowledge = "knowledge",
 })
 
+-- Codex refuses to load a skill whose description runs past this, and it refuses
+-- silently, so tripping the limit makes a skill invisible rather than making it
+-- fail. This is an external hard limit and not ours to round off or relax.
+local DESCRIPTION_CHARACTER_LIMIT = 1024
+
+local NAME_CHARACTER_LIMIT = 64
+
+-- Lua patterns carry no alternation or group repetition, so `^[a-z0-9]+(-[a-z0-9]+)*$`
+-- cannot be written as one pattern here. Kebab-case is checked as the constraints
+-- that compose it, which also lets a failure name the character that broke it.
+local NAME_FORMAT_CHECKS = table.freeze({
+	{
+		pattern = "[^%l%d%-]",
+		problem = "holds a character outside lowercase letters, digits, and hyphens",
+	},
+	{
+		pattern = "^%-",
+		problem = "starts with a hyphen",
+	},
+	{
+		pattern = "%-$",
+		problem = "ends with a hyphen",
+	},
+	{
+		pattern = "%-%-",
+		problem = "holds a double hyphen",
+	},
+})
+
 -- CONTRIBUTING.md's checklist sets the convention at 500 lines. This is not that
 -- number. It sits a little above the library's longest skill, so it holds the line
 -- against new sprawl while the long `flipbook/` skills are split into sibling
@@ -69,6 +98,14 @@ local function getBody(contents: string): string
 	return string.match(normalized, "^%-%-%-\n.-\n%-%-%-\n(.*)$") or normalized
 end
 
+-- The frontmatter limits are stated in characters, and a description may carry a
+-- multibyte character, so `#` would count bytes and fail a skill the tool loads
+-- fine. `utf8.len` returns nil only on malformed UTF-8, where the byte count is
+-- the safe fallback.
+local function countCharacters(text: string): number
+	return utf8.len(text) or #text
+end
+
 local function countLines(text: string): number
 	local lines = string.split(text, "\n")
 	-- A file ending in a newline splits to a trailing empty piece that is not a line.
@@ -102,6 +139,59 @@ local skillRules: { SkillRule } = {
 				return {}
 			end
 			return { 'frontmatter "description" carries no "Use when" trigger' }
+		end,
+	},
+	{
+		id = "name-format",
+		summary = "frontmatter `name` is kebab-case",
+		findViolations = function(_skill, contents)
+			local fields = parseFrontmatter(contents)
+			local name = fields and fields.name
+			-- Every check below asks whether the name contains something bad, so an
+			-- empty name would satisfy all of them. Reject it before they run.
+			if not name or name == "" then
+				return { 'frontmatter "name" is missing or empty' }
+			end
+			local violations = {}
+			for _, check in NAME_FORMAT_CHECKS do
+				if string.find(name, check.pattern) then
+					table.insert(violations, `name "{name}" {check.problem}`)
+				end
+			end
+			return violations
+		end,
+	},
+	{
+		id = "name-length",
+		summary = `frontmatter \`name\` within {NAME_CHARACTER_LIMIT} characters`,
+		findViolations = function(_skill, contents)
+			local fields = parseFrontmatter(contents)
+			local name = fields and fields.name
+			if not name then
+				return {}
+			end
+			local length = countCharacters(name)
+			if length <= NAME_CHARACTER_LIMIT then
+				return {}
+			end
+			return { `name is {length} characters, over the {NAME_CHARACTER_LIMIT}-character limit` }
+		end,
+	},
+	{
+		id = "description-length",
+		summary = `frontmatter \`description\` within {DESCRIPTION_CHARACTER_LIMIT} characters, past which Codex will not load the skill`,
+		findViolations = function(_skill, contents)
+			local fields = parseFrontmatter(contents)
+			local description = fields and fields.description
+			-- A missing description is `frontmatter-trigger`'s finding, not this one.
+			if not description then
+				return {}
+			end
+			local length = countCharacters(description)
+			if length <= DESCRIPTION_CHARACTER_LIMIT then
+				return {}
+			end
+			return { `description is {length} characters, over the {DESCRIPTION_CHARACTER_LIMIT}-character limit` }
 		end,
 	},
 	{
