@@ -38,19 +38,19 @@ Fill every section concisely. The Problem/Solution should describe what the chan
 
 **Disclosure:** Every PR body must disclose AI assistance (e.g., closing line: "🤖 Generated with [Claude Code](https://claude.com/claude-code)"). This is mandatory per user convention and applies even when filling a repo's PR template.
 
-**Review routing:** `CODEOWNERS` at the repo root assigns all paths (`*`) to `@flipbook-labs/flipbook-maintainers` and `@flipbook-labs/flipbook-contributors` (verified 2026-07-01), so every PR automatically requests review from those teams — there is no per-directory ownership split.
+**Review routing:** `CODEOWNERS` at the repo root assigns all paths (`*`) to `@flipbook-labs/flipbook-maintainers` and `@flipbook-labs/flipbook-contributors` (verified 2026-07-01), so every PR automatically requests review from those teams. There is no per-directory ownership split.
 
 ### Commit Hygiene
 
 - Make one commit per logical unit; do not squash needlessly.
-- **Do not rewrite history** — no `git reset --hard`, rebase, or cherry-pick to rebuild a branch. If reverting, make a new forward commit (`git rm`, `git checkout <base> -- <files>`).
+- **Do not rewrite history:** no `git reset --hard`, rebase, or cherry-pick to rebuild a branch. If reverting, make a new forward commit (`git rm`, `git checkout <base> -- <files>`).
 - Commits are collapsed on merge anyway (squash-merge workflow), so intermediate history is acceptable.
 
 ---
 
 ## Release Gating and Version Control
 
-Releasing Flipbook is gated and automated — no manual tag pushes, no direct version-string edits.
+Releasing Flipbook is gated and automated: no manual tag pushes, no direct version-string edits.
 
 ### Version Bumping
 
@@ -82,8 +82,8 @@ Flipbook has three build channels (verified in `ci.yml` matrix: dev/beta/prod, a
 
 | Channel  | Use                                 | Keeps                                | Prunes                                                                                                                           |
 | -------- | ----------------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| **dev**  | local dev, CI proof                 | tests, stories, storybooks, example/ | —                                                                                                                                |
-| **beta** | internal validation (experimental)  | same as dev                          | —                                                                                                                                |
+| **dev**  | local dev, CI proof                 | tests, stories, storybooks, example/ | none                                                                                                                             |
+| **beta** | internal validation (experimental)  | same as dev                          | none                                                                                                                             |
 | **prod** | release to Creator Store, end users | core plugin only                     | `code-samples/`, `example/`, `template/`, `test-runner/`, `*.spec.luau`, `*.story.luau`, `*.storybook.luau`, `jest.config.luau*` |
 
 Default channel is `prod`. Pass `--channel dev` or `--channel beta` to `lute run build` to retain development files.
@@ -96,7 +96,7 @@ Default channel is `prod`. Pass `--channel dev` or `--channel beta` to `lute run
 
 Every PR must pass the following gate jobs before merge is recommended:
 
-### `ci.yml` — Standard Build & Attestation
+### `ci.yml`: Standard Build & Attestation
 
 **Trigger:** every push to main, every PR to main, manual dispatch.
 
@@ -116,20 +116,20 @@ Every PR must pass the following gate jobs before merge is recommended:
 
 **When to re-run:** After touching `.lute/`, `darklua.json`, `wally.toml`, `rotriever.toml`, or any `.luau` file.
 
-### `strict.yml` — Tests, Type Checking, Smoketest
+### `strict.yml`: Tests, Type Checking, Smoketest
 
 **Trigger:** every PR (`pull_request_target` with environment gating; see below), every push to main, manual dispatch.
 
 **Jobs:**
 
-1. **`tests`** — Cloud Jest via Rocale.
+1. **`tests`**: Cloud Jest via Rocale.
    - Builds dev plugin.
    - Runs `lute run test` (requires `ROBLOX_API_KEY` secret).
    - Executes tests inside a Roblox place (test universe 6599100156, place 123506190725771).
    - **Proves:** logic is sound; no runtime crashes; stories load and render.
    - **Fails if:** any `*.spec.luau` test fails.
 
-2. **`smoketest`** — Creator Store smoketest publish.
+2. **`smoketest`**: Creator Store smoketest publish.
    - Runs `lune run publish-plugin --smoketest --channel prod --apiKey <key>`.
    - Publishes dev plugin to Creator Store smoketest asset for manual QA.
    - **Proves:** plugin package is valid; Creator Store API accepts the build.
@@ -143,7 +143,7 @@ Every PR must pass the following gate jobs before merge is recommended:
 
 **Rationale (from incident #559, #563):** Fork workflows needed special permissions. `pull_request_target` with environment gating isolates the blast radius (PR #563 "Isolate the surface area of pull_request_target").
 
-### `storybook.yml` — Storybook Preview Deployment
+### `storybook.yml`: Storybook Preview Deployment
 
 **Trigger:** every PR, every push to main.
 
@@ -197,8 +197,8 @@ Use this table to determine which CI gates your change requires and whether it i
 ### Safe (Does Not Require `strict.yml`)
 
 - Documentation-only PRs (fixes to `.md`, docs vault, AGENTS.md).
-- Test files (`*.spec.luau`) — already covered by `strict.yml` when code lands.
-- Story/storybook files (`*.story.luau`, `*.storybook.luau`) — dev-channel only, pruned from prod builds.
+- Test files (`*.spec.luau`): already covered by `strict.yml` when code lands.
+- Story/storybook files (`*.story.luau`, `*.storybook.luau`): dev-channel only, pruned from prod builds.
 - Non-behavior-affecting refactors (renaming, moving code, extracting helpers that keep the same API).
 
 ### Unsafe (Always Requires `strict.yml`)
@@ -418,13 +418,13 @@ Quick reference for determining what CI gates a change needs.
 | Change Scope                                        | Gate: ci.yml    | Gate: strict.yml     | Gate: storybook.yml        | Notes                                     |
 | --------------------------------------------------- | --------------- | -------------------- | -------------------------- | ----------------------------------------- |
 | Plugin code (logic, UI, telemetry)                  | ✅              | ✅                   | ✅ if affects story render | Always required for user-facing changes   |
-| Tests (*.spec.luau)                                 | ✅              | ✅                   | —                          | Runs in cloud; must pass                  |
-| Stories/storybooks (*.story.luau, *.storybook.luau) | ✅              | —                    | ✅                         | Dev-only; not in prod builds              |
-| Build scripts (.lute/, darklua.json)                | ✅              | ✅ if output changes | —                          | Use --clean locally to test               |
-| Wally/Loom/Rokit versions                           | ✅              | ✅                   | —                          | High-risk; test local --clean build first |
-| CI workflows (.github/workflows/*.yml)              | —               | Manual re-run        | —                          | Test in draft PR before merging           |
-| Docs (.md, docs vault)                              | ✅ linting only | —                    | —                          | No code impact; Prettier only             |
-| `.luaurc`, language config                          | ✅              | ✅                   | —                          | Language mode changes affect all files    |
+| Tests (*.spec.luau)                                 | ✅              | ✅                   | none                       | Runs in cloud; must pass                  |
+| Stories/storybooks (*.story.luau, *.storybook.luau) | ✅              | none                 | ✅                         | Dev-only; not in prod builds              |
+| Build scripts (.lute/, darklua.json)                | ✅              | ✅ if output changes | none                       | Use --clean locally to test               |
+| Wally/Loom/Rokit versions                           | ✅              | ✅                   | none                       | High-risk; test local --clean build first |
+| CI workflows (.github/workflows/*.yml)              | none            | Manual re-run        | none                       | Test in draft PR before merging           |
+| Docs (.md, docs vault)                              | ✅ linting only | none                 | none                       | No code impact; Prettier only             |
+| `.luaurc`, language config                          | ✅              | ✅                   | none                       | Language mode changes affect all files    |
 
 ---
 

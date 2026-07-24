@@ -1,6 +1,6 @@
 ---
 name: failure-archaeology
-description: Chronicle of all major Flipbook investigations, dead ends, reverted features, and unresolved bugs with evidence and current status. Check this before attempting a "new" fix to avoid re-fighting settled battles and knowing why workarounds exist.
+description: "A chronicle of Flipbook's major investigations, dead ends, reverted features, and unresolved bugs, each with its evidence and status. Use when: about to attempt a fix that looks new and you want to know whether the battle is already settled, or you inherited a workaround and need to know why it exists."
 type: knowledge
 ---
 
@@ -49,7 +49,7 @@ Combining two package managers (Wally + Loom) doubled directory nesting. Rotriev
 **PR #518 (commit b841b0a2, 2026-03-10):** "Include a path length check"
 
 - Added non-blocking GitHub Actions detector that warns on PRs when artifact paths exceed 260 chars.
-- Detective only—did not prevent builds, merely commented.
+- Detective only: did not prevent builds, merely commented.
 
 **PR #523 (commit 7a6c69b5, 2026-03-12):** "Attempt to defeat path length limit by bundling package blobs as rbxms"
 
@@ -89,7 +89,7 @@ end
 
 ## B. MODULE RELOAD & STATE BUGS DOSSIER
 
-### B1. Charm.flags.frozen Workaround — Unresolved Upstream Bug
+### B1. Charm.flags.frozen Workaround: Unresolved Upstream Bug
 
 **Location:** `src/PluginStarterScript.plugin.luau` (grep `Charm.flags.frozen = false`)
 
@@ -157,7 +157,7 @@ Charm.flags.frozen = false
 
 ---
 
-### B4. ModuleLoader Require-Cache Bypass — Intentional Design
+### B4. ModuleLoader Require-Cache Bypass: Intentional Design
 
 **Location:** `Packages/_Index/flipbook-labs_module-loader@<version>/module-loader/dist/createModuleLoader.luau`
 
@@ -165,7 +165,7 @@ Charm.flags.frozen = false
 
 **Key Mechanism:**
 
-1. **Weak-keyed registry** (grep `__mode = "k"`): `setmetatable({}, { __mode = "k" })` — modules auto-GC'd when source changes.
+1. **Weak-keyed registry** (grep `__mode = "k"`): `setmetatable({}, { __mode = "k" })`, modules auto-GC'd when source changes.
 2. **Module caching** (grep `registry\[` or similar caching check): checks registry before re-require; cached exports returned if found.
 3. **Immutability tolerance** (double-closure wrapper): wraps module source in double-closure to bypass Luau's 200 locals limit (issue in React/ReactFiberWorkLoop).
 4. **Error recovery** (grep `registry\[.+\] = nil` or registry clear): clears registry entry if require fails, preventing stale cache on retry.
@@ -180,7 +180,7 @@ Charm.flags.frozen = false
 
 ## C. REVERT & INCIDENT CATALOG
 
-### Parallelize Build Tasks — Reverted (PR #405)
+### Parallelize Build Tasks: Reverted (PR #405)
 
 **Symptom:** Build parallelization was supposed to cut build time from ~10s to ~5s but caused reliability issues on some developer machines.
 
@@ -224,7 +224,7 @@ Charm.flags.frozen = false
 
 **Commit:** d313d7b6 (2026-01-11)
 
-**Symptom:** Nightly plugin shows warning "failed to communicate with backend: URL must be http" — BACKEND_URL resolves to nil at runtime.
+**Symptom:** Nightly plugin shows warning "failed to communicate with backend: URL must be http". BACKEND_URL resolves to nil at runtime.
 
 **Root Cause:** CI didn't copy `.env.template` → `.env` before build; BACKEND_URL undefined at compile time (Darklua's build-time globals).
 
@@ -273,7 +273,7 @@ Charm.flags.frozen = false
 - Solution: Massaged SOURCE_PATH into relative path before passing to Darklua.
 - Status: Resolved via path normalization.
 
-**Verdict:** Nightly builds are fragile. Darklua is sensitive to path format; always pass relative paths. Lute stdio/process spawning varies between versions—pin Lute version carefully.
+**Verdict:** Nightly builds are fragile. Darklua is sensitive to path format; always pass relative paths. Lute stdio/process spawning varies between versions. Pin Lute version carefully.
 
 ---
 
@@ -362,7 +362,7 @@ Charm.flags.frozen = false
 
 **Message:** "Revert deploy-storybook back to v0.2.0"
 
-- v0.2.1 tag was deleted — fix will ship through proper release workflow.
+- v0.2.1 tag was deleted. Fix will ship through proper release workflow.
 - Inference: v0.2.1 pre-release was broken; rolled back to stable v0.2.0.
 
 **Verdict:** Use proper release workflow; do not pre-release tags.
@@ -549,7 +549,7 @@ Sixteen branches with work-in-progress status. Last activity ranges from 3 days 
 
 ## Provenance and Maintenance
 
-This document was authored 2026-07-01 with commit verification via git log and show. Re-verify key claims before updating:
+**Date stamped:** 2026-07-01, with commit verification via git log and show. Re-verify key claims before updating:
 
 ```bash
 # Verify path-length fixes

@@ -73,15 +73,15 @@ Follow **`org/writing-style`** for the house voice, the banned patterns (antithe
 
 ## Pull Request Descriptions
 
-A PR body exists to orient the human who has to review an ever-growing diff. Its job is to inform and orient — explain what the change does and why it exists — not to catalog every line. The file-change view already owns the granular detail; the body should let a reviewer feel informed before they open a single file.
+A PR body exists to orient the human who has to review an ever-growing diff. Its job is to inform and orient (explain what the change does and why it exists), not to catalog every line. The file-change view already owns the granular detail; the body should let a reviewer feel informed before they open a single file.
 
 **Follow the repo template.** `.github/pull_request_template.md` defines the sections: Problem (why the change is needed), Solution (what it does and any non-obvious decisions), Testing (how it was verified), and Notes for reviewers (tradeoffs, risks, follow-ups). Fill each in; don't invent a custom structure.
 
-**Lead with prose, keep code sparse.** Name things in sentences rather than wrapping every identifier in backticks — a body where half the nouns are inline code is unscannable, and the reader's eye snags on each one. Reserve inline code for things that genuinely read as code: a file path, an alias, a command, a version string. If a paragraph carries more backticks than commas, rewrite it as prose plus a table.
+**Lead with prose, keep code sparse.** Name things in sentences rather than wrapping every identifier in backticks. A body where half the nouns are inline code is unscannable, and the reader's eye snags on each one. Reserve inline code for things that genuinely read as code: a file path, an alias, a command, a version string. If a paragraph carries more backticks than commas, rewrite it as prose plus a table.
 
 **Push granular detail into tables and lists.** A "what changed" table grouped by area (not one row per file) and a verification table mapping each check to its result carry dense facts far better than a paragraph studded with identifiers. Group and summarize; the reviewer drops into the diff when they want the per-file specifics.
 
-**Keep the altitude high.** Explain intent and the decisions a reviewer couldn't infer from the diff; let the mechanical parts speak for themselves. A reader should finish the body knowing why the PR exists, what it changes at a high level, and what to watch for — then reach for the files for anything finer.
+**Keep the altitude high.** Explain intent and the decisions a reviewer couldn't infer from the diff; let the mechanical parts speak for themselves. A reader should finish the body knowing why the PR exists, what it changes at a high level, and what to watch for, then reach for the files for anything finer.
 
 ## Key Files and Paths
 

@@ -1,7 +1,6 @@
 ---
 name: proof-and-analysis-toolkit
-description: >
-  First-principles analysis methods for Flipbook: six recipes to prove claims via mechanism, not inspection. Includes require-graph verification, module-reload isolation, rerender measurement, build determinism auditing, type-level proof via Luau analysis, and dependency-contract reading. Use when validating a build change, debugging state bugs, or claiming a fix works—before trusting the build, measure the mechanism.
+description: "First-principles analysis methods for Flipbook: six recipes that prove a claim by mechanism rather than by inspection, covering require-graph verification, module-reload isolation, rerender measurement, build-determinism auditing, type-level proof via Luau analysis, and dependency-contract reading. Use when: validating a build change, debugging a state bug, or claiming a fix works and you need to measure the mechanism before trusting it."
 type: process
 ---
 
@@ -43,13 +42,13 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 
 1. **Identify the module to trace:** pick a module you know changed (e.g., `workspace/flipbook-core/src/Http/requestAsync.luau` if you changed how the backend is called, or `workspace/flipbook-core/src/Telemetry/fireEventAsync.luau` which reads `_G.BASE_URL`).
 
-2. **Read the sourcemap:** the sourcemaps live at the repo root — `sourcemap.json` (for luau-lsp) and `sourcemap-darklua.json` (the one Darklua's `convert_require` rule consumes, per `.darklua.json`).
+2. **Read the sourcemap:** the sourcemaps live at the repo root: `sourcemap.json` (for luau-lsp) and `sourcemap-darklua.json` (the one Darklua's `convert_require` rule consumes, per `.darklua.json`).
 
    ```bash
    jq '.. | objects | select(.filePaths? and (.filePaths | join(",") | contains("requestAsync")))' sourcemap-darklua.json
    ```
 
-   Look for: the instance name and its position in the tree — that hierarchy is what require paths are rewritten against.
+   Look for: the instance name and its position in the tree. That hierarchy is what require paths are rewritten against.
 
 3. **Identify the build's require statement:** In the build output for that module, find the `require()` call(s) and their argument. Darklua rewrites string requires into Roblox instance-path requires.
 
@@ -59,7 +58,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
    grep -n "require(" build/dev/roblox/workspace/flipbook-core/src/Http/requestAsync.luau
    ```
 
-4. **Cross-check with the sourcemap:** the rewritten `require(script.Parent....)` chain must match the instance hierarchy in `sourcemap-darklua.json`. If it doesn't, the sourcemap was stale at build time — rebuild with `--clean`.
+4. **Cross-check with the sourcemap:** the rewritten `require(script.Parent....)` chain must match the instance hierarchy in `sourcemap-darklua.json`. If it doesn't, the sourcemap was stale at build time. Rebuild with `--clean`.
 
 5. **Inject a test require and verify:** Add a temporary global in the module to signal it loaded:
    ```luau
@@ -71,9 +70,9 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
    print(_G.FLIPBOOK_BACKEND_MODULE_LOADED)  -- Should print true
    ```
 
-### Worked Example: PR #479 — BACKEND_URL Not Baked Into Build
+### Worked Example: PR #479 (BACKEND_URL Not Baked Into Build)
 
-**Symptom:** Nightly plugin logs "failed to communicate with backend: URL must be http"—BACKEND_URL is nil at runtime.
+**Symptom:** Nightly plugin logs "failed to communicate with backend: URL must be http". BACKEND_URL is nil at runtime.
 
 **Investigation steps (as done in PR #479):**
 
@@ -99,7 +98,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 
    If `process.env.BASE_URL` is unset (missing `.env`), the injected `_G.BASE_URL` is nil in the artifact.
 
-4. **The fix that landed — an explicit guard in the build script.** This is exactly what main has today (verified 2026-07-01, in `.lute/build.luau`, grep `if not process.env.BASE_URL`):
+4. **The fix that landed: an explicit guard in the build script.** This is exactly what main has today (verified 2026-07-01, in `.lute/build.luau`, grep `if not process.env.BASE_URL`):
 
    ```luau
    if not process.env.BASE_URL then
@@ -116,7 +115,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 
 **When to use:** Isolate whether a stale-state symptom lives in ModuleLoader's require-cache, Storyteller's story-lifecycle state, or Charm's immutability guarantees. Module-reload bugs are context-dependent; a working test in CI doesn't prove a working Flipbook in Studio.
 
-**The problem:** Flipbook's hot-reload workflow relies on ModuleLoader bypassing Roblox's native module cache, and Storyteller managing story-state lifecycles. If either goes wrong under certain re-renders or story switches, you get crashes like "Attempt to modify a readonly table" without a clear cause. The bug is live-state dependent—hard to reproduce without the full Studio workflow.
+**The problem:** Flipbook's hot-reload workflow relies on ModuleLoader bypassing Roblox's native module cache, and Storyteller managing story-state lifecycles. If either goes wrong under certain re-renders or story switches, you get crashes like "Attempt to modify a readonly table" without a clear cause. The bug is live-state dependent, hard to reproduce without the full Studio workflow.
 
 **The discipline:** Build a minimal story that triggers the suspected codepath, isolate each suspect (ModuleLoader cache, Storyteller state, Charm immutability), and remove candidates until one mechanism explains all symptoms.
 
@@ -155,7 +154,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
    - After switching stories? → Likely ModuleLoader cache not cleared
    - After re-render? → Likely Charm immutability during state update
 
-4. **Test ModuleLoader cache isolation:** Edit the story, save, and reload in Flipbook. If ModuleLoader's weak-keyed registry (the `weak()` helper in `Packages/_Index/flipbook-labs_module-loader@*/module-loader/dist/createModuleLoader.luau` — discover the installed version with `ls Packages/_Index | grep module-loader`) is working, the module should be GC'd and re-required. If not, stale closure state persists.
+4. **Test ModuleLoader cache isolation:** Edit the story, save, and reload in Flipbook. If ModuleLoader's weak-keyed registry (the `weak()` helper in `Packages/_Index/flipbook-labs_module-loader@*/module-loader/dist/createModuleLoader.luau`, discover the installed version with `ls Packages/_Index | grep module-loader`) is working, the module should be GC'd and re-required. If not, stale closure state persists.
 
    ```luau
    -- In the story, add a module-level counter that should re-run on every reload
@@ -191,7 +190,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
    ```
    Reload and check the Output window to see the order of state updates and whether mutations happen after Charm.freeze.
 
-### Worked Example: storyteller#100 — Frozen-Table Crash
+### Worked Example: storyteller#100 (Frozen-Table Crash)
 
 **Symptom:** "Attempt to modify a readonly table" crash when previewing stories in Flipbook after Storyteller's internal state mutations.
 
@@ -199,7 +198,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 
 1. **Storyteller switched from Signals to Charm (PR #509):** Charm provides immutable state with `Charm.flags.frozen = true` to prevent accidental mutations. Tests pass.
 
-2. **Flipbook crashes after a story preview:** Error stack shows mutation inside Storyteller's state handler, but tests don't trigger it. **Inference: the mutation is context-dependent**—only happens when Flipbook's lifecycle (plugin load, story switch) interacts with Storyteller's state mutations.
+2. **Flipbook crashes after a story preview:** Error stack shows mutation inside Storyteller's state handler, but tests don't trigger it. **Inference: the mutation is context-dependent.** It only happens when Flipbook's lifecycle (plugin load, story switch) interacts with Storyteller's state mutations.
 
 3. **Minimal test:** Create a story with controls, change controls rapidly, switch stories. Crash occurs.
 
@@ -217,7 +216,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 
 ---
 
-## Recipe 3: Rerender Accounting — Measurement Instead of Eyeballing
+## Recipe 3: Rerender Accounting (Measurement Instead of Eyeballing)
 
 **When to use:** Claim a UI fix "stops controls from re-rendering on every change" and prove it with a counter, not a visual inspection.
 
@@ -255,7 +254,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
    - The parent no longer re-renders children? (React.memo or context isolation)
    - State updates are batched instead of cascading? (Charm computed signal stability)
 
-### Worked Example: PR #576 — All Control Elements Rerendering
+### Worked Example: PR #576 (All Control Elements Rerendering)
 
 **Symptom (before fix):** Changing one control's value causes the entire `StoryControls` panel to re-render. Visual artifacts and React Scheduler warnings: "Maximum update depth exceeded."
 
@@ -314,7 +313,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 
 **The problem:** Darklua replaces reads of `_G.BUILD_HASH`, `_G.BASE_URL`, etc. with literal values taken from environment variables at build time (`inject_global_value` rules in `.darklua.json`), then constant-folds and dead-code-eliminates around them. If an env var is unset (missing `.env`), the injected value is nil and the wrong branch may be eliminated. The build succeeds; the artifact is silently wrong.
 
-**The discipline:** After building, verify the built artifact actually contains the injected values. Because injection SUBSTITUTES the `_G.X` read with a literal, you cannot grep the built output for `_G.BUILD_HASH` — it's gone. You grep for the literal value or its downstream effect.
+**The discipline:** After building, verify the built artifact actually contains the injected values. Because injection SUBSTITUTES the `_G.X` read with a literal, you cannot grep the built output for `_G.BUILD_HASH`. It's gone. You grep for the literal value or its downstream effect.
 
 ### Recipe: Injected-Global Verification (verified 2026-07-01)
 
@@ -324,7 +323,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
    jq '.process[] | select(.rule? == "inject_global_value")' .darklua.json
    ```
 
-   Eight rules as of 2026-07-01: BUILD_VERSION, BUILD_CHANNEL, BUILD_HASH, BUILD_TARGET, BASE_URL, LOG_LEVEL, ENABLE_OUTPUT_LOGGING, JEST_TEST_PATH_PATTERN — each fed from the same-named env var.
+   Eight rules as of 2026-07-01: BUILD_VERSION, BUILD_CHANNEL, BUILD_HASH, BUILD_TARGET, BASE_URL, LOG_LEVEL, ENABLE_OUTPUT_LOGGING, JEST_TEST_PATH_PATTERN. Each is fed from the same-named env var.
 
 2. **Know where each value comes from before build:** BASE_URL, LOG_LEVEL, ENABLE_OUTPUT_LOGGING come from `.env` (copied from `.env.template`); BUILD_VERSION/BUILD_CHANNEL/BUILD_HASH/BUILD_TARGET are computed by `.lute/build.luau` (e.g. `BUILD_HASH = getCommitHash()`); JEST_TEST_PATH_PATTERN is set by `.lute/test.luau --filter`.
 
@@ -337,7 +336,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
    # A nil injection shows up as a malformed name or a folded-away branch.
    ```
 
-   Note the hash is the commit at BUILD time — if it differs from `git rev-parse --short HEAD`, your build is stale; rebuild with `--clean`.
+   Note the hash is the commit at BUILD time. If it differs from `git rev-parse --short HEAD`, your build is stale; rebuild with `--clean`.
 
 4. **Verify dead-code elimination did the right thing:** in a dev build, the source's `if _G.BUILD_CHANNEL == "development"` branch is folded to an unconditional `_G.__DEV__ = true` block; in a prod build that block is absent entirely.
 
@@ -352,14 +351,14 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
    # After: _G.BUILD_HASH = "new"
    ```
 
-### Worked Example: PR #426 and PR #444 — BUILD_HASH Not Getting Set
+### Worked Example: PR #426 and PR #444 (BUILD_HASH Not Getting Set)
 
 **Symptom (PR #426):** After Lute migration, `BUILD_HASH` global is nil at runtime. Telemetry events have no hash.
 
 **First investigation (PR #426, commit 1863e994):**
 
 1. **Check Darklua config:** `.darklua.json` expects BUILD_HASH in env.
-2. **Check build script:** the build script (then `scripts/build.luau`; moved to `.lute/build.luau` in PR #521) computes BUILD_HASH by shelling out to git — today via `getCommitHash()` feeding the Darklua env (in `.lute/build.luau`, grep `BUILD_HASH = getCommitHash()`). Illustrative shape of the failing pattern:
+2. **Check build script:** the build script (then `scripts/build.luau`; moved to `.lute/build.luau` in PR #521) computes BUILD_HASH by shelling out to git, today via `getCommitHash()` feeding the Darklua env (in `.lute/build.luau`, grep `BUILD_HASH = getCommitHash()`). Illustrative shape of the failing pattern:
    ```luau
    -- illustrative, not a verbatim quote of the historical script
    local result = process.run("git", { "rev-parse", "--short", "HEAD" })
@@ -440,7 +439,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
    end
    ```
 
-### Worked Example: TreeView/createTreeNodeStore.luau — `:: any` Cast
+### Worked Example: TreeView/createTreeNodeStore.luau (`:: any` Cast)
 
 **Location:** `workspace/flipbook-core/src/TreeView/createTreeNodeStore.luau`, in the `setSortOrder` function
 
@@ -469,11 +468,11 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 
 **Caveat:** If you're working in strict mode, assume that `:: any` casts are intentional workarounds. The maintainer has explicitly allowed them because the alternative (rewriting Charm's types or refactoring the module) is more costly.
 
-**What makes this a proof:** By identifying the `:: any` cast, you've documented the exact boundary where the type checker's guarantees end. That's a valid proof of _what strict mode cannot verify_—not just silence, but an explicit statement of the limitation.
+**What makes this a proof:** By identifying the `:: any` cast, you've documented the exact boundary where the type checker's guarantees end. That's a valid proof of _what strict mode cannot verify_, not just silence, but an explicit statement of the limitation.
 
 ---
 
-## Recipe 6: Dependency-Contract Verification — Read the Package Source
+## Recipe 6: Dependency-Contract Verification (Read the Package Source)
 
 **When to use:** You're claiming "ModuleLoader clears its registry on story change" or "Storyteller doesn't mutate control schema" and need to verify the package actually does what you think. Don't assume; read the source.
 
@@ -483,7 +482,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 
 ### Recipe: Dependency-Contract Reading
 
-1. **Locate the package source** (installed `_Index` versions drift across installs — discover them, never hardcode):
+1. **Locate the package source** (installed `_Index` versions drift across installs, so discover them, never hardcode):
 
    ```bash
    # Example: ModuleLoader
@@ -538,7 +537,7 @@ Cross-reference instead: `build-and-toolchain` for Darklua pipeline depth; `diag
 
 **Investigation (as discovered in story-controls briefing):**
 
-1. **Locate Storyteller migration code** (the installed `_Index` version drifts across installs — discover it, don't hardcode):
+1. **Locate Storyteller migration code** (the installed `_Index` version drifts across installs, so discover it, don't hardcode):
 
    ```bash
    ST_DIR=$(ls -d Packages/_Index/flipbook-labs_storyteller@*/storyteller)
@@ -622,13 +621,13 @@ Before claiming a build is correct, verify:
 
 ## Provenance and Maintenance
 
-Recipes and worked examples verified against Flipbook's git history (as of 2026-07-01):
+**Date stamped:** 2026-07-01. Recipes and worked examples verified against Flipbook's git history:
 
-- PR #479 (backend URL injection; variable now named BASE_URL) — grep `BASE_URL` in `.darklua.json`, `.lute/build.luau`, `.env.template`
-- PR #426 & PR #444 (BUILD_HASH) — grep `BUILD_HASH` in `.lute/build.luau` (fed by `getCommitHash()`), check `process.run` stdio behavior in Lute docs
-- PR #576 (rerender isolation) — read `createStoryControlsStore.luau`, `StoryControlRow.luau`, verify per-control Charm signals
-- storyteller#100 (Charm.flags.frozen) — read `src/PluginStarterScript.plugin.luau` (comment block above `Charm.flags.frozen = false`), verify workaround in place
-- ModuleLoader weak-keyed registry — read `Packages/_Index/flipbook-labs_module-loader@*/module-loader/dist/createModuleLoader.luau` (the `weak()` helper; installed version drifts, discover with `ls Packages/_Index | grep module-loader`)
-- UILabs Object migration — read `Packages/_Index/flipbook-labs_storyteller@*/storyteller/dist/controls/migrations/ui-labs-*/migrateUILabsControl.luau` (the `control.Type == "Object"` branch returning nil; grep `"Object"` in installed 1.11.0 as of 2026-07-01)
+- PR #479 (backend URL injection; variable now named BASE_URL): grep `BASE_URL` in `.darklua.json`, `.lute/build.luau`, `.env.template`
+- PR #426 & PR #444 (BUILD_HASH): grep `BUILD_HASH` in `.lute/build.luau` (fed by `getCommitHash()`), check `process.run` stdio behavior in Lute docs
+- PR #576 (rerender isolation): read `createStoryControlsStore.luau`, `StoryControlRow.luau`, verify per-control Charm signals
+- storyteller#100 (Charm.flags.frozen): read `src/PluginStarterScript.plugin.luau` (comment block above `Charm.flags.frozen = false`), verify workaround in place
+- ModuleLoader weak-keyed registry: read `Packages/_Index/flipbook-labs_module-loader@*/module-loader/dist/createModuleLoader.luau` (the `weak()` helper; installed version drifts, discover with `ls Packages/_Index | grep module-loader`)
+- UILabs Object migration: read `Packages/_Index/flipbook-labs_storyteller@*/storyteller/dist/controls/migrations/ui-labs-*/migrateUILabsControl.luau` (the `control.Type == "Object"` branch returning nil; grep `"Object"` in installed 1.11.0 as of 2026-07-01)
 
 To re-verify, run: `git log --oneline | grep -E "479|426|444|576|509"` and inspect each PR's commits. Then spot-check one recipe by building and running a minimal reproduction. If recipes or worked examples drift from the repo, update them here and re-date.

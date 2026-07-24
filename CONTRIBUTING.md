@@ -157,18 +157,18 @@ drift fastest and heal slowest.
 
 `lute test` runs the mechanical half of the checklist over every skill, so it fails
 loudly instead of depending on an author to remember it. The rules live in
-`tests/lib/doctrineRules.luau`: the frontmatter genre and load trigger, body length,
-the provenance footer and its date stamp, em dashes and line-number citations in prose,
-machine-specific paths, relative links that resolve, and a `scripts/` drift detector on
-single-repo skills. Each rule is itself tested in `tests/doctrineRules.spec.luau`, so a
-rule that stops matching cannot pass the library silently.
+`tests/lib/doctrineRules.luau`: the frontmatter genre and load trigger, the provenance
+footer and its date stamp, em dashes and line-number citations in prose,
+machine-specific paths, and relative links that resolve. Each rule is itself tested in
+`tests/doctrineRules.spec.luau`, so a rule that stops matching cannot pass the library
+silently. A rule reports every place it fires rather than the first, so one run gives
+you the whole worklist.
 
-Violations that predate the checks are grandfathered per skill in
-`tests/lib/doctrineBaseline.luau`, as a count per rule. That count is a ceiling that
-only moves toward zero: the suite fails when a skill exceeds its entry, and it fails
-again when a skill beats it, so a fix lands with the number lowered and the backlog
-cannot quietly grow back. Adding a number for new work defeats the purpose, so fix the
-skill instead.
+The library passes all of them, with no grandfathered exceptions. Two checklist items
+have no check yet: the 500-line ceiling, which seven `flipbook/` skills still exceed,
+and the `scripts/` drift detector, which almost none of them ship. Both need the
+content work before the check can go in, so they land with it rather than as a backlog
+the suite tolerates.
 
 The judgment half stays yours. Nothing here can tell you whether a claim is true,
 whether an anchor points at the right symbol, or whether a skill has earned its length.

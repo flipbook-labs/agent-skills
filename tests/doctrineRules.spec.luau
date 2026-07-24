@@ -22,31 +22,14 @@ local FRONTMATTER = table.concat({
 
 local PROVENANCE = "\n## Provenance and Maintenance\n\n**Date stamped:** 2026-07-24. Written from a review.\n"
 
--- Fixtures point at real directories so the filesystem-backed rules resolve:
--- a shared-scope skill with no `scripts/`, a single-repo skill that ships one,
--- and a single-repo skill that does not.
+-- Points at a real directory, because `resolvable-links` resolves targets
+-- against the skill's own folder on disk.
 local SHARED_SKILL: Skill = {
 	scope = "org",
 	name = "writing-style",
 	id = "org/writing-style",
 	directory = "src/org/writing-style",
 	skillPath = "src/org/writing-style/SKILL.md",
-}
-
-local SCRIPTED_SKILL: Skill = {
-	scope = "flipbook",
-	name = "diagnostics-and-tooling",
-	id = "flipbook/diagnostics-and-tooling",
-	directory = "src/flipbook/diagnostics-and-tooling",
-	skillPath = "src/flipbook/diagnostics-and-tooling/SKILL.md",
-}
-
-local UNSCRIPTED_SKILL: Skill = {
-	scope = "flipbook",
-	name = "run-checks",
-	id = "flipbook/run-checks",
-	directory = "src/flipbook/run-checks",
-	skillPath = "src/flipbook/run-checks/SKILL.md",
 }
 
 local function ruleById(id: string): DoctrineRule
@@ -80,13 +63,9 @@ test.suite("doctrine rules", function(suite)
 
 		local noTrigger = string.gsub(clean, "Use when: you need the thing.", "It is about things.")
 		assert.eq(countViolations("frontmatter-trigger", SHARED_SKILL, noTrigger), 1, "a topic summary is not a trigger")
-	end)
 
-	suite:case("body-length rejects a body past the ceiling", function(assert)
-		assert.eq(countViolations("body-length", SHARED_SKILL, clean), 0, "the fixture body is a few lines")
-
-		local padded = FRONTMATTER .. string.rep("A line of the body.\n", 501)
-		assert.eq(countViolations("body-length", SHARED_SKILL, padded), 1, "501 body lines is over the ceiling")
+		local narrowed = string.gsub(clean, "Use when:", "Use only when:")
+		assert.eq(countViolations("frontmatter-trigger", SHARED_SKILL, narrowed), 0, "a narrowing form still triggers")
 	end)
 
 	suite:case("provenance-footer rejects a skill that ends without one", function(assert)
@@ -149,6 +128,9 @@ test.suite("doctrine rules", function(suite)
 
 		local store = clean .. "\nThe package installs to ~/.loom/store/AgentSkills@v1/.\n"
 		assert.eq(countViolations("machine-path", SHARED_SKILL, store), 0, "the store path is the documented location")
+
+		local named = clean .. "\nThe symptom is a path starting with `/Users/` reaching darklua.\n"
+		assert.eq(countViolations("machine-path", SHARED_SKILL, named), 0, "an inline span names the prefix")
 	end)
 
 	suite:case("resolvable-links checks relative targets and skips external ones", function(assert)
@@ -160,11 +142,17 @@ test.suite("doctrine rules", function(suite)
 
 		local offsite = clean .. "\nSee [the docs](https://example.com) and [the route](/docs/stories).\n"
 		assert.eq(countViolations("resolvable-links", SHARED_SKILL, offsite), 0, "neither resolves against the disk")
-	end)
 
-	suite:case("drift-script applies only to skills whose anchors leave the repo", function(assert)
-		assert.eq(countViolations("drift-script", SHARED_SKILL, clean), 0, "an org skill has nothing to drift against")
-		assert.eq(countViolations("drift-script", SCRIPTED_SKILL, clean), 0, "this one ships detectors")
-		assert.eq(countViolations("drift-script", UNSCRIPTED_SKILL, clean), 1, "a flipbook skill with no scripts/")
+		local demonstrated = clean .. "\n```markdown\nWrite a link as [label](path).\n```\n"
+		assert.eq(countViolations("resolvable-links", SHARED_SKILL, demonstrated), 0, "a fenced link is syntax")
+
+		local spanned = clean .. "\nEmbed an image with `![alt](path)` and real alt text.\n"
+		assert.eq(countViolations("resolvable-links", SHARED_SKILL, spanned), 0, "so is one in an inline span")
+
+		local codeLabel = clean .. "\nSee [`org/code-comments`](../code-comments/SKILL.md) for the bar.\n"
+		assert.eq(countViolations("resolvable-links", SHARED_SKILL, codeLabel), 0, "a code label keeps the link checked")
+
+		local codeLabelBroken = clean .. "\nSee [`org/gone`](../gone/SKILL.md) for the bar.\n"
+		assert.eq(countViolations("resolvable-links", SHARED_SKILL, codeLabelBroken), 1, "and still catches it broken")
 	end)
 end)

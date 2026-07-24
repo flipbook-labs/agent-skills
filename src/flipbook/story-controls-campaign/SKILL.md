@@ -350,7 +350,7 @@ Solutions are ranked by evidence, scope, and risk. Each has success criteria and
 - Storyteller: verify control constructors exist (createUDim2Control, createVector3Control)
 - Flipbook: add UDim2Control, Vector3Control components
 - Tests: spec for each new control type validating schema → UI → story props round-trip
-- Vault spec says each type needs "acceptance criteria" — those become test assertions
+- Vault spec says each type needs "acceptance criteria": those become test assertions
 
 **Risks:** MODERATE. Simple 1-to-1 component mapping (like ObjectControl → InstancePicker). Risk if Storyteller constructors don't exist or have different names.
 
@@ -583,7 +583,7 @@ lute run test
 
 ### SOLUTION B: ControlGroup UI (Requires Design Decision)
 
-**GATE B.0: DESIGN DECISION GATE — Do Not Proceed Without Approval**
+**GATE B.0: DESIGN DECISION GATE (Do Not Proceed Without Approval)**
 
 **This gate is a decision point, not a code gate.** Before implementing ControlGroup support, you MUST:
 
@@ -987,9 +987,9 @@ end)
 
 1. **Resurrect uilabs-controls-support branch:** It is 3 commits stale (lacks #576, #579, #597). Merging it would revert ObjectControl + InstancePicker work, and lose re-render isolation fixes. If you need UILabs compat, port examples forward onto main. **Citation:** Briefing states branch predates ObjectControl extraction; main is current.
 
-2. **Reintroduce shared-store subscriptions:** PR #576 eliminated a prior pattern where all controls subscribed to one shared Charm signal. This caused all controls to re-render when any changed. Current per-control signal pattern is the fix. Don't go back. **Citation:** Briefing says #576 is the "lesson" — don't make the same mistake.
+2. **Reintroduce shared-store subscriptions:** PR #576 eliminated a prior pattern where all controls subscribed to one shared Charm signal. This caused all controls to re-render when any changed. Current per-control signal pattern is the fix. Don't go back. **Citation:** Briefing says #576 is the "lesson". Don't make the same mistake.
 
-3. **Bypass Storyteller by parsing controls in Flipbook:** UILabs schema → Storyteller schema → Flipbook UI is the layering contract. If Storyteller doesn't support a control type, the fix goes in Storyteller (as with Object migration). Flipbook must not parse raw UILabs schema or duplicate Storyteller's migration logic. **Citation:** Briefing states "layering contract" — maintain it.
+3. **Bypass Storyteller by parsing controls in Flipbook:** UILabs schema → Storyteller schema → Flipbook UI is the layering contract. If Storyteller doesn't support a control type, the fix goes in Storyteller (as with Object migration). Flipbook must not parse raw UILabs schema or duplicate Storyteller's migration logic. **Citation:** Briefing states "layering contract". Maintain it.
 
 ---
 
@@ -1001,7 +1001,7 @@ end)
 2. ✅ **All tests pass:** `lute run test` (entire suite)
 3. ✅ **Lint passes:** `lute run lint` (StyLua, Selene, Prettier)
 4. ✅ **Type check passes:** `lute run analyze` (Luau strict mode)
-5. ✅ **Measurable validation** (per Phase 4.1 protocol — test assertions, not eyeballing)
+5. ✅ **Measurable validation** (per Phase 4.1 protocol: test assertions, not eyeballing)
 6. ✅ **Changelog entry** added (if repo uses changewrite; see `release-and-operations` skill)
 7. ✅ **PR body discloses AI authorship** (maintainer convention; see the `change-control` skill and fill the `.github/pull_request_template.md`)
 

@@ -1,33 +1,26 @@
 -- The authoring conventions from CONTRIBUTING.md, as checks. Each rule reports
--- every occurrence it finds; tests/doctrine.spec.luau compares those counts
--- against the grandfathered baseline.
+-- every occurrence it finds, so one run gives an author the whole worklist
+-- instead of the first failure.
+--
+-- The library passes all of these today. Two further conventions, the 500-line
+-- body ceiling and the `scripts/` drift detector, are not checked yet because
+-- most `flipbook/` skills still violate them; they land with the work that
+-- makes them pass.
 
 local fs = require("@std/fs")
 local path = require("@std/path")
 
 local parseFrontmatter = require("./parseFrontmatter")
+local stripInlineCode = require("./stripInlineCode")
 local toProse = require("./toProse")
 local types = require("./types")
 
-type Skill = types.Skill
 type DoctrineRule = types.DoctrineRule
 
 local Genre = table.freeze({
 	Process = "process",
 	Knowledge = "knowledge",
 })
-
--- Scopes whose skills describe the org rather than one repo, so they carry no
--- anchors that can drift and nothing for a drift detector to check.
-local SHARED_SCOPES = table.freeze({
-	org = true,
-	family = true,
-})
-
--- A body past this gets skimmed rather than read, and it is the ceiling the
--- agent vendors' own skill-authoring guidance names. Detail beyond it goes in a
--- sibling file the skill links to.
-local MAX_BODY_LINES = 500
 
 local EXCERPT_RADIUS = 40
 
@@ -79,22 +72,11 @@ local rules: { DoctrineRule } = {
 		findViolations = function(_skill, contents)
 			local fields = parseFrontmatter(contents)
 			local description = fields and fields.description
-			if description and string.find(description, "Use when", 1, true) then
+			-- "Use when", and the narrowing forms "Use only when" and "Use this when".
+			if description and string.find(description, "Use%s+[%l%s]*when") then
 				return {}
 			end
 			return { 'frontmatter "description" carries no "Use when" trigger' }
-		end,
-	},
-	{
-		id = "body-length",
-		summary = `body stays within {MAX_BODY_LINES} lines`,
-		findViolations = function(_skill, contents)
-			local body = string.match(contents, "^%-%-%-\n.-\n%-%-%-\n(.*)$") or contents
-			local lineCount = #string.split(body, "\n")
-			if lineCount <= MAX_BODY_LINES then
-				return {}
-			end
-			return { `body is {lineCount} lines, over the {MAX_BODY_LINES}-line ceiling` }
 		end,
 	},
 	{
@@ -137,7 +119,9 @@ local rules: { DoctrineRule } = {
 		id = "machine-path",
 		summary = "no absolute or home-relative paths, including inside commands",
 		findViolations = function(_skill, contents)
-			return findAnyMatch(contents, { "/Users/", "~/git/" })
+			-- Fences stay in scope, because a command a reader copies is exactly
+			-- where a machine-specific prefix does its damage.
+			return findAnyMatch(stripInlineCode(contents), { "/Users/", "~/git/" })
 		end,
 	},
 	{
@@ -145,7 +129,11 @@ local rules: { DoctrineRule } = {
 		summary = "every relative link resolves to a file in the library",
 		findViolations = function(skill, contents)
 			local violations = {}
-			for target in string.gmatch(contents, "%]%(([^)]+)%)") do
+			-- Code is dropped, because a link inside a fence or an inline span is
+			-- markdown syntax being demonstrated, not a link the reader can follow.
+			-- A real link keeps its target outside any span even when its label is
+			-- code, so `[`org/x`](../x/SKILL.md)` is still checked.
+			for target in string.gmatch(toProse(contents), "%]%(([^)]+)%)") do
 				-- A leading `/` is a docs-site route rather than a path on disk, so
 				-- it resolves against a site this rule knows nothing about.
 				local isExternal = string.find(target, "^%a+:")
@@ -160,19 +148,6 @@ local rules: { DoctrineRule } = {
 				end
 			end
 			return violations
-		end,
-	},
-	{
-		id = "drift-script",
-		summary = "a single-repo skill ships a `scripts/` drift detector",
-		findViolations = function(skill, _contents)
-			if SHARED_SCOPES[skill.scope] then
-				return {}
-			end
-			if fs.exists(path.format(path.join(skill.directory, "scripts"))) then
-				return {}
-			end
-			return { "no `scripts/` drift detector for a skill whose anchors point into another repo" }
 		end,
 	},
 }

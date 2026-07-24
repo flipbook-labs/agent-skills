@@ -1,6 +1,6 @@
 # Worked example: slimming a PR body
 
-Four drafts of the body for one real change — a GitHub Actions edit to Flipbook's
+Four drafts of the body for one real change: a GitHub Actions edit to Flipbook's
 weekly "Upgrade Roblox Packages" job ([flipbook#611](https://github.com/flipbook-labs/flipbook/pull/611),
 an illustration rather than a live anchor). The diff never changed between drafts;
 only the prose did. Read them in order and watch what gets cut.
@@ -8,7 +8,7 @@ only the prose did. Read them in order and watch what gets cut.
 | Draft | File                                                     | What it shows                                                                         |
 | ----- | -------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | 1     | [`1-default.md`](1-default.md)                           | The default: one sentence per diff hunk, transition narration, a CI-echoing test plan |
-| 2     | [`2-durable-self-applied.md`](2-durable-self-applied.md) | This skill applied by the author to their own draft — better, but still padded        |
+| 2     | [`2-durable-self-applied.md`](2-durable-self-applied.md) | This skill applied by the author to their own draft, better but still padded          |
 | 3     | [`3-adversarial-cut.md`](3-adversarial-cut.md)           | A fresh pass, not attached to the words, cutting to the non-derivable core            |
 | 4     | [`4-template-fitted.md`](4-template-fitted.md)           | Draft 3 reflowed into the repo's PR template                                          |
 
@@ -16,8 +16,8 @@ only the prose did. Read them in order and watch what gets cut.
 
 Draft 1 is the shape this skill exists to prevent. Every step of the diff has a
 matching sentence, so the whole body is recoverable from the diff itself. It narrates
-the transition — "the version bump is now…", "Replaces the `peter-evans` step… what
-erased in-progress work before" — which is true only while the change is fresh. And it
+the transition ("the version bump is now…", "Replaces the `peter-evans` step… what
+erased in-progress work before"), which is true only while the change is fresh. And it
 closes with a test plan of checkboxes that echo what CI already runs.
 
 Draft 2 leads with the why instead, which is most of the win. But it was edited by the
@@ -39,7 +39,7 @@ tests literally:
   cases the pipeline covers.
 - **Not load-bearing → cut.** "matching the other PR-based workflows (e.g. Storyteller)."
 - **Kept.** The two non-derivable whys (app token, commit-on-top) and the secret
-  dependency — the one thing a reviewer cannot see and might be missing.
+  dependency, the one thing a reviewer cannot see and might be missing.
 
 The result is roughly a third of the length carrying more. The lesson is not "draft 3
 is short"; it is that the hard cutting happened in a pass that was not attached to the
@@ -58,4 +58,4 @@ That this progression reaches the template only at draft 4 is itself the mistake
 learn from. The author wrote drafts 1 through 3 from a blank page and reformatted at
 the end. The template should have framed draft 1: fetch it first (see the skill's
 "Start from the template, not a blank page"), fill its sections, and apply the cutting
-tests inside them — collapsing four drafts toward one.
+tests inside them, collapsing four drafts toward one.
