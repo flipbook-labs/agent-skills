@@ -58,7 +58,7 @@ local NAME_FORMAT_CHECKS = table.freeze({
 -- against new sprawl while the long `flipbook/` skills are split into sibling
 -- reference files, and it comes down as they are. Passing it is not evidence that
 -- a skill is within the convention.
-local BODY_LINE_CEILING = 1150
+local BODY_LINE_CEILING = 650
 
 local EXCERPT_RADIUS = 40
 

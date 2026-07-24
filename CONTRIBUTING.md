@@ -165,7 +165,7 @@ Each rule is tested in `tests/doctrineRules.spec.luau` and file discovery in `te
 
 The library passes every check, with no grandfathered exceptions.
 
-The body-length ceiling is the one number that is not the convention. It is set at 1150 lines, a little above the longest skill here today, while the convention is 500. It holds the line against new sprawl while the long `flipbook/` skills get split into sibling reference files, and it comes down as they are. A passing run means a skill has not grown. It does not mean the skill is within the convention.
+The body-length ceiling is the one number that is not the convention. It is set at 650 lines, a little above the longest skill here today, while the convention is 500. It holds the line against new sprawl while the long `flipbook/` skills get split into sibling reference files, and it comes down as they are. A passing run means a skill has not grown. It does not mean the skill is within the convention.
 
 The 1024-character `description` ceiling runs the other way: it is not ours to relax. Codex refuses to load a skill whose description passes it, and refuses silently, so the skill goes invisible instead of failing. Shorten the description rather than the number.
 

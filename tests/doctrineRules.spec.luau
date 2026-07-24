@@ -166,13 +166,13 @@ test.suite("doctrine rules", function(suite)
 	suite:case("body-length counts the body and leaves the frontmatter out of it", function(assert)
 		assert.eq(countSkillViolations("body-length", clean), 0, "the fixture is a handful of lines")
 
-		local atCeiling = FRONTMATTER .. string.rep("A line of body.\n", 1150)
-		assert.eq(countSkillViolations("body-length", atCeiling), 0, "1150 body lines plus frontmatter fits")
+		local atCeiling = FRONTMATTER .. string.rep("A line of body.\n", 650)
+		assert.eq(countSkillViolations("body-length", atCeiling), 0, "650 body lines plus frontmatter fits")
 
-		local overCeiling = FRONTMATTER .. string.rep("A line of body.\n", 1151)
+		local overCeiling = FRONTMATTER .. string.rep("A line of body.\n", 651)
 		assert.eq(countSkillViolations("body-length", overCeiling), 1, "one line past the ceiling fails")
 
-		local unfenced = string.rep("A line of body.\n", 1151)
+		local unfenced = string.rep("A line of body.\n", 651)
 		assert.eq(countSkillViolations("body-length", unfenced), 1, "a skill with no frontmatter is all body")
 	end)
 
