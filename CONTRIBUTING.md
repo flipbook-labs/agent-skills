@@ -145,8 +145,30 @@ drift fastest and heal slowest.
       `../sibling` for sibling repos, runtime-derived in scripts.
 - [ ] Frontmatter `description` says exactly _when to load_ (trigger-rich "Use when:") and
       `type:` declares the genre.
+- [ ] Body within 500 lines. Past that a skill gets skimmed rather than read, so move the
+      detail into a sibling file and link to it from `SKILL.md`.
 - [ ] Project Skills index in AGENTS.md updated if the skill is new, renamed, or retired.
 - [ ] "When not to use" links sibling skills so the right one wins.
 - [ ] Provenance footer with a date stamp and a runnable re-verify block; a `scripts/`
       drift detector for single-repo scopes where the fact is mechanically checkable.
 - [ ] A `.changes/` entry (`bump:` + short description) so the change lands in the next release's changelog.
+
+## Most of the checklist is enforced
+
+`lute test` runs the mechanical half of the checklist over every skill, so it fails
+loudly instead of depending on an author to remember it. The rules live in
+`tests/lib/doctrineRules.luau`: the frontmatter genre and load trigger, body length,
+the provenance footer and its date stamp, em dashes and line-number citations in prose,
+machine-specific paths, relative links that resolve, and a `scripts/` drift detector on
+single-repo skills. Each rule is itself tested in `tests/doctrineRules.spec.luau`, so a
+rule that stops matching cannot pass the library silently.
+
+Violations that predate the checks are grandfathered per skill in
+`tests/lib/doctrineBaseline.luau`, as a count per rule. That count is a ceiling that
+only moves toward zero: the suite fails when a skill exceeds its entry, and it fails
+again when a skill beats it, so a fix lands with the number lowered and the backlog
+cannot quietly grow back. Adding a number for new work defeats the purpose, so fix the
+skill instead.
+
+The judgment half stays yours. Nothing here can tell you whether a claim is true,
+whether an anchor points at the right symbol, or whether a skill has earned its length.
