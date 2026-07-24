@@ -155,20 +155,32 @@ drift fastest and heal slowest.
 
 ## Most of the checklist is enforced
 
-`lute test` runs the mechanical half of the checklist over every skill, so it fails
-loudly instead of depending on an author to remember it. The rules live in
-`tests/lib/doctrineRules.luau`: the frontmatter genre and load trigger, the provenance
-footer and its date stamp, em dashes and line-number citations in prose,
-machine-specific paths, and relative links that resolve. Each rule is itself tested in
-`tests/doctrineRules.spec.luau`, so a rule that stops matching cannot pass the library
-silently. A rule reports every place it fires rather than the first, so one run gives
-you the whole worklist.
+`lute test` runs the mechanical half of the checklist over every skill, so it fails loudly instead of depending on an author to remember it. The rules live in `tests/lib/doctrineRules.luau`, split by what they judge:
 
-The library passes all of them, with no grandfathered exceptions. Two checklist items
-have no check yet: the 500-line ceiling, which seven `flipbook/` skills still exceed,
-and the `scripts/` drift detector, which almost none of them ship. Both need the
-content work before the check can go in, so they land with it rather than as a backlog
-the suite tolerates.
+- **Skill rules** run once, against `SKILL.md`, because they are about the skill as a unit: the frontmatter genre and load trigger, the provenance footer and its date stamp, and the body-length ceiling.
+- **Prose rules** run against every markdown file in the skill's directory, `SKILL.md` and the reference files nested beneath it alike, because a reader who follows a link out of a skill reads what they land on the same way. They cover em dashes, line-number citations, machine-specific paths, and relative links that resolve. A relative link resolves against the folder holding the file that carries it, not the skill root.
+
+Each rule is tested in `tests/doctrineRules.spec.luau` and file discovery in `tests/discoverMarkdownFiles.spec.luau`, so neither a rule that stops matching nor a discovery that stops finding files can pass the library silently. A rule reports every place it fires rather than the first, so one run gives you the whole worklist.
+
+The library passes every check, with no grandfathered exceptions.
+
+The body-length ceiling is the one number that is not the convention. It is set at 1150 lines, a little above the longest skill here today, while the convention is 500. It holds the line against new sprawl while the long `flipbook/` skills get split into sibling reference files, and it comes down as they are. A passing run means a skill has not grown. It does not mean the skill is within the convention.
+
+One checklist item has no check at all: the `scripts/` drift detector, which two of the twenty-one single-repo skills ship. That needs the content work before the check can go in, so it lands with it rather than as a backlog the suite tolerates.
 
 The judgment half stays yours. Nothing here can tell you whether a claim is true,
 whether an anchor points at the right symbol, or whether a skill has earned its length.
+
+## Opting a file out of a prose rule
+
+A file that exists to show bad writing has to be allowed to hold it. `src/org/durable-writing/examples/` reproduces real PR bodies verbatim, including the drafts the skill is teaching you to avoid, so correcting their punctuation would corrupt the exemplar. A file in that position declares an opt-out in an HTML comment, which renders as nothing:
+
+```markdown
+<!-- doctrine-exempt rules="em-dash" reason="Reproduced verbatim as the draft this example exists to criticize." -->
+```
+
+- `rules` names specific rule ids, comma-separated. An opt-out is never blanket, so every rule the marker does not name keeps checking the file.
+- `reason` is required. A marker without one exempts nothing and is reported instead, so no file gets muted by a marker nobody had to justify.
+- Grep `doctrine-exempt` to find every one in the library.
+
+The marker is checked as hard as the rules it mutes. Naming a rule that does not exist fails, and so does exempting a rule the file no longer breaks, because a marker left behind after its violation is gone is a rule switched off with nothing to notice it. Fix the file and delete the marker in the same edit.

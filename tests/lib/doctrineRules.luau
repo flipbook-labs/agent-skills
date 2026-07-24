@@ -2,10 +2,10 @@
 -- every occurrence it finds, so one run gives an author the whole worklist
 -- instead of the first failure.
 --
--- The library passes all of these today. Two further conventions, the 500-line
--- body ceiling and the `scripts/` drift detector, are not checked yet because
--- most `flipbook/` skills still violate them; they land with the work that
--- makes them pass.
+-- The rules are split by what they are about. A skill rule judges the skill as a
+-- unit and runs against `SKILL.md`. A prose rule judges writing and runs against
+-- every markdown file the skill ships, since a reader following a link into a
+-- reference file expects the same conventions there.
 
 local fs = require("@std/fs")
 local path = require("@std/path")
@@ -15,12 +15,21 @@ local stripInlineCode = require("./stripInlineCode")
 local toProse = require("./toProse")
 local types = require("./types")
 
-type DoctrineRule = types.DoctrineRule
+type DoctrineRules = types.DoctrineRules
+type ProseRule = types.ProseRule
+type SkillRule = types.SkillRule
 
 local Genre = table.freeze({
 	Process = "process",
 	Knowledge = "knowledge",
 })
+
+-- CONTRIBUTING.md's checklist sets the convention at 500 lines. This is not that
+-- number. It sits a little above the library's longest skill, so it holds the line
+-- against new sprawl while the long `flipbook/` skills are split into sibling
+-- reference files, and it comes down as they are. Passing it is not evidence that
+-- a skill is within the convention.
+local BODY_LINE_CEILING = 1150
 
 local EXCERPT_RADIUS = 40
 
@@ -53,7 +62,23 @@ local function findAnyMatch(text: string, patterns: { string }): { string }
 	return matches
 end
 
-local rules: { DoctrineRule } = {
+-- The checklist bounds the body, so the frontmatter block does not count against
+-- the ceiling.
+local function getBody(contents: string): string
+	local normalized = string.gsub(contents, "\r\n", "\n")
+	return string.match(normalized, "^%-%-%-\n.-\n%-%-%-\n(.*)$") or normalized
+end
+
+local function countLines(text: string): number
+	local lines = string.split(text, "\n")
+	-- A file ending in a newline splits to a trailing empty piece that is not a line.
+	if lines[#lines] == "" then
+		table.remove(lines)
+	end
+	return #lines
+end
+
+local skillRules: { SkillRule } = {
 	{
 		id = "frontmatter-genre",
 		summary = "frontmatter `type` declares `process` or `knowledge`",
@@ -102,38 +127,52 @@ local rules: { DoctrineRule } = {
 		end,
 	},
 	{
+		id = "body-length",
+		summary = `body within {BODY_LINE_CEILING} lines, on the way down to the 500-line convention`,
+		findViolations = function(_skill, contents)
+			local length = countLines(getBody(contents))
+			if length <= BODY_LINE_CEILING then
+				return {}
+			end
+			return { `body is {length} lines, over the {BODY_LINE_CEILING}-line ceiling` }
+		end,
+	},
+}
+
+local proseRules: { ProseRule } = {
+	{
 		id = "em-dash",
 		summary = "no em dash or spaced double hyphen in prose",
-		findViolations = function(_skill, contents)
-			return findAnyMatch(toProse(contents), { "—", " %-%- " })
+		findViolations = function(file)
+			return findAnyMatch(toProse(file.contents), { "—", " %-%- " })
 		end,
 	},
 	{
 		id = "source-line-citation",
 		summary = "locates source by grep-able anchor, never by line number",
-		findViolations = function(_skill, contents)
-			return findMatches(toProse(contents), "%f[%a]lines?%s+%d")
+		findViolations = function(file)
+			return findMatches(toProse(file.contents), "%f[%a]lines?%s+%d")
 		end,
 	},
 	{
 		id = "machine-path",
 		summary = "no absolute or home-relative paths, including inside commands",
-		findViolations = function(_skill, contents)
+		findViolations = function(file)
 			-- Fences stay in scope, because a command a reader copies is exactly
 			-- where a machine-specific prefix does its damage.
-			return findAnyMatch(stripInlineCode(contents), { "/Users/", "~/git/" })
+			return findAnyMatch(stripInlineCode(file.contents), { "/Users/", "~/git/" })
 		end,
 	},
 	{
 		id = "resolvable-links",
 		summary = "every relative link resolves to a file in the library",
-		findViolations = function(skill, contents)
+		findViolations = function(file)
 			local violations = {}
 			-- Code is dropped, because a link inside a fence or an inline span is
 			-- markdown syntax being demonstrated, not a link the reader can follow.
 			-- A real link keeps its target outside any span even when its label is
 			-- code, so `[`org/x`](../x/SKILL.md)` is still checked.
-			for target in string.gmatch(toProse(contents), "%]%(([^)]+)%)") do
+			for target in string.gmatch(toProse(file.contents), "%]%(([^)]+)%)") do
 				-- A leading `/` is a docs-site route rather than a path on disk, so
 				-- it resolves against a site this rule knows nothing about.
 				local isExternal = string.find(target, "^%a+:")
@@ -141,7 +180,7 @@ local rules: { DoctrineRule } = {
 					or string.find(target, "^/")
 				local withoutAnchor = string.match(target, "^([^#]*)")
 				if not isExternal and withoutAnchor and withoutAnchor ~= "" then
-					local resolved = path.format(path.normalize(path.join(skill.directory, withoutAnchor)))
+					local resolved = path.format(path.normalize(path.join(file.directory, withoutAnchor)))
 					if not fs.exists(resolved) then
 						table.insert(violations, `link target does not exist: {target}`)
 					end
@@ -152,4 +191,9 @@ local rules: { DoctrineRule } = {
 	},
 }
 
-return table.freeze(rules)
+local doctrineRules: DoctrineRules = {
+	skill = skillRules,
+	prose = proseRules,
+}
+
+return table.freeze(doctrineRules)
