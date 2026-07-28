@@ -124,8 +124,7 @@ See [Writing Stories](/docs/creating-stories/writing-stories) for the full guide
 ````
 ```code-sample
 workspace/code-samples/src/React/ReactButton.luau#L4-L13
-````
-
+```
 ````
 
 ### Callout Boxes
@@ -144,7 +143,7 @@ Callout syntax for both Obsidian and Docusaurus:
 
 > [!seealso]
 > Related links (use for cross-reference blocks at page bottom)
-````
+```
 
 ### Sidebars and Navigation
 

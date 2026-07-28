@@ -19,6 +19,11 @@ type Skill = types.Skill
 
 local function findSkillProblems(skill: Skill): { string }
 	local problems: { string } = {}
+	-- Every directory under a scope is a skill, so a missing SKILL.md is a finding
+	-- and not a directory to pass over.
+	if not fs.exists(skill.skillPath) then
+		return { `{skill.skillPath}: skill directory has no SKILL.md` }
+	end
 	local contents = fs.readFileToString(skill.skillPath)
 
 	for _, rule in doctrineRules.skill do
