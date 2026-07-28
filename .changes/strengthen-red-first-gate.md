@@ -1,6 +1,6 @@
 ---
-bump: minor
+bump: patch
 category: Changes
 ---
 
-Extend `org/write-luau-tests` with rules for catching tests that pass when they should fail.
+`org/write-luau-tests` now covers tests that cannot fail: triaging a green break-check, and assertions and fixtures that do not discriminate.
