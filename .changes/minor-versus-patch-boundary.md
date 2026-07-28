@@ -3,4 +3,4 @@ bump: patch
 category: Changes
 ---
 
-`org/changelog-entries` now draws the `minor` line at new surface area rather than at how much a consumer notices the change.
+`org/changelog-entries` now picks a bump by whether a change adds surface area, takes it away, or refines what is already there.
