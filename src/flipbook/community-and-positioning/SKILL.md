@@ -1,6 +1,6 @@
 ---
 name: community-and-positioning
-description: Community-first doctrine, telemetry/privacy posture, ecosystem positioning vs web Storybook and UI Labs, and claim discipline for Flipbook features
+description: "Flipbook's community-first doctrine, telemetry and privacy posture, ecosystem positioning against web Storybook and UI Labs, and the discipline required before claiming a feature. Use when: understanding Flipbook's positioning or its commitments to the community, writing docs or release notes that make a claim, or deciding what telemetry may collect."
 type: knowledge
 ---
 
@@ -70,18 +70,18 @@ The telemetry system in Flipbook is implemented in `workspace/flipbook-core/src/
 
 **Event Types (from `Telemetry/types.luau`):**
 
-- `AppOpened` — plugin opened (no properties)
-- `AppClosed` — plugin closed (no properties)
-- `StoryOpened` — user opened a story (no properties)
-- `StoryClosed` — user closed a story (no properties)
-- `PageChanged` — user navigated to a page (property: `page` string)
-- `NodePinned` — user pinned a storybook node (no properties)
-- `NodeUnpinned` — user unpinned a storybook node (no properties)
-- `TelemetryOptedIn` — user opted in (no properties)
-- `TelemetryOptedOut` — user opted out (no properties)
-- `FeedbackDialogOpened` — user opened feedback dialog (no properties)
-- `FeedbackSubmitted` — user submitted feedback (no properties)
-- `FeedbackDiscarded` — user discarded feedback (no properties)
+- `AppOpened`: plugin opened (no properties)
+- `AppClosed`: plugin closed (no properties)
+- `StoryOpened`: user opened a story (no properties)
+- `StoryClosed`: user closed a story (no properties)
+- `PageChanged`: user navigated to a page (property: `page` string)
+- `NodePinned`: user pinned a storybook node (no properties)
+- `NodeUnpinned`: user unpinned a storybook node (no properties)
+- `TelemetryOptedIn`: user opted in (no properties)
+- `TelemetryOptedOut`: user opted out (no properties)
+- `FeedbackDialogOpened`: user opened feedback dialog (no properties)
+- `FeedbackSubmitted`: user submitted feedback (no properties)
+- `FeedbackDiscarded`: user discarded feedback (no properties)
 
 **Per-Event Envelope (from `fireEventAsync.luau`):**
 Each event is sent as JSON with:
@@ -158,7 +158,7 @@ Each event is sent as JSON with:
 
 Flipbook is _not_ trying to be a feature-complete Roblox port of Storybook. Parity is:
 
-- **Story format:** Users write stories in a compatible shape — a module returning a table with a `story` function and optional `controls` field. Web Storybook's [Component Story Format](https://storybook.js.org/docs/react/api/csf) (CSF) inspired this.
+- **Story format:** Users write stories in a compatible shape: a module returning a table with a `story` function and optional `controls` field. Web Storybook's [Component Story Format](https://storybook.js.org/docs/react/api/csf) (CSF) inspired this.
 - **Controls/ArgTypes:** Flipbook supports a controls schema (see `story-controls-campaign` for the revamp). This mirrors Storybook's ArgTypes but adapted to Roblox data types.
 - **Multiple renderers:** Flipbook supports React, Roact, Fusion, and functional renderers. Storybook supports React, Vue, Angular, Web Components, etc. Both allow plugging in UI libraries.
 - **Story discovery:** Both scan a codebase for story files and surface them in a tree UI.
@@ -196,10 +196,10 @@ UI Labs is a competing Roblox storybook plugin. A gap analysis lives in the Obsi
 
 **Unverified (Cannot Claim Without External Research):**
 
-- "UI Labs has N times more users than Flipbook" — repo does not contain usage metrics; this is unverified without telemetry.
-- "UI Labs controls are more powerful" — no detailed feature matrix in this repo; the vault has a matrix but it's aspirational (what Flipbook _targets_), not verified.
-- "UI Labs has a larger community" — repo does not document community size; unverified.
-- "UI Labs maintainers are more responsive on Discord" — documented in vault (`product/2025-product-spec/index.md`) as user sentiment, but not verified by this repo.
+- "UI Labs has N times more users than Flipbook": repo does not contain usage metrics; this is unverified without telemetry.
+- "UI Labs controls are more powerful": no detailed feature matrix in this repo; the vault has a matrix but it's aspirational (what Flipbook _targets_), not verified.
+- "UI Labs has a larger community": repo does not document community size; unverified.
+- "UI Labs maintainers are more responsive on Discord": documented in vault (`product/2025-product-spec/index.md`) as user sentiment, but not verified by this repo.
 
 **Labeling Rule:**
 Any claim about UI Labs in documentation or release notes must be labeled **(unverified)** unless the repo itself provides evidence (e.g., a working code sample, a test, a deployed feature). Competitive claims are marketing risk; verify before asserting.
@@ -214,22 +214,22 @@ Before labeling a feature as shipped, production-ready, or documented in release
 
 **For Features:**
 
-1. ✅ **Code exists on main branch** — not on a draft branch, not WIP, not stalled
-2. ✅ **Tests pass** (if applicable) — `lute run test` succeeds; or no test exists because the feature is UI-only and manually verified
-3. ✅ **Builds without error** — `lute run build plugin --channel prod` succeeds
-4. ✅ **Working code sample or demo** — either a `.story.luau` file showing the feature in action (in `workspace/code-samples/` or sibling Storybook) or documented reproduction steps
-5. ✅ **Deployed example** (if relevant) — for embedding or in-experience features, a deployed storybook place demonstrating the feature (via `deploy-storybook`)
+1. ✅ **Code exists on main branch**: not on a draft branch, not WIP, not stalled
+2. ✅ **Tests pass** (if applicable): `lute run test` succeeds; or no test exists because the feature is UI-only and manually verified
+3. ✅ **Builds without error**: `lute run build plugin --channel prod` succeeds
+4. ✅ **Working code sample or demo**: either a `.story.luau` file showing the feature in action (in `workspace/code-samples/` or sibling Storybook) or documented reproduction steps
+5. ✅ **Deployed example** (if relevant): for embedding or in-experience features, a deployed storybook place demonstrating the feature (via `deploy-storybook`)
 
 **For Documentation/Release Notes:**
 
-1. ✅ **Feature is on main** — no "coming soon" claims without a PR merged
-2. ✅ **Docs are written and accurate** — docs reference the feature correctly; they don't promise behavior that doesn't exist
-3. ✅ **No conflicting open bugs** — if a known issue is tracked, the docs must acknowledge it (e.g., "Known limitation: X")
+1. ✅ **Feature is on main**: no "coming soon" claims without a PR merged
+2. ✅ **Docs are written and accurate**: docs reference the feature correctly; they don't promise behavior that doesn't exist
+3. ✅ **No conflicting open bugs**: if a known issue is tracked, the docs must acknowledge it (e.g., "Known limitation: X")
 
 **For Claims About Compatibility/Parity:**
 
-1. ✅ **Test or example proves it** — e.g., "Flipbook supports UI Labs controls" requires a story using UI Labs control types that renders correctly
-2. ✅ **Verified against the thing you're claiming parity with** — not just "we implemented it locally"; actually test against a real UI Labs story if claiming interop
+1. ✅ **Test or example proves it**: e.g., "Flipbook supports UI Labs controls" requires a story using UI Labs control types that renders correctly
+2. ✅ **Verified against the thing you're claiming parity with**: not just "we implemented it locally"; actually test against a real UI Labs story if claiming interop
 
 ### Examples
 
@@ -245,14 +245,14 @@ Before labeling a feature as shipped, production-ready, or documented in release
 
 - Code: Exists on branch `uilabs-controls-support`, merged to main in parts (e.g., PR #597 "Extract InstancePicker from ObjectControl")
 - Status: Q1 2026, _in progress_. Not all control types are shipped.
-- What can be claimed: "New control types (Color, Date, Slider, etc.) are coming in the next release" — must say _coming_, not shipped
-- What cannot be claimed: "Flipbook has full UI Labs parity" — incomplete; test shows gaps remain
+- What can be claimed: "New control types (Color, Date, Slider, etc.) are coming in the next release". Must say _coming_, not shipped
+- What cannot be claimed: "Flipbook has full UI Labs parity". It is incomplete; test shows gaps remain
 
 **Example 3: Automated Story Snapshots (Stalled, NOT Shipping)**
 
 - Code: Branch `automated-story-snapshots` exists, not merged to main
 - Status: Stalled; not being actively developed
-- What can be claimed: Nowhere in docs or release notes — this is a research branch
+- What can be claimed: Nowhere in docs or release notes. This is a research branch
 - Exception: In a research/frontier skill, you can document it as "exploratory" with caveats
 
 ### Enforcement (For Reviewers)
@@ -272,7 +272,7 @@ When authoring docs, blog posts, or release notes:
 1. **Label unreleased work:** If a feature is on a branch or incomplete, call it "experimental" or "in progress", not "released" or "shipped".
 2. **Disclose AI assistance:** Every PR is marked with 🤖 and a link to Claude Code.
 3. **No oversell:** Avoid "Flipbook is the best storybook plugin" or "faster than X" without numbers. Stick to factual features and design principles.
-4. **Community-first framing:** When describing Flipbook, emphasize that it's open-source, community-driven, and built for all Roblox developers — not just Roblox-internal use.
+4. **Community-first framing:** When describing Flipbook, emphasize that it's open-source, community-driven, and built for all Roblox developers, not just Roblox-internal use.
 5. **Cite the repo:** If claiming a fact about Flipbook (e.g., "supports React, Roact, Fusion"), cite the code or a test that proves it.
 
 ---
@@ -289,8 +289,18 @@ When authoring docs, blog posts, or release notes:
 
 **Medium-term (Nice-to-Have):**
 
-- [ ] Telemetry dashboard (show top stories, pages, etc. — anonymized aggregates only)
+- [ ] Telemetry dashboard (show top stories, pages, etc., with anonymized aggregates only)
 - [ ] User survey on data collection concerns
 - [ ] Export telemetry data (let users see what was sent about their account)
 
 ---
+
+## Provenance and Maintenance
+
+**Date stamped:** 2026-07-01. Migrated from Flipbook's own skill library, where the doctrine was recorded from the maintainer's positions on community commitments, telemetry, and what may be claimed about a feature.
+
+**Re-verify these claims when this skill next loads** (run from a Flipbook checkout):
+
+- Telemetry opt-in default and the events collected: `grep -rn "collectAnonymousUsageData" workspace/flipbook-core/src`
+- What a telemetry payload carries: read `workspace/flipbook-core/src/Telemetry/fireEventAsync.luau`
+- The privacy roadmap items above are open commitments rather than shipped behavior. Confirm against the repo before repeating one as a claim.

@@ -1,12 +1,12 @@
 ---
 name: research-frontier
-description: "Open research problems where Flipbook advances SOTA beyond web Storybook and uilabs: in-experience collaboration, automated visual regression, agent-driven development. First steps, blockers, milestones."
+description: "Open research problems where Flipbook could advance the state of the art beyond web Storybook and UI Labs: in-experience collaboration, automated visual regression, and agent-driven development, each with its first steps, blockers, and falsifiable milestones. Use when: exploring a new capability, planning long-term direction, or checking whether an idea is already a known blocker."
 type: knowledge
 ---
 
 # Flipbook Research Frontier
 
-This skill documents three distinguished-engineer-level research frontiers where Flipbook has unique assets and the potential to advance the state of the art beyond web Storybook and uilabs. Each frontier includes current SOTA gaps, Flipbook's specific advantage, first-order blockers, and falsifiable milestones. **All frontiers are open/candidate** — nothing here is shipped. Ground every claim in the repo; external-world assertions (web Storybook capabilities, uilabs scope) are labeled unverified-from-repo.
+This skill documents three distinguished-engineer-level research frontiers where Flipbook has unique assets and the potential to advance the state of the art beyond web Storybook and uilabs. Each frontier includes current SOTA gaps, Flipbook's specific advantage, first-order blockers, and falsifiable milestones. **All frontiers are open/candidate**: nothing here is shipped. Ground every claim in the repo; external-world assertions (web Storybook capabilities, uilabs scope) are labeled unverified-from-repo.
 
 Sibling skills: `failure-archaeology` (dead ends), `story-controls-campaign` (hardest live problem), `write-docs` (publication). For questions about what lands when and under what conditions, see `change-control` (PR workflow) and `release-and-operations` (artifact/deployment conventions).
 
@@ -14,7 +14,7 @@ Sibling skills: `failure-archaeology` (dead ends), `story-controls-campaign` (ha
 
 ### Problem: Why Current SOTA Fails
 
-Web Storybook's shareable preview links (unverified-from-repo: Storybook Cloud, Netlify integration) exist as static web renderings — they are not running _inside_ the Roblox runtime or the place where the UI will actually appear. Designers, product managers, and stakeholders reviewing candidate UI must either (1) ask developers to manually deploy the experience and open it in Studio (friction, latency), or (2) review flat screenshots/videos (static, no interaction). This creates a deployment-to-feedback cycle measured in minutes or hours, not seconds.
+Web Storybook's shareable preview links (unverified-from-repo: Storybook Cloud, Netlify integration) exist as static web renderings. They are not running _inside_ the Roblox runtime or the place where the UI will actually appear. Designers, product managers, and stakeholders reviewing candidate UI must either (1) ask developers to manually deploy the experience and open it in Studio (friction, latency), or (2) review flat screenshots/videos (static, no interaction). This creates a deployment-to-feedback cycle measured in minutes or hours, not seconds.
 
 ### Flipbook's Specific Asset
 
@@ -34,7 +34,7 @@ Branch: `embedded-http-proxy` (75 commits, last activity 2026-06-19). Main commi
 
 Approach:
 
-- When embedded, `src/EmbeddedServerStarterScript.server.luau` creates a `RemoteFunction` tagged `FlipbookHttpProxy` (verified in branch diff on `embedded-http-proxy`; the file ships on main via #582, but the `FlipbookHttpProxy` tag is branch-only — do not expect to grep it on main).
+- When embedded, `src/EmbeddedServerStarterScript.server.luau` creates a `RemoteFunction` tagged `FlipbookHttpProxy` (verified in branch diff on `embedded-http-proxy`; the file ships on main via #582, but the `FlipbookHttpProxy` tag is branch-only: do not expect to grep it on main).
 - Client's `workspace/flipbook-core/src/Http/requestAsync.luau` detects the proxy via `CollectionService` and invokes it server-to-server instead of calling `HttpService` directly (verified in branch diff on `embedded-http-proxy`).
 - Server-side proxy filters all requests through an allowlist (grep `ALLOWED_HOST` on the branch) + host-parsing logic to defeat spoofing (URL parsing stripping userinfo and port; grep `userinfo` in the same file on the branch).
 
@@ -102,7 +102,7 @@ Web Storybook's Chromatic integration (unverified-from-repo) allows teams to sna
 
 - **`automated-story-snapshots` branch** (11 commits, last activity 2026-06-28; kept in sync with main): Implements WebSocket-based story capture directly from Lute scripting (not via browser screenshot).
 - **stories.spec harness** (verified in main: `workspace/flipbook-core/src/Storybook/stories.spec.luau`): All stories are renderable in a headless Jest test context; render-all would require iterating this list and calling each story's render function with default controls.
-- **Cloud Luau Execution via Rocale** (verified in `.github/workflows/strict.yml`): Tests run inside Roblox (not mocked). We can spawn a place, render stories, capture screenshots server-side, and assert pixel-diffs — all in CI.
+- **Cloud Luau Execution via Rocale** (verified in `.github/workflows/strict.yml`): Tests run inside Roblox (not mocked). We can spawn a place, render stories, capture screenshots server-side, and assert pixel-diffs, all in CI.
 
 ### Open Work: Characterize the Branch (Read-Only)
 
@@ -117,7 +117,7 @@ What it ships (verified in commits):
 
 What remains speculative (not in branch commits, inference):
 
-- **Pixel-diff engine:** The branch captures PNGs but does not include logic to compare against a baseline or flag regressions. This is _candidate/out-of-scope_ for the branch itself — the diff would live in a separate PR or tool.
+- **Pixel-diff engine:** The branch captures PNGs but does not include logic to compare against a baseline or flag regressions. This is _candidate/out-of-scope_ for the branch itself. The diff would live in a separate PR or tool.
 - **Story iteration in CI:** Branch does not include a `stories.spec` helper to render all stories and capture each one. This is a separate step (inference: would need to iterate `stories.spec.luau`'s test suite, render each story's function with default/candidate controls, capture each, hash/diff the results).
 - **CI gate:** No `.github/workflows/` job yet that runs visual regression tests and blocks PRs on mismatches. This is post-capture infrastructure.
 
@@ -242,7 +242,7 @@ Command:
 git show agent-actions-registry:workspace/flipbook-core/src/Actions/types.luau | grep -A 20 "type ManifestEntry"
 ```
 
-Expected output (verified in the `agent-actions-registry` branch diff; grep `ManifestEntry` there — the type is not on main):
+Expected output (verified in the `agent-actions-registry` branch diff; grep `ManifestEntry` there, the type is not on main):
 
 ```luau
 export type ManifestEntry = {
@@ -341,9 +341,9 @@ Frontiers are not independent. **Visual regression depends on stable controls.**
 
 ---
 
-## Provenance & Re-Verification Commands
+## Provenance and Maintenance
 
-Date: 2026-07-01
+**Date stamped:** 2026-07-01.
 
 Verify frontier branch status and commit details (read-only git):
 

@@ -34,12 +34,12 @@ return {
 
 The `story` function receives a `props` object and must return one of six supported UI types (see "Story Formats by Framework" below). The `props` object contains:
 
-- `props.container: Instance` — parent GuiObject or Folder to render into (reserved by Storyteller)
-- `props.controls: StoryControls?` — current control values after user interaction (reserved by Storyteller)
-- `props.theme: string` — "Light" or "Dark" (from Flipbook's theme setting)
-- `props.locale: string` — e.g. "en-us" (from Flipbook's locale setting)
-- `props.plugin: Pluginlike?` — mock Plugin object (only when Flipbook runs embedded in an experience)
-- `props.widget: GuiBase2d?` — containing widget (only when Flipbook runs as a Studio plugin)
+- `props.container: Instance`: parent GuiObject or Folder to render into (reserved by Storyteller)
+- `props.controls: StoryControls?`: current control values after user interaction (reserved by Storyteller)
+- `props.theme: string`: "Light" or "Dark" (from Flipbook's theme setting)
+- `props.locale: string`: e.g. "en-us" (from Flipbook's locale setting)
+- `props.plugin: Pluginlike?`: mock Plugin object (only when Flipbook runs embedded in an experience)
+- `props.widget: GuiBase2d?`: containing widget (only when Flipbook runs as a Studio plugin)
 - Plus: merged static props from `props` field (story definition) and user-modified controls
 
 The return type `T` depends on the framework: React elements, Roact elements, Fusion values, raw Instances, or functions returning any of those.
@@ -117,7 +117,7 @@ A story does not strictly need a storybook; Flipbook surfaces orphaned stories u
 
 ### Stories Without Storybooks
 
-If a story file has no covering storybook (no storybook declares its parent folder in `storyRoots`), Flipbook still discovers and renders it—it simply appears in a special "Unavailable Stories" group in the tree. This is useful for quick prototyping, though production stories should always have a storybook.
+If a story file has no covering storybook (no storybook declares its parent folder in `storyRoots`), Flipbook still discovers and renders it. It simply appears in a special "Unavailable Stories" group in the tree. This is useful for quick prototyping, though production stories should always have a storybook.
 
 ## Story Formats by Framework
 
@@ -229,11 +229,11 @@ Support exists for backward compatibility. New stories should use the `story` ke
 
 Storyteller exports these key discovery functions (wally.toml pins Storyteller 1.12.0; verify installed version with `ls Packages/_Index | grep storyteller`):
 
-- `isStorybookModule(instance: Instance) -> boolean` — test if an Instance is a `.storybook.luau` module
-- `isStoryModule(instance: Instance) -> boolean` — test if an Instance is a `.story.luau` module
-- `findStorybookModules(parent: Instance) -> { ModuleScript }` — recursive search for storybooks under `parent`
-- `loadStorybookModule(loader: ModuleLoader, storybookModule: ModuleScript) -> Storybook` — validate and return storybook table
-- `loadStoryModule(loader: ModuleLoader, storyModule: ModuleScript, storybook: Storybook?) -> LoadedStory<T>` — validate and return story table
+- `isStorybookModule(instance: Instance) -> boolean`: test if an Instance is a `.storybook.luau` module
+- `isStoryModule(instance: Instance) -> boolean`: test if an Instance is a `.story.luau` module
+- `findStorybookModules(parent: Instance) -> { ModuleScript }`: recursive search for storybooks under `parent`
+- `loadStorybookModule(loader: ModuleLoader, storybookModule: ModuleScript) -> Storybook`: validate and return storybook table
+- `loadStoryModule(loader: ModuleLoader, storyModule: ModuleScript, storybook: Storybook?) -> LoadedStory<T>`: validate and return story table
 
 The `loader` is a ModuleLoader instance (see "ModuleLoader" section below). Storyteller calls `loader:require(moduleScript)` instead of the built-in `require()` to bypass Roblox's cache.
 
@@ -241,9 +241,9 @@ The `loader` is a ModuleLoader instance (see "ModuleLoader" section below). Stor
 
 When you open a story in Flipbook, Storyteller calls the `story` function with a props object, captures the return value, and hands it to a **renderer** (React, Roact, Fusion, or custom). The renderer then mounts the value into a container. This lifecycle supports three operations:
 
-1. **Mount** — call `story()` and render result into container
-2. **Update** — (optional) re-render with new control values without full unmount
-3. **Unmount** — destroy UI and clean up subscriptions
+1. **Mount**: call `story()` and render result into container
+2. **Update**: (optional) re-render with new control values without full unmount
+3. **Unmount**: destroy UI and clean up subscriptions
 
 Storyteller's renderer API (type `Storyteller.StoryRenderer<T>`) looks like:
 
@@ -270,67 +270,67 @@ Storyteller's `hydrateControls(schema, overrides)` function merges schema defaul
 
 Flipbook supports 11 control types (on main as of 2026-07-01). Each is a discriminated union keyed on `type`:
 
-1. **Boolean** — toggle on/off
+1. **Boolean**: toggle on/off
 
    ```luau
    Storyteller.createBooleanControl(default: boolean?) -> BooleanControl
    ```
 
-2. **String** — text input
+2. **String**: text input
 
    ```luau
    Storyteller.createStringControl(default: string?) -> StringControl
    ```
 
-3. **Number** — numeric input with optional step
+3. **Number**: numeric input with optional step
 
    ```luau
    Storyteller.createNumberControl(default: number?, options: {step: number?}?) -> NumberControl
    ```
 
-4. **Slider** — range slider (Number with implicit UI hint)
+4. **Slider**: range slider (Number with implicit UI hint)
 
    ```luau
    Storyteller.createSliderControl(default: number?, range: NumberRange?) -> SliderControl
    ```
 
-5. **Color** — color picker
+5. **Color**: color picker
 
    ```luau
    Storyteller.createColorControl(default: Color3?) -> ColorControl
    ```
 
-6. **Date** — date/datetime picker
+6. **Date**: date/datetime picker
 
    ```luau
    Storyteller.createDateControl(default: DateTime?) -> DateControl
    ```
 
-7. **Select** — dropdown (single choice from items list)
+7. **Select**: dropdown (single choice from items list)
 
    ```luau
    Storyteller.createSelectControl(items: { T }, options: {default: T?, tostring: (T) -> string?, sort: (T, T) -> bool?}?) -> SelectControl
    ```
 
-8. **Radio** — radio group (single choice, all visible)
+8. **Radio**: radio group (single choice, all visible)
 
    ```luau
    Storyteller.createRadioControl(items: { T }, options: {...}?) -> RadioControl
    ```
 
-9. **MultiSelect** — multiselect list (multiple choices)
+9. **MultiSelect**: multiselect list (multiple choices)
 
    ```luau
    Storyteller.createMultiSelectControl(items: { T }, options: {default: { T }?, ...}?) -> MultiSelectControl
    ```
 
-10. **Check** — checkbox list (multiple boolean flags)
+10. **Check**: checkbox list (multiple boolean flags)
 
     ```luau
     Storyteller.createCheckControl(items: { T }, options: {...}?) -> CheckControl
     ```
 
-11. **Object** — instance picker (select an Instance from the DataModel)
+11. **Object**: instance picker (select an Instance from the DataModel)
     ```luau
     Storyteller.createObjectControl(default: Instance?) -> ObjectControl
     ```
@@ -446,9 +446,9 @@ return {
 
 When Flipbook opens a story with controls, it uses an internal control store (in `workspace/flipbook-core/src/StoryControls/createStoryControlsStore.luau`) to manage state. The store is built on Charm signals:
 
-- `getControlValue(key: string) -> () -> any` — returns a Charm computed signal for a control's value (resolves override or schema default)
-- `setControl(key: string, value: any) -> ()` — updates a control value
-- `getControls() -> Storyteller.StoryControls` — returns final merged controls passed to the story function
+- `getControlValue(key: string) -> () -> any`: returns a Charm computed signal for a control's value (resolves override or schema default)
+- `setControl(key: string, value: any) -> ()`: updates a control value
+- `getControls() -> Storyteller.StoryControls`: returns final merged controls passed to the story function
 
 The store is wrapped in a React context (`StoryControlsContext`) and consumed by individual control UI components. Each control subscribes only to its own value via `useSignalState()`, so changing one control does not re-render siblings. This isolation prevents visual flicker and performance issues.
 

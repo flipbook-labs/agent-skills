@@ -6,7 +6,7 @@ type: process
 
 # Flipbook Research Methodology
 
-This skill documents how Flipbook's community and maintainers move from hypothesis to evidence to change — the discipline that guards against false fixes, premature optimization, and abandoning dead ends without a verdict. Every rule is grounded in real incidents from the project's history.
+This skill documents how Flipbook's community and maintainers move from hypothesis to evidence to change, the discipline that guards against false fixes, premature optimization, and abandoning dead ends without a verdict. Every rule is grounded in real incidents from the project's history.
 
 ## I. The Evidence Bar: One Mechanism Must Explain All Observations
 
@@ -14,19 +14,19 @@ This skill documents how Flipbook's community and maintainers move from hypothes
 
 ### Pattern: The BUILD_HASH Double Failure (PRs #426 and #444)
 
-**First failure — symptom:** After Lute upgrade, the `BUILD_HASH` global stopped being set at build time. Plugin tagged with empty hash.
+**First failure, symptom:** After Lute upgrade, the `BUILD_HASH` global stopped being set at build time. Plugin tagged with empty hash.
 
 **Initial diagnosis (PR #426, commit 1863e994, 2025-11-02):** "I was supplying the wrong default for Lute's `stdio` parameter. We're now properly falling back to its default which propagates `result.stdout`."
 
 **Evidence:** Changed `scripts/lib/run.luau` (grep `stdio = nil`) from `stdio = "inherit"` to `stdio = nil` (let Lute default). Worked locally. Merged.
 
-**Second failure — six weeks later (PR #444, commit 704fbd5b, 2025-12-15):** Same symptom recurred. `BUILD_HASH` nil in CI nightly builds.
+**Second failure, six weeks later (PR #444, commit 704fbd5b, 2025-12-15):** Same symptom recurred. `BUILD_HASH` nil in CI nightly builds.
 
 **Root cause analysis:** "The build hash comes from a `git rev-parse` command which has been quite brittle from switching between Lute versions and how its stdio behavior works between those versions." The mechanism was NOT "wrong default" but "Lute's stdio behavior varies between versions."
 
 **Revised fix:** Explicitly set `stdio = "default"` in the git call; added assertion `assert(commitHash ~= nil and commitHash ~= "", "commit hash is empty")` to CI so regression is caught immediately.
 
-**Why the first fix failed:** The explanation "wrong Lute default" was incomplete. It happened to work locally because local Lute version (installed via `rokit install`) differed from CI's nightly. The real invariant — "Lute stdio behavior is version-sensitive" — was never isolated. The fix needed to be explicit, not rely on defaults.
+**Why the first fix failed:** The explanation "wrong Lute default" was incomplete. It happened to work locally because local Lute version (installed via `rokit install`) differed from CI's nightly. The real invariant, "Lute stdio behavior is version-sensitive", was never isolated. The fix needed to be explicit, not rely on defaults.
 
 ### Mechanism Validation Checklist
 
@@ -35,7 +35,7 @@ Before accepting a root-cause explanation:
 1. **Collect all observations:** What broke? What didn't? What platforms, Lute versions, contexts were involved?
 2. **State the mechanism:** One sentence describing how the bug operates (e.g., "Lute's stdio parameter default changed between v0.1.0-nightly.20251210 and subsequent versions, breaking stdout capture in git rev-parse calls").
 3. **Check negatives:** Why didn't this affect local builds? (Answer: rokit pins Lute version; CI's nightly workflow does not.) Why did it work once in #426? (Answer: commit 1863e994 accidentally set a compatible version alongside the fix.)
-4. **Assign adversarial review:** A second engineer or model explicitly tries to break the explanation by proposing alternative root causes. ("Could it be git version differences?" — test: git --version consistent in CI and local. "Could it be path escaping?" — test: check commit hash length in logs.)
+4. **Assign adversarial review:** A second engineer or model explicitly tries to break the explanation by proposing alternative root causes. ("Could it be git version differences?" Test: git --version consistent in CI and local. "Could it be path escaping?" Test: check commit hash length in logs.)
 5. **Accept or refine:** If adversary finds a hole, refine the mechanism and repeat. Only merge when adversary cannot punch through.
 
 ### Residue in Codebase
@@ -103,7 +103,7 @@ This is **scaffolding**: code added to catch regressions after understanding was
 - Implement and measure (use hypothesis-prediction pattern from Section II).
 - Collect evidence: test pass/fail, benchmark deltas, real-world validation.
 - Examples:
-  - `feat/charm-signals-migration` (PR #509, commit acf0fa29, 2026-03-10): "Switch from Signals to Charm" — 394 insertions across 40 files, 1:1 API mapping, shipped with risk noted: "There are likely to still be some edge cases."
+  - `feat/charm-signals-migration` (PR #509, commit acf0fa29, 2026-03-10): "Switch from Signals to Charm", 394 insertions across 40 files, 1:1 API mapping, shipped with risk noted: "There are likely to still be some edge cases."
   - `fix/story-controls-store` (PR #576, commit 371d7752, 2026-05-30): Dedicated state store + React context (280 insertions, test file 71 lines, measurement validated).
 
 **Stage 3a: Adopted Change (PR merged, code persists)**
@@ -177,7 +177,7 @@ Example verdict to add to archaeology:
 **Example: DevTools instrumentation (scripts/)**
 
 - Pain: Build times unclear; no visibility into which phases were slow.
-- Solution: Lute scripts in `.lute/` added for `analyze`, `lint`, `test` — each solving a specific friction point.
+- Solution: Lute scripts in `.lute/` added for `analyze`, `lint`, `test` (each solving a specific friction point).
 - Outcome: Lute scripts become shared scaffolding; documented in `diagnostics-and-tooling`.
 
 ### Source 2: Competitive Pressure (UI Labs gap analysis)
@@ -360,7 +360,7 @@ Now future maintainers know.
 
 ---
 
-## VIII. Provenance and Maintenance
+## Provenance and Maintenance
 
 This skill is built on real incidents from Flipbook's git history as of 2026-07-01. Re-verify annually or when major failures occur:
 

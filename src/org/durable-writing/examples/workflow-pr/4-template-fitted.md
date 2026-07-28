@@ -1,6 +1,6 @@
 ## Problem
 
-Once an upgrade PR is open, the weekly RobloxPackages job stops making progress: it skips the run instead of advancing the in-flight PR. Its PRs also can't run CI on their own — a maintainer has to approve each run first.
+Once an upgrade PR is open, the weekly RobloxPackages job stops making progress: it skips the run instead of advancing the in-flight PR. Its PRs also can't run CI on their own, so a maintainer has to approve each run first.
 
 ## Solution
 

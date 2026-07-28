@@ -27,7 +27,7 @@ It is not a linter to run against existing text. So:
 
 A hard rule. Recast the sentence with a period, comma, parentheses, or colon. It applies to prose and to list blurbs alike: write a label and its blurb with a colon (`Label: blurb`), never with an em dash between them.
 
-The rule covers the em-dash character `—` and every substitute for it. A double hyphen (`--`) used as an em dash, an en dash, or any other sentence punctuation is banned the same way, in prose and in code comments. "The test runs fast -- most of the time" fails the rule. Recast it as "The test runs fast, most of the time." Luau comment syntax is a separate matter: a comment may open with `--`, but a `--` inside the comment text, standing in for a dash, is still a violation.
+The rule covers the em-dash character `—` and every substitute for it. A double hyphen (`--`) used as an em dash, an en dash, or any other sentence punctuation is banned the same way, in prose and in code comments. `The test runs fast -- most of the time` fails the rule. Recast it as `The test runs fast, most of the time.` Luau comment syntax is a separate matter: a comment may open with `--`, but a `--` inside the comment text, standing in for a dash, is still a violation.
 
 Concrete check for the critic pass: flag any `--` that sits between spaces, or glues two words or clauses together in place of a dash, and recast it the way you would an em dash.
 
