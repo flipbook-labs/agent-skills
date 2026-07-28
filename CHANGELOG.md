@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 
 
+## v0.5.2
+
+### Changes
+
+- `org/changelog-entries` now picks a bump by whether a change adds surface area, takes it away, or refines what is already there.
+
+- `org/write-luau-tests` now covers tests that cannot fail: triaging a green break-check, and assertions and fixtures that do not discriminate.
+
+
 ## v0.5.1
 
 ### Changes
