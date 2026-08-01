@@ -74,7 +74,7 @@ subagent will find the skills on its own.
 
 ### Family: Flipbook / Storyteller / ModuleLoader (`family/`)
 
-_none yet_
+- `family/charm-store-patterns`: the three Charm store shapes in the Flipbook / Storyteller / ModuleLoader family (owner-constructed factory modules, lazy `Charm.computed` singletons, eager `Charm.signal` singletons), the invariants behind each, and the `useSignalState` / `get` consumer conventions. Use when: adding or refactoring a store, wiring store state into React, or reviewing store code. `type: knowledge`.
 
 ### Flipbook (`flipbook/`)
 
