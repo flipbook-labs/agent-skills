@@ -11,7 +11,7 @@ The weekly RobloxPackages upgrade updates the in-flight upgrade PR in place, inc
 
 ## Watch out for
 
-- Depends on `FLIPBOOK_BACKEND_APP_ID` / `FLIPBOOK_BACKEND_APP_PRIVATE_KEY` being available to this repo. They're org secrets used by sibling repos, but worth confirming they're granted here.
+- Depends on the `FLIPBOOK_BACKEND_CLIENT_ID` organization variable and `FLIPBOOK_BACKEND_APP_PRIVATE_KEY` organization secret being available to this repo.
 - A pull request is opened only when the branch is created fresh; on an existing branch the job just pushes the bump.
 
 ## Verifying

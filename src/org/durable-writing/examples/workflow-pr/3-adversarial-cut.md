@@ -5,6 +5,6 @@ Two decisions the diff doesn't explain:
 - **App token instead of `GITHUB_TOKEN`:** pushes and PRs authored by `GITHUB_TOKEN` don't trigger CI, so the upgrade PR's checks would sit unrun until someone manually approved the run.
 - **Commit on top instead of rebuilding from base:** these bumps stay open for weeks while we adapt Flipbook to the new packages, and rebuilding each run would discard that work.
 
-Requires `FLIPBOOK_BACKEND_APP_ID` / `FLIPBOOK_BACKEND_APP_PRIVATE_KEY` to be granted to this repo.
+Requires the `FLIPBOOK_BACKEND_CLIENT_ID` organization variable and `FLIPBOOK_BACKEND_APP_PRIVATE_KEY` organization secret to be granted to this repo.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
