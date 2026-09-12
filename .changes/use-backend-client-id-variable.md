@@ -3,4 +3,4 @@ bump: patch
 category: Changes
 ---
 
-Update GitHub App workflow examples to use the public Client ID organization variable.
+GitHub App workflow examples use the public Client ID organization variable.
