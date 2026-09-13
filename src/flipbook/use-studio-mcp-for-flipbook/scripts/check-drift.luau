@@ -39,16 +39,20 @@ checkAnchors(repoRoot, ".mcp.json", {
 checkAnchors(repoRoot, "workspace/flipbook-agents/src/createAgentGateway.luau", {
 	'name = "FlipbookAgentGateway"',
 })
-checkAnchors(repoRoot, "workspace/flipbook-agents/src/actions.luau", {
-	'name = "openWidget"',
-	'name = "embedFlipbook"',
-	'name = "listStorybooks"',
-	'name = "listStories"',
-	'name = "openStory"',
-	'name = "getCurrentStory"',
-	'name = "getControls"',
-	'name = "setControls"',
-})
+for _, actionName in {
+	"openWidget",
+	"embedFlipbook",
+	"listStorybooks",
+	"listStories",
+	"openStory",
+	"getCurrentStory",
+	"getControls",
+	"setControls",
+} do
+	checkAnchors(repoRoot, `workspace/flipbook-agents/src/actions/{actionName}.luau`, {
+		`name = "{actionName}"`,
+	})
+end
 checkAnchors(repoRoot, ".lute/build.luau", {
 	'subcommand == "plugin"',
 	'subcommand == "storybook"',
