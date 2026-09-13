@@ -381,13 +381,13 @@ Charm.flags.frozen = false
 
 ## D. STALLED BRANCH INVENTORY
 
-Fifteen branches with work-in-progress status. Last activity ranges from 3 days to 7 months ago. Categorized by status.
+This snapshot records branches observed during the 2026-07-01 archaeology pass. Verify live branch state before acting on it.
 
 ### Nearly-Ready (Few Commits, Recent Activity)
 
 #### agent-actions-registry
 
-- **Last activity:** 2026-06-18 (10 days ago)
+- **Last activity:** 2026-06-18
 - **Commits:** 2 (fc2a79bc + merge)
 - **Attempt:** Central Actions registry with PluginAction + Bindable routing.
 - **Status:** Stalled at review stage; likely blocked on PR feedback or merge queue.
@@ -395,7 +395,7 @@ Fifteen branches with work-in-progress status. Last activity ranges from 3 days 
 
 #### update-darklua-0.19-loaders
 
-- **Last activity:** 2026-06-11 (17 days ago)
+- **Last activity:** 2026-06-11
 - **Commits:** 1 (6289bf76)
 - **Attempt:** Update Darklua to 0.19.0 and declare content loaders.
 - **Status:** Stalled; unclear why not merged; may await integration testing.
@@ -407,7 +407,7 @@ Fifteen branches with work-in-progress status. Last activity ranges from 3 days 
 
 #### embedded-http-proxy
 
-- **Last activity:** 2026-06-19 (9 days ago)
+- **Last activity:** 2026-06-19
 - **Commits:** 75 (heavy work: 7f076c51 + 19f25ecc + 73 others)
 - **Attempt:** Route embedded HTTP requests through server-side proxy.
 - **Status:** Substantial feature; 75 commits suggests major architectural addition; no recent activity.
@@ -415,7 +415,7 @@ Fifteen branches with work-in-progress status. Last activity ranges from 3 days 
 
 #### shrink-ui
 
-- **Last activity:** 2026-06-19 (9 days ago)
+- **Last activity:** 2026-06-19
 - **Commits:** 13 (84be51a3, b7d9a61e, 8c96cd0b + others)
 - **Attempt:** UI layout optimizations (sizing tweaks).
 - **Status:** Incremental feature; stalled after initial work; likely low priority.
@@ -423,7 +423,7 @@ Fifteen branches with work-in-progress status. Last activity ranges from 3 days 
 
 #### telemetry-source-and-is-studio
 
-- **Last activity:** 2026-05-31 (31 days ago)
+- **Last activity:** 2026-05-31
 - **Commits:** 35 (4b6e25ae, 066a6699, e4415a3d + others)
 - **Attempt:** Back telemetry source store with Charm signal; add source/isStudio fields.
 - **Status:** Moderate-scope feature; dormant for month; deprioritized or superseded.
@@ -431,7 +431,7 @@ Fifteen branches with work-in-progress status. Last activity ranges from 3 days 
 
 #### uilabs-controls-support
 
-- **Last activity:** 2026-05-09 (53 days ago)
+- **Last activity:** 2026-05-09
 - **Commits:** 3 (66f14210, 2757a881, 9d570e0e)
 - **Attempt:** Support UI Labs controls (upgrade Storyteller for patches).
 - **Status:** Stalled after exploratory work; control breakage noted in commit message "ControlGroup and Object are broken."
@@ -440,7 +440,7 @@ Fifteen branches with work-in-progress status. Last activity ranges from 3 days 
 
 #### upgrade-loom-dependencies
 
-- **Last activity:** 2026-05-09 (53 days ago)
+- **Last activity:** 2026-05-09
 - **Commits:** 6 (1852d77b, f91d28dc, 8eaabc0e + others)
 - **Attempt:** Upgrade Lute version and fix cascading dependency breakage.
 - **Status:** Infrastructure upgrade; painful (commit message: "Bumping Lute version and fixing the nightmare it spawned"); multiple cascading fixes needed; stalled waiting for full integration test results.
@@ -448,7 +448,7 @@ Fifteen branches with work-in-progress status. Last activity ranges from 3 days 
 
 #### panel-layout
 
-- **Last activity:** 2026-05-04 (58 days ago)
+- **Last activity:** 2026-05-04
 - **Commits:** 18 (243325c0, d09c5dd0, 8f456b97 + others)
 - **Attempt:** Panel layout refactor (offload work to GroupContext).
 - **Status:** Stalled after refactor; unknown why not merged; moderate complexity.
@@ -456,7 +456,7 @@ Fifteen branches with work-in-progress status. Last activity ranges from 3 days 
 
 #### story-controls-documentation
 
-- **Last activity:** 2026-05-04 (58 days ago)
+- **Last activity:** 2026-05-04
 - **Commits:** 88 (58e6579c, 84ac52fe, 225f9474 + others)
 - **Attempt:** Documentation + controls component reorganization.
 - **Status:** Large feature (88 commits); documentation + code moves; stalled.
@@ -464,7 +464,7 @@ Fifteen branches with work-in-progress status. Last activity ranges from 3 days 
 
 #### locale-switcher
 
-- **Last activity:** 2026-04-18 (74 days ago)
+- **Last activity:** 2026-04-18
 - **Commits:** 4 (98845d5e, 8ae91b19, 5b6b64e4 + merge)
 - **Attempt:** Add locale/theme switcher components.
 - **Status:** Exploratory; stalled; deprioritized for i18n work.
@@ -472,7 +472,7 @@ Fifteen branches with work-in-progress status. Last activity ranges from 3 days 
 
 #### package-upgrade-body-updates
 
-- **Last activity:** 2026-03-20 (103 days ago)
+- **Last activity:** 2026-03-20
 - **Commits:** 2 (097a49ff, 8fef6415)
 - **Attempt:** Automate dependency upgrade PR bodies using app token.
 - **Status:** Small feature; stalled at edge; awaiting token setup or schema finalization.
@@ -480,7 +480,7 @@ Fifteen branches with work-in-progress status. Last activity ranges from 3 days 
 
 #### flipbook-api
 
-- **Last activity:** 2026-03-12 (111 days ago)
+- **Last activity:** 2026-03-12
 - **Commits:** 4 (8ebecbac, 0f78e88f, 05060db9 + merge)
 - **Attempt:** Export FlipbookCore APIs (remove Storyteller-specific exports).
 - **Status:** API surface work; stalled; unknown why not merged; may await consumer usage.
@@ -492,7 +492,7 @@ Fifteen branches with work-in-progress status. Last activity ranges from 3 days 
 
 #### flipbook-docs
 
-- **Last activity:** 2026-06-28 (3 days ago)
+- **Last activity:** 2026-06-28
 - **Commits:** 44 (f01f8179, 106024f0, a8cdf667 + 41 more)
 - **Attempt:** Documentation vault overhaul (Obsidian setup, Docusaurus integration).
 - **Status:** Large ongoing documentation project; kept current with main merge (commit f01f8179 is merge of main).
@@ -500,7 +500,7 @@ Fifteen branches with work-in-progress status. Last activity ranges from 3 days 
 
 #### automated-story-snapshots
 
-- **Last activity:** 2026-06-28 (3 days ago)
+- **Last activity:** 2026-06-28
 - **Commits:** 11 (9e1a5923, 5be55aa7, a8b1a133 + others)
 - **Attempt:** Auto-capture story screenshots (WebSocket-based capture, skill integration).
 - **Status:** Features have been merged to main; branch still open, kept current (likely experimental tracking branch).
@@ -508,7 +508,7 @@ Fifteen branches with work-in-progress status. Last activity ranges from 3 days 
 
 #### docs-in-studio
 
-- **Last activity:** 2025-12-26 (187 days ago)
+- **Last activity:** 2025-12-26
 - **Commits:** 8 (75b02bf5, a254bfae, ba86de9e + others)
 - **Attempt:** Embed documentation in Roblox Studio (workspace member).
 - **Status:** Forgotten; large feature not completed.
@@ -516,7 +516,7 @@ Fifteen branches with work-in-progress status. Last activity ranges from 3 days 
 
 #### storybook-onboarding
 
-- **Last activity:** 2025-11-02 (242 days ago)
+- **Last activity:** 2025-11-02
 - **Commits:** 7 (dc078b2f, 86695947, 8801c8b1 + others)
 - **Attempt:** Storybook onboarding flow improvements.
 - **Status:** Forgotten; stalled for 8+ months.

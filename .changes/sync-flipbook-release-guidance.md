@@ -3,4 +3,4 @@ bump: patch
 category: Changes
 ---
 
-Sync Flipbook review ownership and Changewrite release guidance with the current repository.
+Document Flipbook review ownership and the Changewrite release flow.
