@@ -116,7 +116,7 @@ CI jobs use `actions/attest-build-provenance@v3` to create SLSA provenance attes
 - Plugin .rbxm files (build-plugin matrix)
 - Flipbook-core rotriever packages (build-package matrix)
 
-These attestations prove the artifacts were built in CI and can be verified by Rotriever consumers.
+These attestations prove the artifacts were built in CI and can be verified by Rotriever consumers. Fork pull requests skip attestation because their read-only token cannot mint attestations; the build and artifact upload still run.
 
 ### Channels: Dev, Beta, Prod
 
@@ -151,15 +151,15 @@ Each build channel has different behavior:
 
 **Purpose:** Validate that the plugin publishes and loads without crashing (end-to-end test).
 
-**Trigger:** `strict.yml` tests job (pull_request_target + push to main, behind environment gates).
+**Trigger:** `strict.yml` tests job (`pull_request_target` + push to main, behind environment gates).
 
 **What it does:**
 
 ```sh
-lune run publish-plugin --smoketest --channel prod --apiKey <key>
+lune run publish-plugin --smoketest --channel prod --skipBuild
 ```
 
-**Behavior:** Builds prod channel, publishes to asset `smoketest` (defined in rbxasset.toml), validates the publish succeeded. Does not test actual loading in Studio (offline validation only).
+**Behavior:** A secretless job builds the production plugin and test place from the contribution. The protected `tests` job checks out the trusted base revision on a fresh runner, downloads both artifacts, runs the test place, and publishes the prebuilt plugin to the `smoketest` asset. The workflow supplies `ROBLOX_API_KEY` through the step environment. Contributor-controlled code never runs in that job.
 
 **Historical lessons:**
 
@@ -172,7 +172,7 @@ lune run publish-plugin --smoketest --channel prod --apiKey <key>
 
 **Purpose:** Deploy each PR's storybook to a Roblox place for visual preview; main builds get a fresh Flipbook runtime.
 
-**Trigger:** `storybook.yml` (push to main + pull_request).
+**Trigger:** `storybook.yml` (push to main + `pull_request_target`).
 
 **Implementation:** Uses `flipbook-labs/deploy-storybook@v0.4.0` GitHub Action (checkout at `../deploy-storybook`).
 
@@ -190,9 +190,11 @@ On `main` only:
 
 On each PR:
 
-1. Build storybook place only (no fresh Flipbook build).
-2. Deploy to per-PR place named `Flipbook Preview <PR number>`.
-3. Let deploy-storybook fetch latest Flipbook release from GitHub (don't pass `flipbook-rbxm`).
+1. Check out the pull request revision on a runner with read-only access and no secrets.
+2. Build and upload the storybook place as an artifact.
+3. Require approval through `luau-execution-gated` when the contribution comes from a fork.
+4. Check out the trusted base revision on a fresh runner and deploy the artifact to `Flipbook Preview <PR number>` with the `storybook-preview` environment secret.
+5. Let deploy-storybook fetch the latest Flipbook release from GitHub by omitting `flipbook-rbxm`.
 
 **Why release instead of local?** PR UI changes should not be hidden under a custom runtime; the latest public Flipbook shows the baseline.
 
@@ -219,7 +221,7 @@ These are hardcoded in the action inputs and also resolved dynamically in storyb
 - `cli-version`: Version of flipbook-cli to use (default 0.6.0).
 - `comment`: Post preview link comment on PR (default true).
 
-**Outputs:** Updates or creates the place via Open Cloud, posts comment with preview link if requested.
+**Outputs:** Updates or creates the place through Open Cloud. Pull request target runs disable the action's built-in comment because v0.4.0 only comments on `pull_request` events, then invoke the action-installed `flipbook-cli` from the trusted runner to post the preview link.
 
 ---
 
@@ -243,9 +245,10 @@ Runs on every PR and push to main:
 
 Runs on pull_request_target and push to main (secrets gated):
 
-| Job   | Condition      | Environment                                                  | Notes                                        |
-| ----- | -------------- | ------------------------------------------------------------ | -------------------------------------------- |
-| tests | all PRs / main | `luau-execution-gated` (fork) or `luau-execution` (internal) | Runs `lute run test`, then smoketest publish |
+| Job               | Condition      | Environment                                                  | Notes                                                    |
+| ----------------- | -------------- | ------------------------------------------------------------ | -------------------------------------------------------- |
+| build-test-inputs | all PRs / main | none                                                         | Builds test and smoketest artifacts without secrets      |
+| tests             | all PRs / main | `luau-execution-gated` (fork) or `luau-execution` (internal) | Tests and publishes artifacts from a trusted base runner |
 
 Fork PRs require explicit approval before running (environment gate); internal PRs run automatically.
 
@@ -268,9 +271,11 @@ Triggered by pushes to main, release events, manual dispatch, and pull requests 
 
 Runs on push to main and every PR:
 
-| Job    | Trigger   | Environment       | Concurrency                                        |
-| ------ | --------- | ----------------- | -------------------------------------------------- |
-| deploy | main + PR | storybook-preview | storybook-preview-<PR#> (cancel in-progress on PR) |
+| Job     | Trigger   | Environment                                                  | Concurrency                                        |
+| ------- | --------- | ------------------------------------------------------------ | -------------------------------------------------- |
+| build   | main + PR | none                                                         | storybook-preview-<PR#> (cancel in-progress on PR) |
+| approve | main + PR | `luau-execution-gated` (fork) or `luau-execution` (internal) | same workflow run                                  |
+| deploy  | main + PR | storybook-preview                                            | same workflow run                                  |
 
 Concurrency ensures one deployment per PR at a time; main pushes run independently.
 
@@ -278,7 +283,7 @@ Concurrency ensures one deployment per PR at a time; main pushes run independent
 
 ## Environments & Secrets Map
 
-**Key constraint:** Never hardcode secrets in workflows. Always use `environment:` to gate and require approval.
+**Key constraint:** Never hardcode secrets in workflows. Contributor-controlled code runs in jobs without secrets; protected jobs use fresh runners, trusted base scripts, and environment-scoped credentials.
 
 ### GitHub Environments (Gating Points)
 
@@ -404,9 +409,11 @@ The script `.lune/publish-plugin.luau` reads rbxasset.toml and publishes to the 
 
 ### Deployment Orchestration (PRs #559–563, #561–562, #596)
 
-**Fork workflow support (PR #559):** Switched to `pull_request_target` to support fork contributions, but opened broader permissions surface.
+**Fork workflow support (PR #559):** Switched to `pull_request_target` to support fork contributions, but opened a broader permissions surface.
 
-**Narrow scope (PR #563):** Reduced `pull_request_target` to specific jobs; environment gating enforces approval for forks.
+**Narrow scope (PR #563):** Reduced `pull_request_target` to specific jobs and added environment approval for forks.
+
+**Artifact boundary:** Environment approval delays credential access, but it does not make fork code safe to execute with those credentials. Secretless jobs build opaque artifacts; protected jobs consume them from fresh runners while executing only the trusted base revision.
 
 **Dev deployment leak (PR #561):** Dev build deployed from every PR; fix: condition to main only.
 
@@ -448,6 +455,7 @@ To keep this skill current and aligned with code changes:
 - Verify asset IDs in rbxasset.toml: `cat rbxasset.toml | grep -E "name|model|universe"`
 - Verify project.luau storybook IDs: `grep ROBLOX_STORYBOOK project.luau`
 - Verify channel-to-asset mapping: `grep -A 5 "ASSET_NAMES_BY_CHANNEL" .lune/publish-plugin.luau`
+- Verify untrusted checkouts cannot reach protected jobs: `grep -n "pull_request.head.sha\|pull_request.base.sha\|persist-credentials\|environment:" .github/workflows/{strict,storybook}.yml`
 - Verify deploy-storybook version pinned in storybook.yml: `grep "deploy-storybook@" .github/workflows/storybook.yml`
 - Verify Wally token docs in creating-releases.md: `cat docs/docs/contributing/creating-releases.md`
 
@@ -459,14 +467,14 @@ To keep this skill current and aligned with code changes:
 
 **Verification scope:**
 
-- All six workflow files (.github/workflows/*.yml) read and command syntax verified
+- All workflow files under `.github/workflows/` read and command syntax verified
 - Changewrite version mirrors verified (wally.toml, loom.config.luau, rotriever.toml)
 - `.changes/` entry format and CI enforcement verified against Changewrite v0.7.0
 - rbxasset.toml asset names and environment config read
 - project.luau universe/place IDs verified (10262009842, 139676401890813)
 - docs/docs/contributing/creating-releases.md release procedure confirmed
 - deploy-storybook action.yml inputs and defaults confirmed (v0.4.0 pinned in storybook.yml)
-- .lune/publish-plugin.luau channel mapping verified (dev/beta→dev, prod→prod, smoketest→smoketest)
+- `.lune/publish-plugin.luau` channel mapping and prebuilt artifact option verified (dev/beta→dev, prod→prod, smoketest→smoketest)
 
 **Known drifts to watch:**
 

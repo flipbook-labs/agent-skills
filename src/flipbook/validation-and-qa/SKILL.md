@@ -76,8 +76,8 @@ lute run test --apiKey "YOUR_KEY"
 
 **How it works:**
 
-- Builds dev plugin (`lute run build plugin --channel dev --clean --skip-reload`)
-- Packs a test place via Rojo (loads built plugin into ReplicatedStorage)
+- Builds and packs a test place through `lute run buildTests`
+- Runs the prebuilt place through `lute run runTests`
 - Runs jsdotlua Jest in the cloud via Rocale/Luau Execution API
 - Test runner entry: `.lute/tasks/run-tests.luau` → `workspace/test-runner/src/init.luau`
 - Jest config: `workspace/flipbook-core/src/jest.config.luau` with `testMatch = { "**/*.spec" }`
@@ -402,14 +402,13 @@ If `ROBLOX_API_KEY` is unavailable (local setup, CI on fork, dev environment):
 
 ### Fallback Priority
 
-1. **Run lint + analyze** (both work offline):
+1. **Run the contributor check** (no Open Cloud key required):
 
    ```bash
-   lute run lint
-   lute run analyze
+   lute run check
    ```
 
-   These catch ~80% of bugs (style, types, dead code). Accept it as sufficient for typos, renames, obvious fixes.
+   This covers style, types, dead code, and a development plugin build. Accept it as sufficient for typos, renames, obvious fixes.
 
 2. **Manual smoke-test** (documented recipe):
    Build the plugin and verify in Studio. Example: "Built dev plugin, opened Flipbook, opened StoryControls story, changed a string control, verified the component re-rendered only the changed control (not the entire panel)."
@@ -444,11 +443,13 @@ If a ContextProvider (React context provider at the root of the app) throws an e
 
 ## CI Integration
 
-CI runs the three tiers on every PR:
+CI runs the validation tiers on every PR:
 
-1. **`analyze` job** (`.github/workflows/ci.yml`) — blocks merge if it fails
-2. **`lint` job** — blocks merge if it fails
-3. **`test` job** (`.github/workflows/strict.yml`) — cloud Jest tests; fork PRs require approval via `luau-execution-gated` environment
+1. **`analyze` job** (`.github/workflows/ci.yml`) runs lint and static analysis.
+2. **`build-plugin` and `build-package` jobs** compile every supported channel and target.
+3. **`tests` job** (`.github/workflows/strict.yml`) runs cloud Jest tests and publishes the smoketest artifact.
+
+The `build-test-inputs` job builds fork code without secrets. For an external pull request, the `tests` job waits for approval through `luau-execution-gated`, checks out the trusted base revision on a fresh runner, and consumes only the prebuilt test and plugin artifacts. Never move contributor-controlled execution into the protected job.
 
 All three must pass for a PR to merge. If cloud tests are unavailable, CI will fail; you must run locally or request a review bypass (rare).
 
@@ -540,6 +541,7 @@ return story
 - Test runner: `cat workspace/test-runner/src/init.luau` (verify Jest is invoked with `testPathPattern`)
 - Lint: `lute run lint` (verify it runs Selene, StyLua, Prettier)
 - Analyze: `lute run analyze` (verify it runs luau-lsp in strict mode)
+- Contributor check: `lute run check`
 - Test: `lute run test --filter "usePrevious"` (verify tests build and run)
 
 Last verified: 2026-07-01. Darklua 0.17.1, lute 1.0.0, Jest 3.10.0 (jsdotlua), Rocale via Luau Execution.
