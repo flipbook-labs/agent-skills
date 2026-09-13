@@ -91,7 +91,7 @@ Default channel is `prod`. Pass `--channel dev` or `--channel beta` to `lute run
 
 Every PR must pass the following gate jobs before merge is recommended:
 
-### `ci.yml` — Standard Build & Attestation
+### `ci.yml`: Standard Build and Attestation
 
 **Trigger:** every push to main, every PR to main, manual dispatch.
 
@@ -100,7 +100,7 @@ Every PR must pass the following gate jobs before merge is recommended:
 **What it proves:**
 
 - Source → Darklua → Rojo pipeline succeeds for all channels.
-- Build artifacts are reproducible (provenance attestation via GitHub Attestations API, verified 2026-07-01).
+- Trusted build artifacts receive provenance attestations through the GitHub Attestations API. Fork builds skip this step because their read-only token cannot mint attestations.
 - No syntax errors or broken requires.
 
 **Fails if:**
@@ -111,41 +111,33 @@ Every PR must pass the following gate jobs before merge is recommended:
 
 **When to re-run:** After touching `.lute/`, `darklua.json`, `wally.toml`, `rotriever.toml`, or any `.luau` file.
 
-### `strict.yml` — Tests, Type Checking, Smoketest
+### `strict.yml`: Tests and Smoketest
 
 **Trigger:** every PR (`pull_request_target` with environment gating; see below), every push to main, manual dispatch.
 
 **Jobs:**
 
-1. **`tests`** — Cloud Jest via Rocale.
-   - Builds dev plugin.
-   - Runs `lute run test` (requires `ROBLOX_API_KEY` secret).
-   - Executes tests inside a Roblox place (test universe 6599100156, place 123506190725771).
-   - **Proves:** logic is sound; no runtime crashes; stories load and render.
-   - **Fails if:** any `*.spec.luau` test fails.
+1. **`build-test-inputs`** runs pull request code with read-only repository access and no secrets. It builds the test place and production plugin, then uploads both as artifacts.
+2. **`tests`** checks out the trusted base revision on a fresh runner, downloads those artifacts, runs the test place through `lute run runTests`, and publishes the prebuilt smoketest plugin.
 
-2. **`smoketest`** — Creator Store smoketest publish.
-   - Runs `lune run publish-plugin --smoketest --channel prod --apiKey <key>`.
-   - Publishes dev plugin to Creator Store smoketest asset for manual QA.
-   - **Proves:** plugin package is valid; Creator Store API accepts the build.
-   - **Fails if:** publish fails (e.g., malformed rbxm, asset mismatch).
+The separate runners are the security boundary. Never run contributor-controlled source, build scripts, dependency installation, or repository actions in the job that receives `ROBLOX_API_KEY`. Environment approval controls when the protected job starts, but it does not make contributor code trusted.
 
 **Environment Gating:** (verified in `.github/workflows/strict.yml`, grep the conditional `environment:` job key)
 
-- **Fork PRs** (external contributions): `luau-execution-gated` environment requires approval.
-- **Internal PRs** (from flipbook-labs org): `luau-execution` environment (auto-approved).
+- **Fork PRs** (external contributions): `luau-execution-gated` environment requires approval after the secretless build succeeds.
+- **Internal PRs** (from flipbook-labs org): `luau-execution` environment runs automatically.
 - **Main/manual:** runs without gating.
 
-**Rationale (from incident #559, #563):** Fork workflows needed special permissions. `pull_request_target` with environment gating isolates the blast radius (PR #563 "Isolate the surface area of pull_request_target").
+**Rationale:** `pull_request_target` supplies a trusted workflow definition and protected credentials, so its secret-bearing jobs must never check out or execute the pull request revision. Artifacts carry build output across the runner boundary without carrying contributor-controlled execution into the protected job.
 
-### `storybook.yml` — Storybook Preview Deployment
+### `storybook.yml`: Storybook Preview Deployment
 
 **Trigger:** every PR, every push to main.
 
 **What it proves:**
 
-- `lute run build storybook` (the test place bundle) succeeds.
-- Storybook can deploy to a place via `flipbook-labs/deploy-storybook@v0.4.0` (verified 2026-07-01).
+- `lute run build storybook` succeeds on a runner with no secrets.
+- A fresh trusted runner can deploy the resulting place through `flipbook-labs/deploy-storybook@v0.4.0`.
 - Dev/beta builds can sync to Studio without errors.
 
 **Fails if:**
@@ -153,9 +145,9 @@ Every PR must pass the following gate jobs before merge is recommended:
 - Rojo workspace sync fails.
 - deploy-storybook GitHub Action fails.
 
-**On main:** Also builds a fresh prod Flipbook (`.rbxm`) as the embedded runtime to catch embedding issues pre-release (see shift #582, "Embed Flipbook in the DataModel").
+Fork previews wait at the `luau-execution-gated` environment before the deployment job can access the `storybook-preview` environment secret. On main, the secretless build also produces a fresh prod Flipbook runtime to catch embedding issues before release.
 
-### Linting and Analysis
+### Contributor Check, Linting, and Analysis
 
 **Trigger:** every PR, every push to main (as part of `ci.yml`'s `analyze` job).
 
@@ -167,6 +159,8 @@ Every PR must pass the following gate jobs before merge is recommended:
 - Luau strict mode type checking (`lute run analyze` → Luau LSP strict; `languageMode: "strict"` in `.luaurc`).
 
 **Fails if:** any linter or formatter would change the code.
+
+Contributors can run `lute run check` after copying `.env.template` to `.env`. It sets up Lute type definitions, runs lint and analysis, and builds a development plugin without an Open Cloud key.
 
 ---
 
