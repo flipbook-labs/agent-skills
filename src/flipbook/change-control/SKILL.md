@@ -34,6 +34,8 @@ All work proceeds through feature branches and pull requests. **Never commit dir
 
 Fill every section concisely. The Problem/Solution should describe what the change does in present tense on its own ("Add a foo helper to consolidate X"), not its origin story.
 
+**Visual evidence:** When a change affects visible appearance or interaction, attach evidence that lets an application reviewer evaluate the result without recreating the setup. Use a screenshot for a static state and a short video for motion, input, or a state transition. Capture the exact story and state described in Testing. Visual evidence supplements behavioral proof; it does not replace specs, read-back assertions, or manual verification steps. If capture is unavailable, keep the PR in draft and report the concrete blocker instead of claiming visual verification.
+
 **Status:** Agent-authored PRs open as **drafts** (`gh pr create --draft`). Never open ready-for-review and never run `gh pr ready` unless the user explicitly asks. Changewrite's generated `Publish v{version}` PR is the deliberate exception: it opens ready for review because preparing it is the release notification.
 
 **Disclosure:** Every PR body must disclose AI assistance (e.g., closing line: "🤖 Generated with [Claude Code](https://claude.com/claude-code)"). This is mandatory per user convention and applies even when filling a repo's PR template.
