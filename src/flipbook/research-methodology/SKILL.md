@@ -126,7 +126,6 @@ Flipbook has ~18 stalled branches with work-in-progress; most violate this proto
 
 **Nearly-ready (awaiting merge review):**
 
-- `adopt-changewrite` (1 commit, 2026-06-28): feature-complete, no obstacles evident.
 - `agent-actions-registry` (2 commits, 2026-06-18): stalled at review stage; needs verdict (merge or document why not).
 - `update-darklua-0.19-loaders` (1 commit, 2026-06-11): awaiting integration test results; verdict pending.
 

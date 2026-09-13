@@ -381,16 +381,9 @@ Charm.flags.frozen = false
 
 ## D. STALLED BRANCH INVENTORY
 
-Sixteen branches with work-in-progress status. Last activity ranges from 3 days to 7 months ago. Categorized by status.
+Fifteen branches with work-in-progress status. Last activity ranges from 3 days to 7 months ago. Categorized by status.
 
 ### Nearly-Ready (Few Commits, Recent Activity)
-
-#### adopt-changewrite
-
-- **Last activity:** 2026-06-28 (3 days ago)
-- **Commits:** 1 (92fd7caa)
-- **Status:** Appears feature-complete; small surface area; may need final review/merge.
-- **Verdict:** Viable for immediate merge review.
 
 #### agent-actions-registry
 
