@@ -221,7 +221,7 @@ These are hardcoded in the action inputs and also resolved dynamically in storyb
 - `cli-version`: Version of flipbook-cli to use (default 0.6.0).
 - `comment`: Post preview link comment on PR (default true).
 
-**Outputs:** Updates or creates the place through Open Cloud. Pull request target runs disable the action's built-in comment because v0.4.0 only comments on `pull_request` events, then `lute run commentStorybook` posts the preview link from the trusted runner.
+**Outputs:** Updates or creates the place through Open Cloud. Pull request target runs disable the action's built-in comment because v0.4.0 only comments on `pull_request` events, then invoke the action-installed `flipbook-cli` from the trusted runner to post the preview link.
 
 ---
 
