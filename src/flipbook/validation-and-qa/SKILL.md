@@ -1,6 +1,6 @@
 ---
 name: validation-and-qa
-description: "Acceptance discipline: what counts as proof a change works, test anatomy, spec-writing guide. Use when: you need to prove a fix is correct (learn the evidence bar), writing unit tests, adding specs to a PR, or understanding why a test matters. Three tiers of validation: Lint (static checks) → Analyze (type safety) → Test (behavior in real Roblox). For measurement/instrumentation to *find* the bug, see diagnostics-and-tooling."
+description: "Acceptance discipline: what counts as proof a change works, test anatomy, visual evidence, and spec-writing guidance. Use when: you need to prove a fix is correct, capture screenshots or video for a visual change, write unit tests, add specs to a PR, or understand why a test matters. Three tiers of validation: Lint (static checks) → Analyze (type safety) → Test (behavior in real Roblox). For measurement/instrumentation to *find* the bug, see diagnostics-and-tooling."
 type: process
 ---
 
@@ -197,6 +197,24 @@ The fix is simple (typo, const rename, obvious logic), all tests pass, and type-
 - "Works on my machine" (screenshot without steps, no measurement)
 - "All tests pass" (does not mean the fix is correct, only that no existing tests broke)
 - "I read the code and it looks right" (code review without execution)
+
+## Visual Evidence for User-Visible Changes
+
+Follow `org/visual-evidence` for media choice, virtual input, cross-platform capture, before/after footage, verification before attachment, and process cleanup. This section adds the Flipbook-specific render and read-back path.
+
+A visual artifact proves what Studio rendered. Pair it with concrete read-back evidence, such as the selected story ID, mount readiness, or control value, then capture that verified state.
+
+### Capture Flipbook through Studio
+
+1. Call `list_roblox_studios` before opening a place and record the baseline instance IDs.
+2. Open the worktree-built Storybook place once. Record the one new Studio ID and reuse it for the rest of the validation.
+3. Discover the Flipbook AgentGateway and read its manifest. Prefer an advertised action that moves the mounted Flipbook app from its dock widget into the Edit-mode viewport.
+4. Open the exact story under review and poll its read-back action until the expected story is mounted and ready.
+5. Capture the viewport in Edit mode. Use a short recording driven by virtual input when the behavior depends on hover, input, or a transition. Keep the user's physical pointer out of the recording.
+6. Invoke the advertised action that returns Flipbook to its widget, then confirm the selected story and controls remain intact.
+7. Close only the Studio instance opened in step 2. Verify `list_roblox_studios` has returned to the baseline so validation does not leave duplicate Studio processes consuming memory.
+
+If the gateway does not advertise an Edit-mode viewport action, use the pull request's Storybook preview or the existing Play-mode embedding flow. State which surface the evidence shows. If capture tooling is unavailable, report the blocker and keep the visual evidence incomplete rather than substituting an unverified claim.
 
 ---
 
@@ -541,5 +559,6 @@ return story
 - Lint: `lute run lint` (verify it runs Selene, StyLua, Prettier)
 - Analyze: `lute run analyze` (verify it runs luau-lsp in strict mode)
 - Test: `lute run test --filter "usePrevious"` (verify tests build and run)
+- Visual evidence policy: `grep -n "visual evidence\|screenshots, video" AGENTS.md .github/MERGE_POLICY.md`
 
-Last verified: 2026-07-01. Darklua 0.17.1, lute 1.0.0, Jest 3.10.0 (jsdotlua), Rocale via Luau Execution.
+Last verified: 2026-09-13. Darklua 0.17.1, lute 1.0.0, Jest 3.10.0 (jsdotlua), Rocale via Luau Execution. The visual-evidence workflow was checked against the repository policy and the AgentGateway Edit-mode surface flow.

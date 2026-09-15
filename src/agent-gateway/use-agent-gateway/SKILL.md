@@ -38,11 +38,13 @@ Useful Studio MCP tools:
 - `execute_luau`: run Luau. Use `datamodel_type = "Edit"` for plugin and gateway work.
 - `start_stop_play`, `screen_capture`: playtesting and viewport captures.
 
+Before opening a validation place, call `list_roblox_studios` and record the existing instance IDs. Open one worktree-built place, record its new ID, and reuse that instance. When validation finishes, close only the instance you opened and verify the list returns to the baseline. Repeated opens accumulate Studio processes and memory.
+
 ### Troubleshooting
 
 - **No active instance:** call `list_roblox_studios`, then `set_active_studio`. As a fallback probe, `search_game_tree` against `Workspace` before retrying.
 - **`Not connected to the WS host`:** the Studio-side server isn't enabled in the open session. Stop and ask the user to enable it (step 1 above). Retrying tools will not fix this.
-- **`screen_capture` captures the 3D viewport only**, never plugin dock widgets. To visually inspect plugin UI, look for a gateway action that embeds the UI into the place, then capture in play mode.
+- **`screen_capture` captures the Studio viewport, not plugin dock widgets.** Read the gateway manifest for an action that moves the mounted plugin UI into the Edit-mode viewport. Capture there when available, then invoke the advertised return action so the same mounted UI goes back to its widget. If the gateway offers no Edit-mode surface, use its embedding action and capture in play mode.
 - If a Command Bar is all you have (no MCP), the same Luau snippets below work there (View → Command Bar).
 
 ## Discover gateways
@@ -108,7 +110,7 @@ return HttpService:JSONEncode(manifest.result)
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-05. Based on the "discoverable and self-describing gateways" design in agent-gateway [PR #13](https://github.com/flipbook-labs/agent-gateway/pull/13) (branch `agent-discoverability`), which is **not yet merged**. Tag-based discovery and the `Usage`/`Description` attributes exist on that branch, not on agent-gateway `main`.
+**Date stamped:** 2026-09-13. Based on the "discoverable and self-describing gateways" design in agent-gateway [PR #13](https://github.com/flipbook-labs/agent-gateway/pull/13) (branch `agent-discoverability`), which is **not yet merged**. Tag-based discovery and the `Usage`/`Description` attributes exist on that branch, not on agent-gateway `main`. The Studio instance lifecycle and Edit-mode viewport guidance reflect validation of Flipbook's surface-switching gateway flow.
 
 **Re-verify these claims when this skill next loads:** run `scripts/check-drift.luau` (via `lute` from the hub root). It checks the anchors against `origin/agent-discoverability` in a sibling `../agent-gateway` checkout (via `git show`, so it works regardless of what's checked out) and skips cleanly when the repo or ref is absent. It confirms the `AgentGateway` tag (`src/constants.luau`), the `list`/`call` methods (`src/types.luau`), and the `ProtocolVersion` / `Usage` / `Description` attributes (`src/createGateway.luau`).
 
