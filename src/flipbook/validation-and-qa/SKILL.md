@@ -200,7 +200,7 @@ The fix is simple (typo, const rename, obvious logic), all tests pass, and type-
 
 ## Visual Evidence for User-Visible Changes
 
-When a change has a visible result, pair the behavioral evidence above with a screenshot or short video. Use a screenshot for layout, styling, copy, and one stable state. Use a video when the review depends on motion, input, a state transition, or continuity between states. Keep the capture focused on the changed behavior and use the same story, controls, and state named in the manual verification recipe.
+Follow `org/visual-evidence` for media choice, virtual input, cross-platform capture, before/after footage, verification before attachment, and process cleanup. This section adds the Flipbook-specific render and read-back path.
 
 A visual artifact proves what Studio rendered. Pair it with concrete read-back evidence, such as the selected story ID, mount readiness, or control value, then capture that verified state.
 
@@ -210,7 +210,7 @@ A visual artifact proves what Studio rendered. Pair it with concrete read-back e
 2. Open the worktree-built Storybook place once. Record the one new Studio ID and reuse it for the rest of the validation.
 3. Discover the Flipbook AgentGateway and read its manifest. Prefer an advertised action that moves the mounted Flipbook app from its dock widget into the Edit-mode viewport.
 4. Open the exact story under review and poll its read-back action until the expected story is mounted and ready.
-5. Capture the viewport in Edit mode. Use a short screen recording instead when the behavior depends on interaction or a transition.
+5. Capture the viewport in Edit mode. Use a short recording driven by virtual input when the behavior depends on hover, input, or a transition. Keep the user's physical pointer out of the recording.
 6. Invoke the advertised action that returns Flipbook to its widget, then confirm the selected story and controls remain intact.
 7. Close only the Studio instance opened in step 2. Verify `list_roblox_studios` has returned to the baseline so validation does not leave duplicate Studio processes consuming memory.
 

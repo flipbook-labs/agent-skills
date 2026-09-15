@@ -1,6 +1,6 @@
 ---
-bump: patch
+bump: minor
 category: Changes
 ---
 
-Require focused screenshots or video for visible Flipbook changes and clean up Studio instances after capture.
+Add a cross-platform visual-evidence workflow for verified screenshots and matched before/after video.
