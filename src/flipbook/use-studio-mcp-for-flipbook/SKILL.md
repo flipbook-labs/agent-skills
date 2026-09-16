@@ -44,10 +44,6 @@ Do not use fixed sleeps. Discover paths from gateway results instead of hard-cod
 
 Studio MCP viewport captures do not include plugin dock widgets. For visual evidence, or when a missing semantic action makes UI input necessary, follow the [embedded Play-mode workflow](references/embedded-play-mode.md). Prefer gateway actions in Edit mode. Use virtual input against the embedded client when no semantic action covers the interaction, and add a focused action when the same interaction becomes routine.
 
-When changing story reload behavior or control wiring, follow the [story hot-reload controls workflow](references/story-hot-reload-controls.md) to verify that controls remain connected after Studio reloads an open story module.
-
 ## Provenance and maintenance
 
 **Last verified:** 2026-09-13 against Flipbook PR #635.
-
-**Re-verify these claims when this skill next loads:** read the `AgentSkills` `rev` pinned in the Flipbook checkout's `loom.config.luau`, resolve `<skills>` as `~/.loom/store/AgentSkills@<rev>`, and run `lute run <skills>/src/flipbook/use-studio-mcp-for-flipbook/scripts/check-drift.luau`. It checks the registered Studio MCP server, gateway name and actions, and build subcommands.
