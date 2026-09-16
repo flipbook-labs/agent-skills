@@ -2,7 +2,7 @@
 
 Use this workflow when a Flipbook check needs viewport screenshots or virtual mouse and keyboard input. Run semantic gateway actions in Edit mode first. The embedded client is the visual and input surface.
 
-1. Invoke `embedFlipbook` through `CoreGui.FlipbookAgentGateway`. Omit `parent` to use `ReplicatedStorage`, and leave `overwrite` false unless replacing an existing embedded runtime is intended.
+1. Discover gateways through the `AgentGateway` CollectionService tag, select the gateway whose manifest name is `FlipbookAgentGateway`, and invoke `embedFlipbook`. Omit `parent` to use `ReplicatedStorage`, and leave `overwrite` false unless replacing an existing embedded runtime is intended.
 2. Start Play mode with `start_stop_play`, then poll `get_studio_state` until the Client data model is available.
 3. Find the embedded UI under `LocalPlayer.PlayerGui.Flipbook` and wait for its target story or control to appear. Do not substitute a blank or loading capture for evidence.
 4. Use `screen_capture` for visual evidence.

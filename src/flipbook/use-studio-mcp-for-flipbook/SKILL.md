@@ -50,4 +50,4 @@ When changing story reload behavior or control wiring, follow the [story hot-rel
 
 **Last verified:** 2026-09-13 against Flipbook PR #635.
 
-**Re-verify these claims when this skill next loads:** run `lute run ~/.loom/store/AgentSkills@*/src/flipbook/use-studio-mcp-for-flipbook/scripts/check-drift.luau` from the Flipbook checkout. It checks the registered Studio MCP server, gateway name and actions, and build subcommands.
+**Re-verify these claims when this skill next loads:** read the `AgentSkills` `rev` pinned in the Flipbook checkout's `loom.config.luau`, resolve `<skills>` as `~/.loom/store/AgentSkills@<rev>`, and run `lute run <skills>/src/flipbook/use-studio-mcp-for-flipbook/scripts/check-drift.luau`. It checks the registered Studio MCP server, gateway name and actions, and build subcommands.
