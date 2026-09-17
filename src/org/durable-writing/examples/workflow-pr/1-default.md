@@ -4,7 +4,7 @@
 
 Reworks the `Upgrade Roblox Packages` workflow so the weekly run always makes a meaningful change to the in-flight upgrade PR — instead of bailing out when the branch already exists.
 
-- Authenticate as the **flipbook-backend GitHub App** (via `FLIPBOOK_BACKEND_APP_ID` / `FLIPBOOK_BACKEND_APP_PRIVATE_KEY`), matching our other PR-based workflows (e.g. Storyteller release) — commits and the PR created by this token trigger CI without a maintainer having to approve the run.
+- Authenticate as the **flipbook-backend GitHub App** via the public `FLIPBOOK_BACKEND_CLIENT_ID` variable and the `FLIPBOOK_BACKEND_APP_PRIVATE_KEY` secret, matching our other PR-based workflows (e.g. Storyteller release). Commits and the PR created by this token trigger CI without a maintainer having to approve the run.
 - When an upgrade branch already exists, **check it out and stack the version bump on top** rather than recreating it from `main`. This avoids destroying the code changes we often need to make to accommodate the new Foundation/RobloxPackages versions while a bump sits open.
 - The version bump is now an **in-place edit** of the `ROBLOX_PACKAGES_VERSION` line — it targets the assignment, so it works regardless of what version the branch currently has — committed and force-pushed on top of existing history (fast-forward only, so nothing is discarded).
 - If there's no net change to `project.luau` (branch already at latest), it no-ops. The PR is only opened when the branch is newly created.

@@ -15,6 +15,6 @@ No automated coverage; exercised by dispatching the workflow.
 
 ## Notes for reviewers
 
-Depends on `FLIPBOOK_BACKEND_APP_ID` / `FLIPBOOK_BACKEND_APP_PRIVATE_KEY` being granted to this repo (they're org secrets used by sibling repos).
+Depends on the `FLIPBOOK_BACKEND_CLIENT_ID` organization variable and `FLIPBOOK_BACKEND_APP_PRIVATE_KEY` organization secret being granted to this repo.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
