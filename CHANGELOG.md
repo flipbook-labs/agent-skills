@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 
 
+## v0.6.1
+
+### Changes
+
+- `lute test` enforces the mechanical half of the authoring checklist over every markdown file a skill ships, not only its `SKILL.md`.
+
+
 ## v0.6.0
 
 ### Features
