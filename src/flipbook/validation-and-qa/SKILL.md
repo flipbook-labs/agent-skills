@@ -18,7 +18,7 @@ Flipbook uses three layered validation gates that build on each other. Each has 
 
 ### Tier 1: Lint (Selene + StyLua)
 
-**What it proves:** Style compliance, dead code, missing requires, typos in identifiers — the low-hanging fruit caught by static linters.
+**What it proves:** Style compliance, dead code, missing requires, typos in identifiers. These are the low-hanging fruit caught by static linters.
 
 **Command:**
 
@@ -41,7 +41,7 @@ lute run lint
 
 ### Tier 2: Analyze (Luau strict type checking)
 
-**What it proves:** Type violations, unused locals, incorrect function signatures, schema mismatches — all violations of strict Luau semantics.
+**What it proves:** Type violations, unused locals, incorrect function signatures, schema mismatches. These are all violations of strict Luau semantics.
 
 **Command:**
 
@@ -90,7 +90,7 @@ lute run test --apiKey "YOUR_KEY"
 
 - **Visual regressions:** Tests render into Instances, not screenshot pixels. A color, font size, or layout change is invisible to Jest unless explicitly asserted (rare).
 - **Studio-only interactions:** Plugin hot-reload, script debugger integration, .rbxm file sync, Explorer drag-drop.
-- **ContextProvider errors:** Known FIXME in `createFlipbookApp.luau` (grep `FIXME: ContextProviders having an error won't fail tests`) — if a ContextProvider throws, tests do not fail (React error boundaries capture it; the test sees an empty tree and passes). This is a gap; a manual smoke-test is required (see "Honest Fallback" below).
+- **ContextProvider errors:** Known FIXME in `createFlipbookApp.luau` (grep `FIXME: ContextProviders having an error won't fail tests`). If a ContextProvider throws, tests do not fail (React error boundaries capture it; the test sees an empty tree and passes). This is a gap; a manual smoke-test is required (see "Honest Fallback" below).
 
 **When to use:** Always when possible. A passing test is the strongest evidence a fix works. A failing test that passes after a change is definitive proof of correctness.
 
@@ -129,20 +129,20 @@ Stories are colocated with source and serve as smoke tests. `stories.spec.luau` 
 
 **Notable gaps in spec coverage (dirs with zero .spec.luau files):**
 
-- `About/` — AboutView, RobloxProfile stories exist but untested
-- `Embedding/` — Core embedding feature; no spec
-- `Enums/` — Enum definitions; no spec (not behavior-critical)
-- `Feedback/` — DiscardChangesDialog, FeedbackDialog, SuccessDialog stories exist but untested
-- `Http/` — HTTP client; no spec
-- `Logs/` — LogsView story exists but untested
-- `Navigation/` — Navigation state; no spec
-- `Panels/` — Sidebar, Topbar, ResizablePanel stories exist but untested
-- `Permissions/` — Permission checking; no spec
-- `Plugin/PluginStore/` — Plugin state; spec exists at parent
-- `StoryControls/ControlElements/` — 11 control UI components (Boolean, Check, Color, Date, MultiSelect, Number, Object, Radio, Select, Slider, String) have a comprehensive story (`StoryControls.story.luau`) but no individual unit specs
-- `Storybook/` — StoryError, StorybookError, StorybookTreeView, NoStorySelected, StoryMeta stories exist but untested
-- `Telemetry/` — TelemetryOptOutDialog story exists but untested
-- `UserSettings/` — SettingsView story exists but untested
+- `About/`: AboutView, RobloxProfile stories exist but untested
+- `Embedding/`: Core embedding feature; no spec
+- `Enums/`: Enum definitions; no spec (not behavior-critical)
+- `Feedback/`: DiscardChangesDialog, FeedbackDialog, SuccessDialog stories exist but untested
+- `Http/`: HTTP client; no spec
+- `Logs/`: LogsView story exists but untested
+- `Navigation/`: Navigation state; no spec
+- `Panels/`: Sidebar, Topbar, ResizablePanel stories exist but untested
+- `Permissions/`: Permission checking; no spec
+- `Plugin/PluginStore/`: Plugin state; spec exists at parent
+- `StoryControls/ControlElements/`: 11 control UI components (Boolean, Check, Color, Date, MultiSelect, Number, Object, Radio, Select, Slider, String) have a comprehensive story (`StoryControls.story.luau`) but no individual unit specs
+- `Storybook/`: StoryError, StorybookError, StorybookTreeView, NoStorySelected, StoryMeta stories exist but untested
+- `Telemetry/`: TelemetryOptOutDialog story exists but untested
+- `UserSettings/`: SettingsView story exists but untested
 
 **Story-only approach justification:** Stories serve dual duty: they let developers preview components interactively in Flipbook itself, and they render in the smoke test. For UI components, this is often sufficient (visual verification happens interactively). For business logic (stores, utilities), explicit specs are preferred.
 
@@ -446,9 +446,9 @@ If a ContextProvider (React context provider at the root of the app) throws an e
 
 CI runs the three tiers on every PR:
 
-1. **`analyze` job** (`.github/workflows/ci.yml`) — blocks merge if it fails
-2. **`lint` job** — blocks merge if it fails
-3. **`test` job** (`.github/workflows/strict.yml`) — cloud Jest tests; fork PRs require approval via `luau-execution-gated` environment
+1. **`analyze` job** (`.github/workflows/ci.yml`): blocks merge if it fails
+2. **`lint` job**: blocks merge if it fails
+3. **`test` job** (`.github/workflows/strict.yml`): cloud Jest tests; fork PRs require approval via `luau-execution-gated` environment
 
 All three must pass for a PR to merge. If cloud tests are unavailable, CI will fail; you must run locally or request a review bypass (rare).
 
@@ -498,8 +498,8 @@ Jest auto-discovers `*.spec` files. No config changes needed.
 
 Every component should have a `.story.luau`. Stories are:
 
-1. **Interactive preview** — visible in Flipbook UI; developers preview while building
-2. **Smoke test carrier** — `stories.spec.luau` renders each story and verifies mount/unmount
+1. **Interactive preview**: visible in Flipbook UI; developers preview while building
+2. **Smoke test carrier**: `stories.spec.luau` renders each story and verifies mount/unmount
 
 **Adding a story:**
 
@@ -542,4 +542,4 @@ return story
 - Analyze: `lute run analyze` (verify it runs luau-lsp in strict mode)
 - Test: `lute run test --filter "usePrevious"` (verify tests build and run)
 
-Last verified: 2026-07-01. Darklua 0.17.1, lute 1.0.0, Jest 3.10.0 (jsdotlua), Rocale via Luau Execution.
+**Last verified:** 2026-07-01. Darklua 0.17.1, lute 1.0.0, Jest 3.10.0 (jsdotlua), Rocale via Luau Execution.

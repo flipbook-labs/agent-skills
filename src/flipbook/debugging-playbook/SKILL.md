@@ -122,7 +122,7 @@ If you see the line, the workaround is active. If not, this is a code regression
 
 ### 4. Stories Not Reloading or Reloading with Stale State
 
-**Story:** ModuleLoader (`Packages/_Index/flipbook-labs_module-loader@*/module-loader/dist/createModuleLoader.luau` — the installed version drifts, locate it with `ls Packages/_Index | grep module-loader`) bypasses Roblox's native require cache using weak-keyed registries (a `weak()` helper wraps its tables in `setmetatable(tab, { __mode = "k" })`). Hot-reload works because modules are GC'd when source changes. But stale state persists if: the module isn't actually reloading, or the story function isn't being re-invoked.
+**Story:** ModuleLoader (`Packages/_Index/flipbook-labs_module-loader@*/module-loader/dist/createModuleLoader.luau`: the installed version drifts, locate it with `ls Packages/_Index | grep module-loader`) bypasses Roblox's native require cache using weak-keyed registries (a `weak()` helper wraps its tables in `setmetatable(tab, { __mode = "k" })`). Hot-reload works because modules are GC'd when source changes. But stale state persists if: the module isn't actually reloading, or the story function isn't being re-invoked.
 
 **Symptom checklist:**
 
@@ -238,7 +238,7 @@ echo "Universe: 6599100156, Place: 123506190725771"
 
 ### 7. BUILD_HASH / BUILD_VERSION / BASE_URL Missing at Runtime
 
-**Story:** Darklua injects globals at build time from env vars. PR #426 and PR #444 both fixed "BUILD_HASH not getting set" — the issue recurred due to Lute stdio behavior variance across versions. PR #479 fixed BASE_URL missing (CI didn't copy `.env.template` → `.env`). These are "injected-global failures."
+**Story:** Darklua injects globals at build time from env vars. PR #426 and PR #444 both fixed "BUILD_HASH not getting set". The issue recurred due to Lute stdio behavior variance across versions. PR #479 fixed BASE_URL missing (CI didn't copy `.env.template` → `.env`). These are "injected-global failures."
 
 **Symptom checklist:**
 
@@ -278,7 +278,7 @@ cat build/build-cache.json | grep -A2 "env"
 
 ### 8. Windows Path-Length Errors
 
-**Story:** PRs #518→#530 (the path-length saga) revealed that CI on Windows breaks on MAX_PATH (260 chars) even with OS-level long-path settings enabled — individual tools enforce their own hardcoded limits. The paths got that deep because Rotriever packaging layers a Wally-like structure on top of the already-huge `Packages/`/`RobloxPackages/` trees. PR #523 solved this by bundling `Packages/` and `RobloxPackages/` into `.rbxms` files before packaging for Rotriever consumption. Residue: the rbxm bundling code remains in `.lute/lib/build-system/compileAsync.luau` (grep `packToRbxm`).
+**Story:** PRs #518→#530 (the path-length saga) revealed that CI on Windows breaks on MAX_PATH (260 chars) even with OS-level long-path settings enabled. Individual tools enforce their own hardcoded limits. The paths got that deep because Rotriever packaging layers a Wally-like structure on top of the already-huge `Packages/`/`RobloxPackages/` trees. PR #523 solved this by bundling `Packages/` and `RobloxPackages/` into `.rbxms` files before packaging for Rotriever consumption. Residue: the rbxm bundling code remains in `.lute/lib/build-system/compileAsync.luau` (grep `packToRbxm`).
 
 **Symptom checklist:**
 
@@ -479,11 +479,11 @@ rokit list
 
 **Commands to re-verify when context drifts:**
 
-- `lute run build plugin --channel dev --clean` — verify help output still shows --channel, --target, --clean flags: `lute run build plugin --help`
-- `cat .darklua.json` — confirm inject_global_value rules still include BUILD_HASH, BUILD_VERSION, BASE_URL, LOG_LEVEL, ENABLE_OUTPUT_LOGGING, JEST_TEST_PATH_PATTERN
-- `ls build/sourcemap-darklua.json` — after any rebuild; if file missing, Rojo step failed
-- `grep "Charm.flags.frozen" src/PluginStarterScript.plugin.luau` — this line is permanent (storyteller#100); if absent, add it back immediately
-- `cat .env.template | grep -E "BASE_URL|LOG_LEVEL|ENABLE_OUTPUT|ROBLOX"` — verify env template still defines these vars
-- `rokit.toml` pinned versions — check if Lute, Darklua, Rojo versions have known issues; consult GitHub releases if build behavior changes
+- `lute run build plugin --channel dev --clean`: verify help output still shows --channel, --target, --clean flags: `lute run build plugin --help`
+- `cat .darklua.json`: confirm inject_global_value rules still include BUILD_HASH, BUILD_VERSION, BASE_URL, LOG_LEVEL, ENABLE_OUTPUT_LOGGING, JEST_TEST_PATH_PATTERN
+- `ls build/sourcemap-darklua.json`: after any rebuild; if file missing, Rojo step failed
+- `grep "Charm.flags.frozen" src/PluginStarterScript.plugin.luau`: this line is permanent (storyteller#100); if absent, add it back immediately
+- `cat .env.template | grep -E "BASE_URL|LOG_LEVEL|ENABLE_OUTPUT|ROBLOX"`: verify env template still defines these vars
+- `rokit.toml` pinned versions: check if Lute, Darklua, Rojo versions have known issues; consult GitHub releases if build behavior changes
 
 **Last verified:** 2026-07-01 against commit 78d71e8f. Sourcemap paths, build cache format, logger routing (PR #484), Charm workaround (story#100), Logs panel structure all confirmed current.

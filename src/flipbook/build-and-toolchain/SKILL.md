@@ -1,6 +1,6 @@
 ---
 name: build-and-toolchain
-description: Understanding the Flipbook build system from environment setup through final deployment; source→rbxm pipeline with deep focus on Darklua require transformation, environment globals injection, and dead-code elimination
+description: "The Flipbook build system from environment setup through final deployment: the source→rbxm pipeline, Darklua require transformation, environment-globals injection, dead-code elimination, build caching, and the traps that commonly break a build. Use when: understanding how a build is produced, modifying build output, or diagnosing why a build produced the wrong artifact."
 type: knowledge
 ---
 
@@ -10,10 +10,10 @@ This skill covers environment setup from scratch, the full toolchain responsibil
 
 **Do NOT use this skill for:**
 
-- Release workflows or GitHub Actions orchestration — use `release-and-operations`
-- Story format, controls, or storybook APIs — use `domain-reference`
-- Debugging runtime errors in stories or plugins — use `debugging-playbook`
-- Architecture design or load-bearing invariants — use `architecture-contract`
+- Release workflows or GitHub Actions orchestration: use `release-and-operations`
+- Story format, controls, or storybook APIs: use `domain-reference`
+- Debugging runtime errors in stories or plugins: use `debugging-playbook`
+- Architecture design or load-bearing invariants: use `architecture-contract`
 
 ---
 
@@ -53,9 +53,9 @@ This does the following (from `.lute/install.luau`):
 
 After install, you have:
 
-- `LuauPackages/` — tooling scripts (flipbook-batteries, lute, dotenv)
-- `Packages/` — Roblox runtime dependencies (Wally)
-- `RobloxPackages/` — roblox-packages CLI installs (Foundation, Promise, Dash)
+- `LuauPackages/`: tooling scripts (flipbook-batteries, lute, dotenv)
+- `Packages/`: Roblox runtime dependencies (Wally)
+- `RobloxPackages/`: roblox-packages CLI installs (Foundation, Promise, Dash)
 
 ### Step 3: Copy Environment Template and Set Variables
 
@@ -72,7 +72,7 @@ Edit `.env` and set at least these:
 
 **CI-like contexts** (GitHub Actions, CI runners): CI also copies `.env.template` → `.env` before builds. If `.env` is missing and you try to build, you'll get: "One or more critical environment variables are not set. Please make sure to copy `.env.template` to `.env`."
 
-**Non-obvious variable:** JEST_TEST_PATH_PATTERN is injected by Darklua at build time (when running tests with `--filter`). Don't set it manually — `lute run test --filter "foo"` handles it. ENABLE_OUTPUT_LOGGING is injected by Darklua (per `.darklua.json`); the logger reads `_G.ENABLE_OUTPUT_LOGGING` at runtime.
+**Non-obvious variable:** JEST_TEST_PATH_PATTERN is injected by Darklua at build time (when running tests with `--filter`). Don't set it manually. `lute run test --filter "foo"` handles it. ENABLE_OUTPUT_LOGGING is injected by Darklua (per `.darklua.json`); the logger reads `_G.ENABLE_OUTPUT_LOGGING` at runtime.
 
 ### Troubleshooting Setup
 
@@ -107,13 +107,13 @@ Each tool has a specific, narrow job. Understand which tool does what to debug b
 
 ### Lute
 
-Lute is the **Luau runtime for writing and running Luau scripts outside Roblox** — conceptually equivalent to Node.js for JavaScript. You use it to run build scripts, test infrastructure, and CI automation. Flipbook uses Lute 1.0.0 (pinned in `rokit.toml`).
+Lute is the **Luau runtime for writing and running Luau scripts outside Roblox**, conceptually equivalent to Node.js for JavaScript. You use it to run build scripts, test infrastructure, and CI automation. Flipbook uses Lute 1.0.0 (pinned in `rokit.toml`).
 
 Key facts:
 
 - Scripts are `.luau` files in `.lute/` that `require` from `LuauPackages/`, `Packages/`, and standard library (`@std/*`)
 - Batteries API (from flipbook-batteries@v0.9.0) provides cross-platform file/process/text utilities
-- Processes are spawned with `process.run()` or `process.system()` — both differ in stdio and return shape
+- Processes are spawned with `process.run()` or `process.system()`. Both differ in stdio and return shape
 - Environment variables come from `.env` (loaded by dotenv@0.1.0 in build.luau)
 - Errors bubble as assertions; use `assert(result.ok, result.stderr)` to catch failures
 
@@ -121,7 +121,7 @@ Lute version bumps are **painful** (see archaeology: "upgrade-loom-dependencies"
 
 ### Loom
 
-Loom is the **package manager for Luau** — specifically, for packages you use in the Lute runtime or Luau scripts. It fetches GitHub repos and pins them to a `loom.config.luau` manifest. Flipbook's Loom manifest specifies:
+Loom is the **package manager for Luau**, specifically for packages you use in the Lute runtime or Luau scripts. It fetches GitHub repos and pins them to a `loom.config.luau` manifest. Flipbook's Loom manifest specifies:
 
 - flipbook-batteries v0.9.0 (batteries of utilities: copy, run, find, findAndReplace)
 - lute v1.0.0 (runtime typedefs and batteries plugin)
@@ -243,11 +243,11 @@ Here is a step-by-step trace of one file's journey from source to the installed 
 
 **The `.darklua.json` config** specifies 8 transformation rules in sequence:
 
-1. `convert_require` — main transformation (uses sourcemap + `indexing_style: property`)
-2. Eight `inject_global_value` rules — one per `_G` variable (BUILD_VERSION, BUILD_CHANNEL, BUILD_HASH, BUILD_TARGET, BASE_URL, LOG_LEVEL, ENABLE_OUTPUT_LOGGING, JEST_TEST_PATH_PATTERN)
-3. Dead-code-elimination rules (compute_expression, remove_unused_if_branch, remove_unused_while, filter_after_early_return, remove_nil_declaration, remove_empty_do) — these allow `if BUILD_CHANNEL == "development" then ... end` to vanish in prod builds
+1. `convert_require`: main transformation (uses sourcemap + `indexing_style: property`)
+2. Eight `inject_global_value` rules: one per `_G` variable (BUILD_VERSION, BUILD_CHANNEL, BUILD_HASH, BUILD_TARGET, BASE_URL, LOG_LEVEL, ENABLE_OUTPUT_LOGGING, JEST_TEST_PATH_PATTERN)
+3. Dead-code-elimination rules (compute_expression, remove_unused_if_branch, remove_unused_while, filter_after_early_return, remove_nil_declaration, remove_empty_do): these allow `if BUILD_CHANNEL == "development" then ... end` to vanish in prod builds
 
-**Why sourcemap matters:** If Rojo's sourcemap (from `sourcemap.project.json`) doesn't match the actual Luau tree structure, Darklua can't find files and will error. If `.luaurc` aliases are stale or `.darklua.json` references a missing file, the build halts. This is "sourcemap drift" — a known trap.
+**Why sourcemap matters:** If Rojo's sourcemap (from `sourcemap.project.json`) doesn't match the actual Luau tree structure, Darklua can't find files and will error. If `.luaurc` aliases are stale or `.darklua.json` references a missing file, the build halts. This is "sourcemap drift", a known trap.
 
 ---
 
@@ -257,24 +257,24 @@ All builds go through `.lute/build.luau` (CLI parser + logic) and `.lute/lib/bui
 
 ### Subcommands
 
-- **`plugin`** (default) — Build the main Flipbook plugin (.rbxm). Output: `build/dev|prod|beta/roblox/Flipbook.rbxm`.
-- **`workspace`** — Build all workspace members. Used by CI to verify the workspace compiles. Output: `build/dev|prod|beta/roblox/workspace/`.
-- **`storybook`** — Build a test storybook place (for deploy-storybook). Output: `build/flipbook-storybook.rbxl`.
+- **`plugin`** (default): Build the main Flipbook plugin (.rbxm). Output: `build/dev|prod|beta/roblox/Flipbook.rbxm`.
+- **`workspace`**: Build all workspace members. Used by CI to verify the workspace compiles. Output: `build/dev|prod|beta/roblox/workspace/`.
+- **`storybook`**: Build a test storybook place (for deploy-storybook). Output: `build/flipbook-storybook.rbxl`.
 
 ### Channels
 
 Channels control which code is included in the build:
 
-- **`dev`** (default in most workflows) — Keeps all code: tests (`*.spec.luau`), stories (`*.story.luau`), storybooks (`*.storybook.luau`). Useful for developing Flipbook itself. `BUILD_CHANNEL` → `"development"`.
-- **`beta`** — Intermediate; prod pruning but with different asset mappings. `BUILD_CHANNEL` → `"beta"`. Used for nightly releases.
-- **`prod`** — Strips all test and story code. Directories pruned: code-samples/, example/, template/, test-runner/. Files pruned: `*.spec.luau*`, `*.story.luau*`, `*.storybook.luau*`, `jest.config.luau*`. `BUILD_CHANNEL` → `"production"`.
+- **`dev`** (default in most workflows): Keeps all code: tests (`*.spec.luau`), stories (`*.story.luau`), storybooks (`*.storybook.luau`). Useful for developing Flipbook itself. `BUILD_CHANNEL` → `"development"`.
+- **`beta`**: Intermediate; prod pruning but with different asset mappings. `BUILD_CHANNEL` → `"beta"`. Used for nightly releases.
+- **`prod`**: Strips all test and story code. Directories pruned: code-samples/, example/, template/, test-runner/. Files pruned: `*.spec.luau*`, `*.story.luau*`, `*.storybook.luau*`, `jest.config.luau*`. `BUILD_CHANNEL` → `"production"`.
 
 Pruning happens at **compile time** via Darklua's dead-code elimination. The directories and files are physically deleted from `build/` before Rojo packs the .rbxm.
 
 ### Targets
 
-- **`roblox`** (default) — Build plugin for Roblox Studio. Output: standard plugin .rbxm.
-- **`rotriever`** — Build FlipbookCore as a Rotriever package (for internal Roblox Studio use). Special handling in compileAsync.luau:
+- **`roblox`** (default): Build plugin for Roblox Studio. Output: standard plugin .rbxm.
+- **`rotriever`**: Build FlipbookCore as a Rotriever package (for internal Roblox Studio use). Special handling in compileAsync.luau:
   - Strips out plugin entry points (PluginStarterScript, EmbeddedClientStarterScript, EmbeddedServerStarterScript)
   - Bundles `Packages/` and `RobloxPackages/` directories into `.rbxms` to mitigate Windows path-length limits (Windows MAX_PATH = 260 chars; deeply nested packages exceeded this when consumed by internal tools)
   - Renames all `.luau` files to `.lua` (Rotriever doesn't support `.luau` extension)
@@ -307,9 +307,9 @@ Flipbook uses an incremental build system to speed up dev iteration. The cache i
 
 ### How It Works
 
-**`runBuildGroupAsync`** in `.lute/lib/build-system/runBuildGroupAsync.luau` hashes each input path (Packages/, workspace members, etc.) and compares it to the cached hash. If hashes match and `--clean` is not set, the build step is **skipped** — the files are already built. If hashes don't match or `--clean` is set, the step runs and the cache is updated.
+**`runBuildGroupAsync`** in `.lute/lib/build-system/runBuildGroupAsync.luau` hashes each input path (Packages/, workspace members, etc.) and compares it to the cached hash. If hashes match and `--clean` is not set, the build step is **skipped**. The files are already built. If hashes don't match or `--clean` is set, the step runs and the cache is updated.
 
-**Cache key:** `"{channel}-{target}-{path}"` — the same files are cached separately for each channel/target combo.
+**Cache key:** `"{channel}-{target}-{path}"`. The same files are cached separately for each channel/target combo.
 
 **Gotchas:**
 
@@ -370,7 +370,7 @@ Darklua injects these globals at compile time. They are available in any module 
 
 ### 4. Windows Path Length (Mostly Fixed)
 
-**Trap:** On Windows (notably CI), deeply nested Wally packages exceed MAX_PATH (260 chars). Enabling OS-level long-path support does not fix this — individual tools in the pipeline enforce their own hardcoded limits.
+**Trap:** On Windows (notably CI), deeply nested Wally packages exceed MAX_PATH (260 chars). Enabling OS-level long-path support does not fix this. Individual tools in the pipeline enforce their own hardcoded limits.
 
 **Mitigation:** Rotriever builds (target=rotriever, step 5 in pipeline diagram) bundle packages into .rbxms before consumption (the `packToRbxm(packagesPath)` call in `.lute/lib/build-system/compileAsync.luau`, grep `packToRbxm`). Reduces nesting depth. This is permanent, not a workaround.
 
@@ -404,7 +404,7 @@ Darklua injects these globals at compile time. They are available in any module 
 
 **Trap:** (Not directly a build trap, but related to state bugs.) Storyteller has an unresolved mutation bug (storyteller/issues/100) that causes "Attempt to modify a readonly table" when Charm.flags.frozen=true.
 
-**Mitigation:** `src/PluginStarterScript.plugin.luau` sets `Charm.flags.frozen = false` at startup. This is a known trade-off. **Do not remove this line** — tests pass, but stories will crash at runtime.
+**Mitigation:** `src/PluginStarterScript.plugin.luau` sets `Charm.flags.frozen = false` at startup. This is a known trade-off. **Do not remove this line**. Tests pass, but stories will crash at runtime.
 
 ---
 
@@ -531,6 +531,8 @@ lute run build plugin --channel dev 2>&1 | grep -i "BUILD_VERSION"
 
 ## Provenance and Maintenance
 
+**Date stamped:** 2026-07-01. Migrated from Flipbook's own skill library.
+
 Re-verify these facts against the repo before relying on them for a high-stakes decision:
 
 - **Darklua version and features:** Check the `darklua` pin in `rokit.toml` (grep `darklua =`; currently 0.17.1). Run `darklua --help` to see available rules.
@@ -545,8 +547,8 @@ Re-verify these facts against the repo before relying on them for a high-stakes 
 
 ## Related Documentation
 
-- **Setup onboarding (no duplication):** `setup-dev-env` skill — walks through rokit, lute, .env, and VSCode config.
-- **Test running:** `validation-and-qa` skill — covers `lute run test`, Jest filtering, CI test matrix.
-- **Architecture:** `architecture-contract` skill — load-bearing design decisions (Darklua choice, why string requires matter, Storyteller contracts).
-- **Debugging:** `debugging-playbook` skill — when builds fail, traps with stories, discriminating experiments.
-- **Release pipeline:** `release-and-operations` skill — nightly/smoketest/Creator Store publish, artifact naming.
+- **Setup onboarding (no duplication):** `setup-dev-env` skill, walking through rokit, lute, .env, and VSCode config.
+- **Test running:** `validation-and-qa` skill, covering `lute run test`, Jest filtering, CI test matrix.
+- **Architecture:** `architecture-contract` skill, covering load-bearing design decisions (Darklua choice, why string requires matter, Storyteller contracts).
+- **Debugging:** `debugging-playbook` skill, covering when builds fail, traps with stories, discriminating experiments.
+- **Release pipeline:** `release-and-operations` skill, covering nightly/smoketest/Creator Store publish, artifact naming.
