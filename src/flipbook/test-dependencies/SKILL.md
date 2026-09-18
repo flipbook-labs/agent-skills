@@ -6,7 +6,7 @@ type: process
 
 # Test Dependencies
 
-When a task changes `storyteller` or `module-loader`, verify the changes inside Flipbook by building the dependency and overlaying its `dist/` output into Flipbook's Wally-installed package directory. This circumvents Wally's registry-only resolution — it has no support for local path or git dependencies.
+When a task changes `storyteller` or `module-loader`, verify the changes inside Flipbook by building the dependency and overlaying its `dist/` output into Flipbook's Wally-installed package directory. This circumvents Wally's registry-only resolution. Wally has no support for local path or git dependencies.
 
 ## When not to use
 

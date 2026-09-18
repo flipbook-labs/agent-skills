@@ -14,13 +14,13 @@ This skill documents the foundational design decisions, architectural invariants
 
 ### The Three Starter Scripts
 
-1. **`src/PluginStarterScript.plugin.luau`** — Studio plugin bootstrap. Creates toolbar button, dock widget, and calls `FlipbookCore.createFlipbookPlugin()`. This is the only file with access to the true `plugin` object.
-2. **`src/EmbeddedClientStarterScript.client.luau`** — Embedded runtime client. Checks for `PluginDebugService` to escape if plugin-debugged, then calls `FlipbookCore.createEmbeddedFlipbookApp()` with a ScreenGui.
-3. **`src/EmbeddedServerStarterScript.server.luau`** — Embedded runtime server. Disables `CharacterAutoLoads` to prevent player respawns interfering with UI rendering. Minimal initialization.
+1. **`src/PluginStarterScript.plugin.luau`**: Studio plugin bootstrap. Creates toolbar button, dock widget, and calls `FlipbookCore.createFlipbookPlugin()`. This is the only file with access to the true `plugin` object.
+2. **`src/EmbeddedClientStarterScript.client.luau`**: Embedded runtime client. Checks for `PluginDebugService` to escape if plugin-debugged, then calls `FlipbookCore.createEmbeddedFlipbookApp()` with a ScreenGui.
+3. **`src/EmbeddedServerStarterScript.server.luau`**: Embedded runtime server. Disables `CharacterAutoLoads` to prevent player respawns interfering with UI rendering. Minimal initialization.
 
 **Why this split?** The plugin and embedding modes have different execution contexts (Studio vs. game client), different capabilities (plugin object vs. Players service), and different security contexts (plugin permissions vs. game-client-script permissions). By keeping starter scripts thin, both modes reuse the same `flipbook-core` application logic.
 
-**The norm:** Keep the starter scripts thin — guard the execution context, set build globals, and delegate to a `flipbook-core` entry function. Business logic (components, stores, story handling) belongs in `flipbook-core`, not here. This is a convention to keep in mind, not a gated rule; the scripts are small enough that a glance tells you if something has crept in that shouldn't be there.
+**The norm:** Keep the starter scripts thin. Guard the execution context, set build globals, and delegate to a `flipbook-core` entry function. Business logic (components, stores, story handling) belongs in `flipbook-core`, not here. This is a convention to keep in mind, not a gated rule; the scripts are small enough that a glance tells you if something has crept in that shouldn't be there.
 
 ---
 
@@ -43,13 +43,13 @@ export type Pluginlike = {
 
 **Four required methods:**
 
-- `GetMouse()` — Needed for cursor icon (dev only); embedded mode provides a stub returning `{ Icon = "" }`.
-- `GetSetting() / SetSetting()` — User settings persistence (sidebar width, pinned storybooks, opt-in telemetry status). Both modes support this via `Plugin.GetSetting` or `LocalStorageStore` wrapper.
-- `OpenScript()` — Click-to-open story file in Editor (plugin mode only); embedded mode is a no-op.
+- `GetMouse()`: Needed for cursor icon (dev only); embedded mode provides a stub returning `{ Icon = "" }`.
+- `GetSetting() / SetSetting()`: User settings persistence (sidebar width, pinned storybooks, opt-in telemetry status). Both modes support this via `Plugin.GetSetting` or `LocalStorageStore` wrapper.
+- `OpenScript()`: Click-to-open story file in Editor (plugin mode only); embedded mode is a no-op.
 
 ### createFlipbookApp vs. createFlipbookPlugin
 
-**`createFlipbookApp(container, options?)`** — The core app factory. Takes a GUI container and optional parameters.
+**`createFlipbookApp(container, options?)`**: The core app factory. Takes a GUI container and optional parameters.
 
 Location: `workspace/flipbook-core/src/createFlipbookApp.luau`
 
@@ -70,7 +70,7 @@ Returns: `{ mount, unmount, destroy }` lifecycle functions.
 3. Renders `FlipbookApp` component with the mode
 4. Returns mount/unmount/destroy lifecycle handlers
 
-**`createFlipbookPlugin(plugin, widget, button?)`** — Plugin-specific wrapper.
+**`createFlipbookPlugin(plugin, widget, button?)`**: Plugin-specific wrapper.
 
 Location: `workspace/flipbook-core/src/Plugin/createFlipbookPlugin.luau`
 
@@ -80,7 +80,7 @@ Adds:
 - Lazy mount/unmount on widget visibility changes (performance optimization)
 - Connection cleanup on plugin unload
 
-**`createEmbeddedFlipbookApp(screenGui)`** — Embedded-specific wrapper.
+**`createEmbeddedFlipbookApp(screenGui)`**: Embedded-specific wrapper.
 
 Location: `workspace/flipbook-core/src/Embedding/createEmbeddedFlipbookApp.luau`
 
@@ -174,9 +174,9 @@ grep -r "ModuleLoader" workspace/flipbook-core/src --include="*.luau" | grep -v 
 
 **Rationale for Charm:**
 
-- **Computed signals** — derived state auto-updates when dependencies change
-- **Untracked access** — read state without triggering subscriptions (useful in loops or destructors)
-- **Minimal API surface** — simpler than Roact/Redux, no boilerplate
+- **Computed signals**: derived state auto-updates when dependencies change
+- **Untracked access**: read state without triggering subscriptions (useful in loops or destructors)
+- **Minimal API surface**: simpler than Roact/Redux, no boilerplate
 
 **Trade-off accepted:** Charm's immutability flag (`Charm.flags.frozen`) is disabled due to storyteller/issues/100 (Storyteller mutates state). See Known Weak Points (Section VI).
 
@@ -184,20 +184,20 @@ grep -r "ModuleLoader" workspace/flipbook-core/src --include="*.luau" | grep -v 
 
 **Core stores:**
 
-1. **`createStoryControlsStore(schema)`** — Per-story control state. Location: `workspace/flipbook-core/src/StoryControls/createStoryControlsStore.luau`
+1. **`createStoryControlsStore(schema)`**: Per-story control state. Location: `workspace/flipbook-core/src/StoryControls/createStoryControlsStore.luau`
    - Signals: one per control (Boolean, Number, String, etc.)
    - Computed: `getControls()` merges schema defaults + overrides
    - Subscription: Only re-render control Row whose value changed (via `useSignalState()` per-control)
 
-2. **`UserSettingsStore`** — Plugin settings (sidebar width, pinned storybooks). Location: `workspace/flipbook-core/src/UserSettings/UserSettingsStore.luau`
+2. **`UserSettingsStore`**: Plugin settings (sidebar width, pinned storybooks). Location: `workspace/flipbook-core/src/UserSettings/UserSettingsStore.luau`
    - Signals: sidebar width, pinned instances, telemetry opt-in status
    - Persistence: backed by `plugin.GetSetting() / SetSetting()`
 
-3. **`createPluginStore()`** — Aggregated plugin state. Location: `workspace/flipbook-core/src/Plugin/PluginStore/init.luau`
+3. **`createPluginStore()`**: Aggregated plugin state. Location: `workspace/flipbook-core/src/Plugin/PluginStore/init.luau`
    - Computed: derives from UserSettingsStore
    - Provides: single entry point for plugin-level state
 
-4. **`createTreeNodeStore()`** — TreeView node state. Location: `workspace/flipbook-core/src/TreeView/createTreeNodeStore.luau`
+4. **`createTreeNodeStore()`**: TreeView node state. Location: `workspace/flipbook-core/src/TreeView/createTreeNodeStore.luau`
    - Signals: per-node (name, icon, selected, expanded, visible, filtered, pinned, instance)
    - Computed: ancestors, descendants, path, leaf nodes, selected descendants
    - Constraint: Untracked access in `setSortOrder` function (grep `Charm.untracked(getDescendants)` in createTreeNodeStore.luau) prevents subscription thrashing
@@ -246,7 +246,7 @@ Aliases defined in `.luaurc`:
 - `@workspace/` → workspace members (e.g., flipbook-core)
 - `@root/` → workspace/flipbook-core/src/
 - `@repo/` → repo root (project.luau, etc.)
-- `@scripts/`, `@lute/`, `@std/`, `@lune/` — Lute utilities
+- `@scripts/`, `@lute/`, `@std/`, `@lune/`: Lute utilities
 
 ### Build Pipeline
 
@@ -314,24 +314,24 @@ end
 
 ### Embedded Starter Scripts
 
-1. **`EmbeddedClientStarterScript.client.luau`** — Player-side initialization.
+1. **`EmbeddedClientStarterScript.client.luau`**: Player-side initialization.
    - Exits if `PluginDebugService` ancestor detected (prevents double-init in plugin debug mode)
    - Creates ScreenGui in PlayerGui
    - Calls `FlipbookCore.createEmbeddedFlipbookApp(screenGui)`
 
-2. **`EmbeddedServerStarterScript.server.luau`** — Server-side setup.
+2. **`EmbeddedServerStarterScript.server.luau`**: Server-side setup.
    - Sets `Players.CharacterAutoLoads = false` (prevents respawns interfering with UI)
    - Minimal; most work is client-side
 
 ### Embedding Routes
 
-**Route 1 — "Embed into Experience" dialog:** User clicks dialog in Flipbook UI → embedded copies self to selected DataModel location.
+**Route 1, "Embed into Experience" dialog:** User clicks dialog in Flipbook UI → embedded copies self to selected DataModel location.
 
 Location: `workspace/flipbook-core/src/Embedding/EmbedIntoExperienceDialog.luau`
 
 Calls: `embedFlipbookRuntime(target)` which clones the Flipbook runtime folder, tags it with `FLIPBOOK_RUNTIME_TAG`, and parents it to target.
 
-**Route 2 — flipbook-cli:** Deploys pre-built Flipbook.rbxm to experience via Open Cloud.
+**Route 2, flipbook-cli:** Deploys pre-built Flipbook.rbxm to experience via Open Cloud.
 
 Location: `../deploy-storybook` (sibling repo)
 
@@ -557,7 +557,7 @@ grep -B 5 "CollectionService:GetTagged(constants.FLIPBOOK_RUNTIME_TAG)" \
 
 ---
 
-## X. Provenance and Maintenance
+## Provenance and Maintenance
 
 **Last verified:** 2026-07-01
 

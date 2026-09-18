@@ -1,6 +1,6 @@
 ---
 name: release-and-operations
-description: Release runbooks, deployment orchestration, artifact conventions, CI/CD environments, and operational history; for releasing versions and managing production deployments
+description: "Release runbooks, deployment orchestration, artifact conventions, CI/CD environments, and operational history for Flipbook. Use when: running a release, working through the deployment pipeline, creating a GitHub Release, publishing to the Creator Store, managing nightly or smoketest builds, or investigating an operational failure."
 type: process
 ---
 
@@ -143,7 +143,7 @@ Each build channel has different behavior:
 
 **Visibility:** Visible in the Creator Store under "Developer" section. Users can opt into nightly builds for testing latest changes.
 
-**Historical issue (archaeology):** PR #596 "Fix the dev build failing to deploy" — channel routing was broken after "beta" was introduced. Solution: added `beta → dev` mapping in `publish-plugin.luau` so channel names don't leak into asset selection.
+**Historical issue (archaeology):** PR #596 "Fix the dev build failing to deploy": channel routing was broken after "beta" was introduced. Solution: added `beta → dev` mapping in `publish-plugin.luau` so channel names don't leak into asset selection.
 
 ---
 
@@ -163,8 +163,8 @@ lune run publish-plugin --smoketest --channel prod --skipBuild
 
 **Historical lessons:**
 
-- PR #562 "Fix smoketest deployments cancelling each other" — early smoketest logic in `release.yml` had concurrency bugs when combined with approval gates. Solution: moved smoketest to `strict.yml` tests job (its proper role as an end-to-end test).
-- PR #561 "Fix dev deployments triggering for all PRs" — dev deployments leaked into all PRs. Solution: flipped logic to deploy only on non-PR events (push to main).
+- PR #562 "Fix smoketest deployments cancelling each other": early smoketest logic in `release.yml` had concurrency bugs when combined with approval gates. Solution: moved smoketest to `strict.yml` tests job (its proper role as an end-to-end test).
+- PR #561 "Fix dev deployments triggering for all PRs": dev deployments leaked into all PRs. Solution: flipped logic to deploy only on non-PR events (push to main).
 
 ---
 
@@ -237,7 +237,7 @@ Runs on every PR and push to main:
 | ------------- | --------------- | ---------------- | ---------------------------------------------------------------- |
 | build-plugin  | dev, beta, prod | plugin (default) | 3 matrix runs; attests provenance                                |
 | build-package | flipbook-core   | rotriever        | 3 channel runs; zips for Rotriever consumers                     |
-| analyze       | —               | —                | Runs lute lint, lune setup, lute setup, lute analyze; single run |
+| analyze       | none            | none             | Runs lute lint, lune setup, lute setup, lute analyze; single run |
 
 ### Strict Job Schedule
 
@@ -260,8 +260,8 @@ Triggered by pushes to main, release events, manual dispatch, and pull requests 
 
 | Job                    | Trigger                   | Environment              | Concurrency                 |
 | ---------------------- | ------------------------- | ------------------------ | --------------------------- |
-| build                  | main, debug label, manual | —                        | Builds the release artifact |
-| release                | main, debug label, manual | —                        | Runs Changewrite            |
+| build                  | main, debug label, manual | none                     | Builds the release artifact |
+| release                | main, debug label, manual | none                     | Runs Changewrite            |
 | publish-plugin         | release event only        | roblox-creator-store     | production (serialized)     |
 | publish-nightly-plugin | push to main only         | roblox-creator-store-dev | nightly (serialized)        |
 
@@ -383,9 +383,9 @@ The script `.lune/publish-plugin.luau` reads rbxasset.toml and publishes to the 
 
 ### Windows Path-Length Saga (PRs #518→#523→#530)
 
-**Symptom:** CI running on Windows hit MAX_PATH (260 chars) failures. Note: OS-level long-path settings were already enabled — individual tools in the pipeline enforce their own hardcoded MAX_PATH, so the OS setting does not save you.
+**Symptom:** CI running on Windows hit MAX_PATH (260 chars) failures. Note: OS-level long-path settings were already enabled. Individual tools in the pipeline enforce their own hardcoded MAX_PATH, so the OS setting does not save you.
 
-**Root cause:** Huge unbundled `Packages/`/`RobloxPackages/` hierarchies (Wally + Loom), plus FlipbookCore being packaged as a Rotriever package — which layers another Wally-like packaging structure on top — massively inflated total path depth.
+**Root cause:** Huge unbundled `Packages/`/`RobloxPackages/` hierarchies (Wally + Loom), plus FlipbookCore being packaged as a Rotriever package (which layers another Wally-like packaging structure on top), massively inflated total path depth.
 
 **Solution (PR #523):** Bundle `Packages/` and `RobloxPackages/` dirs into .rbxms before packaging for Rotriever (the `packToRbxm(packagesPath)` call in `.lute/lib/build-system/compileAsync.luau`, grep `packToRbxm`). Reduces path depth.
 
@@ -393,7 +393,7 @@ The script `.lune/publish-plugin.luau` reads rbxasset.toml and publishes to the 
 
 **Residue:** Comment in compileAsync.luau: "Bundle up the gigantic dependency bundles into rbxms to alleviate path length limit issues."
 
-**Lesson:** Windows path length is a real constraint even with OS long-path support enabled, because tools hardcode their own limits; solutions that compact artifact structure (bundling) are better than detection-only approaches. The bundling was a last-resort bet that has held up well so far — treat it as load-bearing.
+**Lesson:** Windows path length is a real constraint even with OS long-path support enabled, because tools hardcode their own limits; solutions that compact artifact structure (bundling) are better than detection-only approaches. The bundling was a last-resort bet that has held up well so far. Treat it as load-bearing.
 
 ### Build-Hash Version Sensitivity (PRs #426, #444)
 
@@ -479,9 +479,9 @@ To keep this skill current and aligned with code changes:
 **Known drifts to watch:**
 
 - Changewrite action version and entry format
-- Creator Store asset IDs (8517129161 prod, 88523969718241 dev) — hardcoded in CI, not in code
-- Environment secret names (ROBLOX_API_KEY vs ROBLOX_STORYBOOK_PREVIEW_API_KEY) — org settings not read-only, may change without code notice
-- Rokit version pinned in workflows (v1.2.0 typical) — minor bumps in action inputs
+- Creator Store asset IDs (8517129161 prod, 88523969718241 dev): hardcoded in CI, not in code
+- Environment secret names (ROBLOX_API_KEY vs ROBLOX_STORYBOOK_PREVIEW_API_KEY): org settings not read-only, may change without code notice
+- Rokit version pinned in workflows (v1.2.0 typical): minor bumps in action inputs
 
 ---
 

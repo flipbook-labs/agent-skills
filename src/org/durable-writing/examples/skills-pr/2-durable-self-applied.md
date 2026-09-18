@@ -1,9 +1,11 @@
+<!-- doctrine-exempt rules="em-dash" reason="A self-edit that dropped the rotted PR reference and left the author's own punctuation in place." -->
+
 ## Summary
 
-Add `org/write-react-code` and `org/use-foundation`, two org-scope skills for react-lua UI work. They are distilled from Flipbook's component codebase, the org's largest body of react-lua UI, but filed at `org/` rather than `flipbook/` because the patterns are library-level, not Flipbook's house style: any flipbook-labs repo that grows a react-lua UI should follow them.
+Add `org/write-react-code` and `org/use-foundation`, two org-scope skills for react-lua UI work. They are distilled from Flipbook's component codebase, the org's largest body of react-lua UI, but filed at `org/` rather than `flipbook/` because the patterns are library-level, not Flipbook's house style — any flipbook-labs repo that grows a react-lua UI should follow them.
 
 - **`org/write-react-code`** owns component structure: module anatomy and the `e` alias, `Props` and defaults via Sift, named-children element trees, state placement across `useState` and Charm, the context module shape, effect discipline, and colocated stories and specs.
-- **`org/use-foundation`** owns styling: FoundationProvider and theme resolution, the `tag` system, tokens via `useTokens`, component and enum idioms, and `CommonProps` passthrough. Its volatile tag and enum vocabulary carries a re-verify block that greps the installed Foundation package, so a reader can re-derive it against the release their repo pins.
+- **`org/use-foundation`** owns styling: FoundationProvider and theme resolution, the `tag` system, tokens via `useTokens`, component and enum idioms, and `CommonProps` passthrough. Its volatile tag and enum vocabulary carries a re-verify block that greps the installed Foundation package — so a reader can re-derive it against the release their repo pins.
 
 The code excerpts are frozen illustrations edited down from real components, not live pointers into any repo.
 

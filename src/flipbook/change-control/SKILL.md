@@ -45,14 +45,14 @@ Fill every section concisely. The Problem/Solution should describe what the chan
 ### Commit Hygiene
 
 - Make one commit per logical unit; do not squash needlessly.
-- **Do not rewrite history** — no `git reset --hard`, rebase, or cherry-pick to rebuild a branch. If reverting, make a new forward commit (`git rm`, `git checkout <base> -- <files>`).
+- **Do not rewrite history:** no `git reset --hard`, rebase, or cherry-pick to rebuild a branch. If reverting, make a new forward commit (`git rm`, `git checkout <base> -- <files>`).
 - Commits are collapsed on merge anyway (squash-merge workflow), so intermediate history is acceptable.
 
 ---
 
 ## Release Gating and Version Control
 
-Releasing Flipbook is gated and automated — no manual tag pushes, no direct version-string edits.
+Releasing Flipbook is gated and automated: no manual tag pushes, no direct version-string edits.
 
 ### Change Entries and Version Bumping
 
@@ -77,8 +77,8 @@ Flipbook has three build channels (verified in `ci.yml` matrix: dev/beta/prod, a
 
 | Channel  | Use                                 | Keeps                                | Prunes                                                                                                                           |
 | -------- | ----------------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| **dev**  | local dev, CI proof                 | tests, stories, storybooks, example/ | —                                                                                                                                |
-| **beta** | internal validation (experimental)  | same as dev                          | —                                                                                                                                |
+| **dev**  | local dev, CI proof                 | tests, stories, storybooks, example/ | none                                                                                                                             |
+| **beta** | internal validation (experimental)  | same as dev                          | none                                                                                                                             |
 | **prod** | release to Creator Store, end users | core plugin only                     | `code-samples/`, `example/`, `template/`, `test-runner/`, `*.spec.luau`, `*.story.luau`, `*.storybook.luau`, `jest.config.luau*` |
 
 Default channel is `prod`. Pass `--channel dev` or `--channel beta` to `lute run build` to retain development files.
@@ -91,7 +91,7 @@ Default channel is `prod`. Pass `--channel dev` or `--channel beta` to `lute run
 
 Every PR must pass the following gate jobs before merge is recommended:
 
-### `ci.yml`: Standard Build and Attestation
+### `ci.yml`: Standard Build & Attestation
 
 **Trigger:** every push to main, every PR to main, manual dispatch.
 
@@ -186,8 +186,8 @@ Use this table to determine which CI gates your change requires and whether it i
 ### Safe (Does Not Require `strict.yml`)
 
 - Documentation-only PRs (fixes to `.md`, docs vault, AGENTS.md).
-- Test files (`*.spec.luau`) — already covered by `strict.yml` when code lands.
-- Story/storybook files (`*.story.luau`, `*.storybook.luau`) — dev-channel only, pruned from prod builds.
+- Test files (`*.spec.luau`): already covered by `strict.yml` when code lands.
+- Story/storybook files (`*.story.luau`, `*.storybook.luau`): dev-channel only, pruned from prod builds.
 - Non-behavior-affecting refactors (renaming, moving code, extracting helpers that keep the same API).
 
 ### Unsafe (Always Requires `strict.yml`)
@@ -407,14 +407,14 @@ Quick reference for determining what CI gates a change needs.
 | Change Scope                                        | Gate: ci.yml    | Gate: strict.yml     | Gate: storybook.yml        | Notes                                     |
 | --------------------------------------------------- | --------------- | -------------------- | -------------------------- | ----------------------------------------- |
 | Plugin code (logic, UI, telemetry)                  | ✅              | ✅                   | ✅ if affects story render | Always required for user-facing changes   |
-| Tests (*.spec.luau)                                 | ✅              | ✅                   | —                          | Runs in cloud; must pass                  |
-| Stories/storybooks (*.story.luau, *.storybook.luau) | ✅              | —                    | ✅                         | Dev-only; not in prod builds              |
-| Build scripts (.lute/, darklua.json)                | ✅              | ✅ if output changes | —                          | Use --clean locally to test               |
-| Wally/Loom/Rokit versions                           | ✅              | ✅                   | —                          | High-risk; test local --clean build first |
-| CI workflows (.github/workflows/*.yml)              | —               | Manual re-run        | —                          | Test in draft PR before merging           |
+| Tests (*.spec.luau)                                 | ✅              | ✅                   | none                       | Runs in cloud; must pass                  |
+| Stories/storybooks (*.story.luau, *.storybook.luau) | ✅              | none                 | ✅                         | Dev-only; not in prod builds              |
+| Build scripts (.lute/, darklua.json)                | ✅              | ✅ if output changes | none                       | Use --clean locally to test               |
+| Wally/Loom/Rokit versions                           | ✅              | ✅                   | none                       | High-risk; test local --clean build first |
+| CI workflows (.github/workflows/*.yml)              | none            | Manual re-run        | none                       | Test in draft PR before merging           |
 | Release-worthy changes                              | ✅ changelog    | As otherwise needed  | As otherwise needed        | Add one `.changes/*.md` entry             |
-| Docs (.md, docs vault)                              | ✅ linting only | —                    | —                          | No code impact; Prettier only             |
-| `.luaurc`, language config                          | ✅              | ✅                   | —                          | Language mode changes affect all files    |
+| Docs (.md, docs vault)                              | ✅ linting only | none                 | none                       | No code impact; Prettier only             |
+| `.luaurc`, language config                          | ✅              | ✅                   | none                       | Language mode changes affect all files    |
 
 ---
 
