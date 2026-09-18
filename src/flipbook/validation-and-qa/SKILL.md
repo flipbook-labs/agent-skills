@@ -76,8 +76,8 @@ lute run test --apiKey "YOUR_KEY"
 
 **How it works:**
 
-- Builds and packs a test place through `lute run buildTests`
-- Runs the prebuilt place through `lute run runTests`
+- Builds and packs a test place through `lute run test --build-only`
+- Runs the prebuilt place through `lute run test --run-only`
 - Runs jsdotlua Jest in the cloud via Rocale/Luau Execution API
 - Test runner entry: `.lute/tasks/run-tests.luau` → `workspace/test-runner/src/init.luau`
 - Jest config: `workspace/flipbook-core/src/jest.config.luau` with `testMatch = { "**/*.spec" }`
@@ -445,7 +445,7 @@ If a ContextProvider (React context provider at the root of the app) throws an e
 
 CI runs the validation tiers on every PR:
 
-1. **`analyze` job** (`.github/workflows/ci.yml`) runs lint and static analysis.
+1. **`analyze` job** (`.github/workflows/ci.yml`) runs the full secret-free `lute run check` after a clean dependency install.
 2. **`build-plugin` and `build-package` jobs** compile every supported channel and target.
 3. **`tests` job** (`.github/workflows/strict.yml`) runs cloud Jest tests and publishes the smoketest artifact.
 

@@ -219,7 +219,7 @@ Controls revamp (#465, #576, #579) is shipping to close UI Labs gap. Features li
 **Example 2: Testing (lute run test)**
 
 - **Pain:** Jest tests run inside Roblox; requires Rocale (Luau Execution), API key, place file. Manual invocation complex.
-- **Solution:** `.lute/test.luau` coordinates `buildTests` and `runTests`, keeping place construction separate from Rocale execution while preserving `--filter <pattern>` locally.
+- **Solution:** `.lute/test.luau` supports `--build-only` and `--run-only`, keeping place construction separate from Rocale execution while preserving `--filter <pattern>` locally.
 - **Outcome:** `lute run test --filter Controls` works locally. CI can build contributor code without secrets, then run the resulting place through trusted scripts with environment-gated API key access.
 
 **Example 3: Build (lute run build plugin --channel dev --watch)**

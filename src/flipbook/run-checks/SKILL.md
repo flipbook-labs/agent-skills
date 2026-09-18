@@ -29,7 +29,7 @@ All commands run from the repo root. No setup required beyond `lute run install`
 lute run check
 ```
 
-Sets up Lute type definitions, runs lint and analysis, and builds a development plugin. Use this as the default local check for a Flipbook contribution because it exercises the secret-free path available to fork authors.
+Sets up Lune and Lute type definitions, runs lint and analysis, and builds a development plugin. Use this as the default local check for a Flipbook contribution because it exercises the secret-free path available to fork authors. Flipbook CI runs the same command after installing dependencies.
 
 ## Lint
 
@@ -66,7 +66,7 @@ lute run test --filter "PartialFileName"
 lute run test --apiKey "YOUR_KEY"
 ```
 
-Builds a test place through `lute run buildTests`, then runs it through `lute run runTests` and Rocale. The split lets CI build contributor code without secrets and run the resulting place from a fresh trusted runner.
+By default, builds a test place and runs it through Rocale. CI invokes the same script as `lute run test --build-only --place <path>` on the secretless contributor runner and `lute run test --run-only --place <path>` on a fresh trusted runner.
 
 **Requires:** `ROBLOX_API_KEY` environment variable (from `.env`) or `--apiKey` flag. Place and universe IDs are read from `.env.template` (grep for `ROBLOX_UNIT_TESTING_`). If the key is unavailable in Flipbook, run `lute run check` instead. In Storyteller and ModuleLoader, run lint and analysis separately.
 
@@ -84,6 +84,6 @@ Builds a test place through `lute run buildTests`, then runs it through `lute ru
 - Analyze command details: `grep "platform=standard\|LuauSolverV2" .lute/analyze.luau`
 - Contributor check: `cat .lute/check.luau`
 - Test requirements and options: `grep -E "apiKey|filter" .lute/test.luau`
-- Split test boundary: `ls .lute/{buildTests,runTests}.luau`
+- Split test boundary: `grep -n "build-only\|run-only" .lute/test.luau`
 - ROBLOX_API_KEY requirement: `grep "ROBLOX_API_KEY" .lute/test.luau`
 - Test place IDs: `grep "ROBLOX_UNIT_TESTING" .env.template`

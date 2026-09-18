@@ -118,7 +118,7 @@ Every PR must pass the following gate jobs before merge is recommended:
 **Jobs:**
 
 1. **`build-test-inputs`** runs pull request code with read-only repository access and no secrets. It builds the test place and production plugin, then uploads both as artifacts.
-2. **`tests`** checks out the trusted base revision on a fresh runner, downloads those artifacts, runs the test place through `lute run runTests`, and publishes the prebuilt smoketest plugin.
+2. **`tests`** checks out the trusted base revision on a fresh runner, downloads those artifacts, runs the test place through `lute run test --run-only`, and publishes the prebuilt smoketest plugin.
 
 The separate runners are the security boundary. Never run contributor-controlled source, build scripts, dependency installation, or repository actions in the job that receives `ROBLOX_API_KEY`. Environment approval controls when the protected job starts, but it does not make contributor code trusted.
 
@@ -160,7 +160,7 @@ Fork previews wait at the `luau-execution-gated` environment before the deployme
 
 **Fails if:** any linter or formatter would change the code.
 
-Contributors can run `lute run check` after copying `.env.template` to `.env`. It sets up Lute type definitions, runs lint and analysis, and builds a development plugin without an Open Cloud key.
+Contributors can run `lute run check` after copying `.env.template` to `.env`. It sets up Lune and Lute type definitions, runs lint and analysis, and builds a development plugin without an Open Cloud key. The CI `analyze` job runs the same command after a clean dependency install.
 
 ---
 
