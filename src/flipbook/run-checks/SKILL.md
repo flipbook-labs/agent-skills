@@ -15,12 +15,21 @@ For dependency verification (testing local storyteller or module-loader changes)
 ## Quick Reference
 
 ```bash
+lute run check # Flipbook only, no Open Cloud key required
 lute run lint
 lute run analyze
 lute run test
 ```
 
 All commands run from the repo root. No setup required beyond `lute run install` (see `setup-dev-env`).
+
+## Flipbook Contributor Check
+
+```bash
+lute run check
+```
+
+Sets up Lune and Lute type definitions, runs lint and analysis, and builds a development plugin. Use this as the default local check for a Flipbook contribution because it exercises the secret-free path available to fork authors. Flipbook CI runs the same command after installing dependencies.
 
 ## Lint
 
@@ -57,9 +66,9 @@ lute run test --filter "PartialFileName"
 lute run test --apiKey "YOUR_KEY"
 ```
 
-Builds plugin with `--channel dev --clean`, generates Rocale test place, and runs Jest via Rocale.
+By default, builds a test place and runs it through Rocale. CI invokes the same script as `lute run test --build-only --place <path>` on the secretless contributor runner and `lute run test --run-only --place <path>` on a fresh trusted runner.
 
-**Requires:** `ROBLOX_API_KEY` environment variable (from `.env`) or `--apiKey` flag. Place and universe IDs are read from `.env.template` (grep for `ROBLOX_UNIT_TESTING_`). If key is unavailable, tests cannot run; use `lute run lint` and `lute run analyze` instead.
+**Requires:** `ROBLOX_API_KEY` environment variable (from `.env`) or `--apiKey` flag. Place and universe IDs are read from `.env.template` (grep for `ROBLOX_UNIT_TESTING_`). If the key is unavailable in Flipbook, run `lute run check` instead. In Storyteller and ModuleLoader, run lint and analysis separately.
 
 **`--filter`** accepts a filename pattern to run only matching test files (e.g., `"Story"` to run `Story.test.luau`). Useful for focused test runs when changed area has a clear test pattern.
 
@@ -73,6 +82,8 @@ Builds plugin with `--channel dev --clean`, generates Rocale test place, and run
 
 - Lint checks order and tools: `head -40 .lute/lint.luau`
 - Analyze command details: `grep "platform=standard\|LuauSolverV2" .lute/analyze.luau`
+- Contributor check: `cat .lute/check.luau`
 - Test requirements and options: `grep -E "apiKey|filter" .lute/test.luau`
+- Split test boundary: `grep -n "build-only\|run-only" .lute/test.luau`
 - ROBLOX_API_KEY requirement: `grep "ROBLOX_API_KEY" .lute/test.luau`
 - Test place IDs: `grep "ROBLOX_UNIT_TESTING" .env.template`
