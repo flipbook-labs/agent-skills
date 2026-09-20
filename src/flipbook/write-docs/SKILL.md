@@ -10,7 +10,7 @@ Flipbook's documentation is authored in the **Obsidian vault at `docs/obsidian-v
 
 The hard rule: **never describe behavior you have not confirmed in the source.** Generic, plausible-sounding docs that don't match the code are worse than no docs.
 
-**Not every page is public docs.** `usage/`, `api/`, `concepts/`, and `contributing/` are the high-rigor reference pages; apply the full house style and accuracy bar to them. `engineering/` (including `engineering/proposals/`), `product/`, and `product/ideas/` are living documents, tech specs, and RFCs: freeform, lower bar, often half-finished thoughts. Keep the voice there, but don't polish or "correct" someone's working notes. Match the surrounding informality and only change what you were asked to. (Everything publishes except a short sensitivity list excluded in `docs/site/docusaurus.config.ts`.)
+**Pages have different editorial bars.** `usage/`, `api/`, `concepts/`, and `contributing/` are high-rigor reference pages; apply the full house style and accuracy bar to them. `engineering/` (including `engineering/proposals/`), `product/`, and `product/ideas/` are public living documents, tech specs, and RFCs: freeform, lower bar, often half-finished thoughts. They publish intentionally so contributors and community members can learn from Flipbook's development. Keep the voice there, but don't polish or "correct" someone's working notes. Match the surrounding informality and only change what you were asked to. Treat the `exclude` list in `docs/site/docusaurus.config.ts` as the publication boundary. Do not exclude a whole section because it contains internal context; omit content only for a concrete privacy or security reason, and ask when the boundary is unclear.
 
 > [!note]
 > Author in Obsidian syntax. The build's remark plugin (`docs/site/src/remark/obsidian.mjs`) resolves wikilinks, image embeds, and `> [!callouts]`, so don't convert them to Docusaurus `:::` syntax to silence a warning; flag a genuinely unrenderable case instead. Note transclusion (embedding one note's body into another with `![[note]]`) is **not** supported: the plugin only embeds images, and a `![[note]]` falls back to a plain link. Don't author Obsidian Bases (`.base`): they don't render on the site (see Conventions).
@@ -66,10 +66,11 @@ Follow **`org/writing-style`** for the house voice, the banned patterns (antithe
 
 ## Code samples
 
-- Vault pages are `.md`, so examples are **inline fenced code blocks** (` ```lua `), not raw-loader imports.
-- **Examples must be real, not invented.** Lift them from working modules (`workspace/code-samples/src/...` or actual `src/`) and keep them in sync with the source. Don't hand-write a snippet you haven't confirmed compiles. This is the same accuracy bar as prose: an example that doesn't run is a wrong claim.
+- Store substantive examples under `workspace/code-samples/src/` so Luau analysis and the docs site read the same source.
+- Embed a sample with a `code-sample` fenced block whose body is its repo-root-relative path. Append `#L4-L13` for an inclusive range or `#L7` for one line. The shared extractor in `docs/code-samples/extract.mjs` powers both the Docusaurus remark plugin and the Obsidian reading-view plugin.
+- **Examples must be real, not invented.** Use working modules from `workspace/code-samples/src/` or actual source, and keep them in sync. Don't hand-write a snippet you haven't confirmed compiles. This is the same accuracy bar as prose: an example that doesn't run is a wrong claim.
 - Use ` ```diff ` fences to show migration or before/after steps (see the migration guides).
-- The raw-loader `<CodeBlock>` import pattern (importing from `workspace/code-samples/` and rendering with `<CodeBlock>` / `<Tabs>`) **only works in `.mdx` pages.** The Obsidian vault pages are `.md` and can't use JS imports, so don't reach for it here. If a page is genuinely `.mdx`, that pattern is available.
+- Read `docs/code-samples/README.md` before changing the extractor, either adapter, or the fenced-block contract. Run `node --test docs/code-samples/extract.test.mjs` after those changes.
 
 ## Pull Request Descriptions
 
@@ -85,41 +86,34 @@ A PR body exists to orient the human who has to review an ever-growing diff. Its
 
 ## Key Files and Paths
 
-| File                               | Purpose                                            |
-| ---------------------------------- | -------------------------------------------------- |
-| `docs/docusaurus.config.ts`        | Docusaurus config (site title, URLs, plugins, nav) |
-| `docs/sidebars.ts`                 | Sidebar structure and section organization         |
-| `docs/package.json`                | Node dependencies for Docusaurus                   |
-| `docs/docs/`                       | Markdown/MDX content root                          |
-| `.github/workflows/docs.yml`       | CI workflow: build on PR, deploy on release        |
-| `.lute/serve-docs.luau`            | Task runner for local dev server                   |
-| `docs/obsidian-vault/`             | Institutional knowledge vault                      |
-| `workspace/code-samples/`          | Real example code embedded in docs                 |
-| `.github/pull_request_template.md` | PR template (docs sections in Problem/Solution)    |
+| File                                   | Purpose                                                         |
+| -------------------------------------- | --------------------------------------------------------------- |
+| `docs/obsidian-vault/`                 | Authoring source and Docusaurus content root                    |
+| `docs/site/docusaurus.config.ts`       | Docusaurus config, publication exclusions, plugins, and nav     |
+| `docs/site/sidebars.ts`                | Autogenerated sidebar entrypoint                                |
+| `docs/site/src/sidebar/obsidian.mjs`   | Obsidian-aware labels and index-note ordering                   |
+| `docs/site/src/remark/obsidian.mjs`    | Wikilink, image embed, and callout translation                  |
+| `docs/site/src/remark/code-sample.mjs` | Docusaurus adapter for `code-sample` fenced blocks              |
+| `docs/site/package.json`               | Docusaurus dependencies and docs checks                         |
+| `docs/code-samples/`                   | Shared code-sample extractor, tests, and Obsidian adapter       |
+| `workspace/code-samples/src/`          | Type-checked Luau examples embedded in docs                     |
+| `.github/workflows/docs.yml`           | CI workflow: build on PR, deploy on release                     |
+| `.lute/serve-docs.luau`                | Task runner for the local Docusaurus server                     |
+| `.github/pull_request_template.md`     | PR template with Problem, Solution, Testing, and reviewer notes |
 
 ## Common Patterns
 
 ### Linking Between Pages
 
-**In Obsidian vault:** Use wikilinks:
+Use wikilinks in vault pages:
 
 ```markdown
-See [[creating-stories/writing-stories]] for the full guide.
-```
-
-**In Docusaurus site:** Use root-relative paths with `/docs/` prefix:
-
-```markdown
-See [Writing Stories](/docs/creating-stories/writing-stories) for the full guide.
+See [[usage/writing-stories|Writing Stories]] for the full guide.
 ```
 
 ### Embedding Code Samples
 
-**When the sample is short (< 10 lines):** Inline the code in a fenced block.
-
-**When the sample is long or lives in the repo:** Reference via code-sample syntax (Obsidian) or raw-loader (Docusaurus) so it auto-updates if source changes.
-
-**Obsidian code-sample syntax:**
+Reference real Luau through the shared `code-sample` syntax:
 
 ````
 ```code-sample
@@ -147,21 +141,25 @@ Callout syntax for both Obsidian and Docusaurus:
 
 ### Sidebars and Navigation
 
-Sidebar structure is in `docs/sidebars.ts` for Docusaurus. Obsidian sidebar comes from `index.md` link lists in each folder. Add new pages by:
+The sidebar is autogenerated from the vault. Each folder's `index.md` controls its item order, and the root order comes from `docs/obsidian-vault/README.md`. Add a page by:
 
 1. Create `.md` file under appropriate section in `docs/obsidian-vault/`.
-2. Add to that folder's `index.md` link list (or update `docs/sidebars.ts` for Docusaurus).
-3. Set `sidebar_position` in frontmatter to control sort order (Docusaurus only).
+2. Add it to that folder's `index.md` wikilink list with a short blurb.
+3. Move the wikilink in the list to set its sidebar order. Do not add Docusaurus sidebar metadata to the note.
+
+## When not to use
+
+Use `org/user-facing-docs` for a package README or getting-started guide outside Flipbook. Use `flipbook/change-control` for PR and merge gates that do not concern docs authoring.
 
 ---
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-07-11. Consolidated with Flipbook's `flipbook-docs-and-writing` skill from `.agents/skills/flipbook-docs-and-writing/`. Voice and banned-patterns sections are lifted into `org/writing-style`.
+**Last verified:** 2026-09-20 against Flipbook's `flipbook-docs` branch at `1afbee13`. Consolidated with Flipbook's former local docs-writing skills. Voice and banned-pattern guidance lives in `org/writing-style`.
 
 **Re-verify these claims when this skill next loads** (run from a `flipbook` checkout):
 
-- The remark plugin and sidebar generator still exist: `git show origin/main:docs/site/src/remark/obsidian.mjs | head` and `git show origin/main:docs/site/src/sidebar/obsidian.mjs | head`
-- The vault root is still `docs/obsidian-vault/`: `git ls-tree origin/main -- docs/obsidian-vault`
-- Docusaurus is still the build system: `grep "docusaurus\|@docusaurus" docs/package.json`
-- PR template exists: `head -5 .github/pull_request_template.md`
+- Run `lute run <skills>/write-docs/scripts/check-docs-layout.luau`, where `<skills>` is this installed skill directory.
+- Confirm the `exclude` list in `docs/site/docusaurus.config.ts` still matches the intended public boundary.
+- Run `cd docs/site && npm run format:check && npm run typecheck && npm run build` after changing site mechanics or vault structure.
+- Run `node --test docs/code-samples/extract.test.mjs` after changing code-sample extraction or either adapter.
