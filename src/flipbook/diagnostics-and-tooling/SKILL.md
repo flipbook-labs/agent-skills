@@ -20,10 +20,10 @@ Flipbook uses the `Log` library (Wally dep) to route log messages to two configu
 
 The log level is controlled by the `LOG_LEVEL` environment variable (defined in `.env.template`), which is injected into `_G.LOG_LEVEL` at build time via Darklua. The values are case-sensitive strings mapping to the Log library's enums:
 
-- `"debug"` — Log.LogLevel.Debugging (most verbose; internal state changes, function entry/exit)
-- `"info"` — Log.LogLevel.Information (default; feature-level messages, story loaded, control changed)
-- `"warn"` or `"warning"` — Log.LogLevel.Warning (alerts; deprecated patterns, missing optional fields)
-- `"err"` or `"error"` — Log.LogLevel.Error (errors only; failed operations, invalid states)
+- `"debug"`: Log.LogLevel.Debugging (most verbose; internal state changes, function entry/exit)
+- `"info"`: Log.LogLevel.Information (default; feature-level messages, story loaded, control changed)
+- `"warn"` or `"warning"`: Log.LogLevel.Warning (alerts; deprecated patterns, missing optional fields)
+- `"err"` or `"error"`: Log.LogLevel.Error (errors only; failed operations, invalid states)
 
 Unrecognized strings default to Warning. The log-level filtering happens at the Log library level in `workspace/flipbook-core/src/logger.luau` (in `stringToLogLevel` function).
 
@@ -103,10 +103,10 @@ Rocale is Roblox's cloud test executor. When you run `lute run test`, the flow i
 
 The output format is Jest's standard TAP (Test Anything Protocol) with colored PASS/FAIL per test file. Look for:
 
-- `✓ (N passed)` — suite passed, N tests all succeeded
-- `✕ (N failed)` — suite failed; see details below
-- `● (test name)` — individual test failure; stack trace shows assertion or error
-- `Test Suites: (X passed), (Y failed)` — summary line at end
+- `✓ (N passed)`: suite passed, N tests all succeeded
+- `✕ (N failed)`: suite failed; see details below
+- `● (test name)`: individual test failure; stack trace shows assertion or error
+- `Test Suites: (X passed), (Y failed)`: summary line at end
 
 Common failures:
 
@@ -133,7 +133,7 @@ The build cache at `build/build-cache.json` is a JSON map tracking which workspa
 
 ### Anatomy of build-cache.json
 
-Example entries. The path segment of each key is the absolute path to the workspace member on the machine that built it — it differs per clone, so it is shown here as `<REPO_ROOT>`:
+Example entries. The path segment of each key is the absolute path to the workspace member on the machine that built it. It differs per clone, so it is shown here as `<REPO_ROOT>`:
 
 ```json
 {
@@ -147,7 +147,7 @@ The keys show:
 
 - `dev` or `prod` channel (dev keeps stories/specs, prod prunes them)
 - Target: `roblox` (in-Studio) or `rotriever` (package format)
-- The absolute path to the workspace member (machine-specific; do not treat the literal hash values or the path prefix above as canonical — read your own `build/build-cache.json` after a build)
+- The absolute path to the workspace member (machine-specific; do not treat the literal hash values or the path prefix above as canonical. Read your own `build/build-cache.json` after a build)
 
 The hash reflects the workspace member's input (source + dependencies), not the output. If the hash hasn't changed since the last build, incremental rebuild skips that member.
 
@@ -222,7 +222,7 @@ grep -n "_G.LOG_LEVEL\|_G.BUILD_VERSION" build/dev/roblox/workspace/flipbook-cor
 
 If you see `_G.LOG_LEVEL = "info"` (a literal value), injection succeeded. If you still see `_G.LOG_LEVEL` (undefined global), the injection failed; check `.darklua.json` and rebuild with `--clean`.
 
-This is a safe, read-only inspection — never edit the built output directly.
+This is a safe, read-only inspection. Never edit the built output directly.
 
 ## Rerender Measurement: Validating Story Control Performance
 
@@ -311,9 +311,9 @@ This validates that the store subscription model (per-control signals via `useSi
 
 ## Diagnostic Scripts
 
-The `scripts/` directory in this skill contains three read-only Lute analysis scripts. They only read the repo — none of them modify it. They are Lute scripts (`.luau`) because Lute is guaranteed present after `rokit install`; there is no shell fallback to keep in sync. Because a script runs from its install location (see below) rather than from your checkout, it resolves the repo root by walking up from your current directory to `rokit.toml`, so run it from anywhere inside your Flipbook checkout. Invoke with `lute run <path>` (the argument is a path to the script file, not a `.lute/` task name).
+The `scripts/` directory in this skill contains three read-only Lute analysis scripts. They only read the repo. None of them modify it. They are Lute scripts (`.luau`) because Lute is guaranteed present after `rokit install`; there is no shell fallback to keep in sync. Because a script runs from its install location (see below) rather than from your checkout, it resolves the repo root by walking up from your current directory to `rokit.toml`, so run it from anywhere inside your Flipbook checkout. Invoke with `lute run <path>` (the argument is a path to the script file, not a `.lute/` task name).
 
-These scripts live in the installed AgentSkills package. After Flipbook runs `lute run install`, they are available at `~/.loom/store/AgentSkills@<version>/src/flipbook/diagnostics-and-tooling/scripts/<name>.luau` (where `<version>` is the pinned version in your `loom.config.luau`). For brevity below, we write `<skills>` to mean that resolved path — e.g., `lute run <skills>/inventory-stories.luau`.
+These scripts live in the installed AgentSkills package. After Flipbook runs `lute run install`, they are available at `~/.loom/store/AgentSkills@<version>/src/flipbook/diagnostics-and-tooling/scripts/<name>.luau` (where `<version>` is the pinned version in your `loom.config.luau`). For brevity below, we write `<skills>` to mean that resolved path (e.g., `lute run <skills>/inventory-stories.luau`).
 
 ### inventory-stories.luau
 
@@ -405,7 +405,7 @@ Or if a rebuild is needed:
 ❌ workspace/flipbook-core: sourcemap older than source (diff: 42.0 sec)
 ✅ root project: sourcemap is fresh
 
-⚠️  Some sourcemaps may be stale — rebuild with: lute run build --clean
+⚠️  Some sourcemaps may be stale. Rebuild with: lute run build --clean
 ```
 
 **Purpose:** Detect out-of-sync sourcemaps, which cause require-path mismatches. If you edit source files and then run a build without regenerating sourcemaps, the sourcemap becomes stale. This script catches that. Run it after pulling new commits or making manual source changes.
@@ -431,6 +431,10 @@ When diagnosing a runtime issue in Flipbook:
 8. **Inventory coverage**: Run `inventory-stories.luau` before and after adding a feature to track test growth.
 
 ## Provenance and Maintenance
+
+**Date stamped:** 2026-07-01. Migrated from Flipbook's own skill library.
+
+Re-verify these claims when this skill next loads:
 
 - Log levels and sinks: Read `workspace/flipbook-core/src/logger.luau` annually. Change log level defaults if performance needs shift.
 - Test filtering: Verify with `lute run test --filter "test" --help` and `.lute/test.luau` that the filter parameter is still injected as `JEST_TEST_PATH_PATTERN`.

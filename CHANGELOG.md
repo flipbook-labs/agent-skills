@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 
 
+## v0.6.0
+
+### Features
+
+- Add a Flipbook Studio MCP workflow for semantic actions, embedded Play-mode checks, and screenshots.
+
+
 ## v0.5.2
 
 ### Changes

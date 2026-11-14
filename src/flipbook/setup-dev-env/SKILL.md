@@ -14,12 +14,12 @@ For testing local dependency changes (storyteller or module-loader), see `test-d
 
 ## Repo Family Layout
 
-`flipbook`, `storyteller`, and `module-loader` are expected to be sibling checkouts:
+`flipbook`, `storyteller`, and `module-loader` are expected to be sibling checkouts under one parent directory, so each reaches the others as `../storyteller` and `../module-loader`:
 
-```bash
-~/git/flipbook
-~/git/storyteller
-~/git/module-loader
+```
+<checkouts>/flipbook
+<checkouts>/storyteller
+<checkouts>/module-loader
 ```
 
 The install script detects and works with any repo in this family.
@@ -50,13 +50,13 @@ cp .env.template .env
 
 ## Common Troubleshooting
 
-**"Cannot resolve packages"** — `lute run` tasks failing with unresolved imports: run `lute run install` again.
+**"Cannot resolve packages"**: `lute run` tasks failing with unresolved imports. Run `lute run install` again.
 
-**Stale build output after dependency changes** — Use `lute run build --clean` for a full rebuild from scratch.
+**Stale build output after dependency changes**: use `lute run build --clean` for a full rebuild from scratch.
 
-**"ERROR No such file or directory (os error 2)"** — Rokit is trying to invoke a tool it has not installed. Run `rokit install` to recover.
+**"ERROR No such file or directory (os error 2)"**: Rokit is trying to invoke a tool it has not installed. Run `rokit install` to recover.
 
-**Do not edit `Packages/` or `LuauPackages/` directly** — these are generated. Regenerate with `lute run install` if needed.
+**Do not edit `Packages/` or `LuauPackages/` directly**: these are generated. Regenerate with `lute run install` if needed.
 
 ---
 

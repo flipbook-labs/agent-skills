@@ -1,6 +1,6 @@
 ---
 name: config-and-flags
-description: Configuration axes (env vars, injected globals, build channels/targets, user settings); adding new config; re-verification commands
+description: "Every configuration axis in Flipbook: environment variables, build-time injected globals, build channels and targets, user-settable preferences, and structural constants. Use when: extending Flipbook's configuration surface, tracing how a setting flows from the environment through the build to runtime behavior, or verifying that a config option is documented correctly."
 type: knowledge
 ---
 
@@ -35,16 +35,16 @@ All environment variables are read from `.env` (loaded by `lute run build`); `.e
 
 Darklua (`.darklua.json`) injects these 8 globals from environment at build time, followed by dead-code elimination so channel-gated branches are pruned:
 
-| Name                     | Purpose                                                          | Source                                                                                                               | Read Locations                                                                                                                                                                                                                   | Prod vs Experimental            |
-| ------------------------ | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| `BUILD_VERSION`          | Package version from `wally.toml`                                | `wally.toml` (grep `package.version`); read in `.lute/build.luau` (grep `readWallyManifestAsync`)                    | `workspace/flipbook-core/src/About/BuildInfo.luau` (grep `BUILD_INFO`), `workspace/flipbook-core/src/About/AboutView.luau` (grep `BuildInfo`), `workspace/flipbook-core/src/Telemetry/fireEventAsync.luau` (grep `buildVersion`) | Production                      |
-| `BUILD_CHANNEL`          | Normalized channel name: "production" \| "beta" \| "development" | `.lute/build.luau` (grep `BUILD_CHANNEL = if channel`) maps `channel` arg to enum                                    | `workspace/flipbook-core/src/FlipbookApp.luau` (grep `showDevBadge`), `workspace/flipbook-core/src/Telemetry/fireEventAsync.luau` (grep `buildChannel`)                                                                          | Production                      |
-| `BUILD_HASH`             | Short commit hash (git rev-parse --short HEAD)                   | `.lute/build.luau` (grep `getCommitHash`)                                                                            | `workspace/flipbook-core/src/About/BuildInfo.luau` (grep `BUILD_INFO`), `workspace/flipbook-core/src/Telemetry/fireEventAsync.luau` (grep `buildHash`)                                                                           | Production                      |
-| `BUILD_TARGET`           | Build target: "roblox" \| "rotriever"                            | `.lute/build.luau` (grep `BUILD_TARGET = target`)                                                                    | `workspace/flipbook-core/src/FlipbookApp.luau` (grep `showInternalBadge`)                                                                                                                                                        | Production                      |
-| `BASE_URL`               | Telemetry backend URL (from .env)                                | `.lute/build.luau` (grep `BASE_URL = process.env.BASE_URL`) reads `process.env.BASE_URL`                             | `workspace/flipbook-core/src/Feedback/postFeedbackAsync.luau`, `workspace/flipbook-core/src/Telemetry/fireEventAsync.luau` (both grep `_G.BASE_URL`)                                                                             | Production                      |
-| `LOG_LEVEL`              | Min log level (from .env)                                        | `.lute/build.luau` (grep `LOG_LEVEL = process.env.LOG_LEVEL`) reads `process.env.LOG_LEVEL`                          | `workspace/flipbook-core/src/logger.luau` (grep `MinLevelFilter`)                                                                                                                                                                | Production                      |
-| `ENABLE_OUTPUT_LOGGING`  | Output logging flag (from .env)                                  | `.darklua.json` (grep `ENABLE_OUTPUT_LOGGING`) injected by Darklua into `_G.ENABLE_OUTPUT_LOGGING`; read from `.env` | `workspace/flipbook-core/src/logger.luau` (grep `_G.ENABLE_OUTPUT_LOGGING == "true"`)                                                                                                                                            | Production                      |
-| `JEST_TEST_PATH_PATTERN` | Test file filter (Jest `testMatch` pattern)                      | `.lute/build.luau` via `--filter` arg; injected by darklua for test builds only                                      | Inlined in test Jest config (not directly grepped in src/)                                                                                                                                                                       | Experimental — test builds only |
+| Name                     | Purpose                                                          | Source                                                                                                               | Read Locations                                                                                                                                                                                                                   | Prod vs Experimental           |
+| ------------------------ | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| `BUILD_VERSION`          | Package version from `wally.toml`                                | `wally.toml` (grep `package.version`); read in `.lute/build.luau` (grep `readWallyManifestAsync`)                    | `workspace/flipbook-core/src/About/BuildInfo.luau` (grep `BUILD_INFO`), `workspace/flipbook-core/src/About/AboutView.luau` (grep `BuildInfo`), `workspace/flipbook-core/src/Telemetry/fireEventAsync.luau` (grep `buildVersion`) | Production                     |
+| `BUILD_CHANNEL`          | Normalized channel name: "production" \| "beta" \| "development" | `.lute/build.luau` (grep `BUILD_CHANNEL = if channel`) maps `channel` arg to enum                                    | `workspace/flipbook-core/src/FlipbookApp.luau` (grep `showDevBadge`), `workspace/flipbook-core/src/Telemetry/fireEventAsync.luau` (grep `buildChannel`)                                                                          | Production                     |
+| `BUILD_HASH`             | Short commit hash (git rev-parse --short HEAD)                   | `.lute/build.luau` (grep `getCommitHash`)                                                                            | `workspace/flipbook-core/src/About/BuildInfo.luau` (grep `BUILD_INFO`), `workspace/flipbook-core/src/Telemetry/fireEventAsync.luau` (grep `buildHash`)                                                                           | Production                     |
+| `BUILD_TARGET`           | Build target: "roblox" \| "rotriever"                            | `.lute/build.luau` (grep `BUILD_TARGET = target`)                                                                    | `workspace/flipbook-core/src/FlipbookApp.luau` (grep `showInternalBadge`)                                                                                                                                                        | Production                     |
+| `BASE_URL`               | Telemetry backend URL (from .env)                                | `.lute/build.luau` (grep `BASE_URL = process.env.BASE_URL`) reads `process.env.BASE_URL`                             | `workspace/flipbook-core/src/Feedback/postFeedbackAsync.luau`, `workspace/flipbook-core/src/Telemetry/fireEventAsync.luau` (both grep `_G.BASE_URL`)                                                                             | Production                     |
+| `LOG_LEVEL`              | Min log level (from .env)                                        | `.lute/build.luau` (grep `LOG_LEVEL = process.env.LOG_LEVEL`) reads `process.env.LOG_LEVEL`                          | `workspace/flipbook-core/src/logger.luau` (grep `MinLevelFilter`)                                                                                                                                                                | Production                     |
+| `ENABLE_OUTPUT_LOGGING`  | Output logging flag (from .env)                                  | `.darklua.json` (grep `ENABLE_OUTPUT_LOGGING`) injected by Darklua into `_G.ENABLE_OUTPUT_LOGGING`; read from `.env` | `workspace/flipbook-core/src/logger.luau` (grep `_G.ENABLE_OUTPUT_LOGGING == "true"`)                                                                                                                                            | Production                     |
+| `JEST_TEST_PATH_PATTERN` | Test file filter (Jest `testMatch` pattern)                      | `.lute/build.luau` via `--filter` arg; injected by darklua for test builds only                                      | Inlined in test Jest config (not directly grepped in src/)                                                                                                                                                                       | Experimental, test builds only |
 
 **Verification:** `grep -r "inject_global_value" .darklua.json` lists the 8 rules.
 
@@ -56,11 +56,11 @@ Darklua (`.darklua.json`) injects these 8 globals from environment at build time
 
 Determine which code is included in the binary. Passed via `--channel` flag to `lute run build <subcommand>`.
 
-| Channel | Default?                                                          | What It Does                                                | Dead-Code Stripping                                 | Pruned Dirs                                                                                                                         | Pruned Files                                                                                                  | Use Case                                       |
-| ------- | ----------------------------------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| `dev`   | No                                                                | Keeps all sources: tests, stories, storybooks, code samples | No pruning                                          | None                                                                                                                                | None                                                                                                          | Local development; working on Flipbook itself  |
-| `beta`  | No                                                                | Full code (like `dev`)                                      | No pruning                                          | None                                                                                                                                | None                                                                                                          | Beta releases (planned; not currently shipped) |
-| `prod`  | **Yes** — default in `.lute/build.luau` (grep `default = "prod"`) | Strips test artifacts and example code                      | Via `compute_expression`, `remove_unused_if_branch` | `workspace/code-samples`, `workspace/example`, `workspace/template`, `workspace/test-runner` (per `project.luau` grep `prunedDirs`) | `*.spec.lua*`, `*.story.lua*`, `*.storybook.lua*`, `jest.config.lua*` (per `project.luau` grep `prunedFiles`) | Production plugin releases                     |
+| Channel | Default?                                                         | What It Does                                                | Dead-Code Stripping                                 | Pruned Dirs                                                                                                                         | Pruned Files                                                                                                  | Use Case                                       |
+| ------- | ---------------------------------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `dev`   | No                                                               | Keeps all sources: tests, stories, storybooks, code samples | No pruning                                          | None                                                                                                                                | None                                                                                                          | Local development; working on Flipbook itself  |
+| `beta`  | No                                                               | Full code (like `dev`)                                      | No pruning                                          | None                                                                                                                                | None                                                                                                          | Beta releases (planned; not currently shipped) |
+| `prod`  | **Yes**, default in `.lute/build.luau` (grep `default = "prod"`) | Strips test artifacts and example code                      | Via `compute_expression`, `remove_unused_if_branch` | `workspace/code-samples`, `workspace/example`, `workspace/template`, `workspace/test-runner` (per `project.luau` grep `prunedDirs`) | `*.spec.lua*`, `*.story.lua*`, `*.storybook.lua*`, `jest.config.lua*` (per `project.luau` grep `prunedFiles`) | Production plugin releases                     |
 
 **Important:** `lute run build` without `--channel` defaults to **`prod`**. Docs examples often show `lute run build --channel dev` to keep stories visible.
 
@@ -174,16 +174,16 @@ File: `.luaurc`
 
 **Aliases:**
 
-- `@lune` → `~/.lune/.typedefs/0.9.4/` — Lune CLI typedefs
-- `@lint` → `~/.lute/typedefs/1.0.0/lint` — Selene lint types
-- `@lute` → `~/.lute/typedefs/1.0.0/lute` — Lute CLI types
-- `@std` → `~/.lute/typedefs/1.0.0/std` — Luau standard lib types
-- `@luaupkg` → `./LuauPackages` — Loom-managed packages
-- `@pkg` → `./Packages` — Wally-managed packages
-- `@rbxpkg` → `./RobloxPackages` — Roblox CLI packages
-- `@repo` → `.` — Repo root (for `project.luau`)
-- `@scripts` → `./.lute` — Lute scripts
-- `@workspace` → `./workspace` — Workspace members
+- `@lune` → `~/.lune/.typedefs/0.9.4/`: Lune CLI typedefs
+- `@lint` → `~/.lute/typedefs/1.0.0/lint`: Selene lint types
+- `@lute` → `~/.lute/typedefs/1.0.0/lute`: Lute CLI types
+- `@std` → `~/.lute/typedefs/1.0.0/std`: Luau standard lib types
+- `@luaupkg` → `./LuauPackages`: Loom-managed packages
+- `@pkg` → `./Packages`: Wally-managed packages
+- `@rbxpkg` → `./RobloxPackages`: Roblox CLI packages
+- `@repo` → `.`: Repo root (for `project.luau`)
+- `@scripts` → `./.lute`: Lute scripts
+- `@workspace` → `./workspace`: Workspace members
 
 ---
 
@@ -231,36 +231,36 @@ Package manager dependencies.
 
 **Runtime:**
 
-- `Charm` 0.11.0-rc.4 — Reactive state management
-- `Highlighter` 0.9.0 — Syntax highlighting
-- `Log` 0.3.0 — Logging library
-- `LuauPolyfill` 1.2.7 — JS polyfills for Luau
-- `ModuleLoader` 0.11.0 — Hot-reload module cache bypass
-- `React` 17.0.2 (jsdotlua) — React library
-- `ReactCharm` 0.4.0-rc.3 — Charm + React integration
-- `ReactRoblox` 17.0.2 (jsdotlua) — React renderer for Roblox
-- `ReactSpring` 2.0.0 — Animation library
-- `sha256` 1.0.1 — Hashing
-- `Sift` 0.0.8 — Table utilities
-- `Storyteller` 1.12.0 — Story discovery/rendering
-- `t` 3.0.0 — Type checking
+- `Charm` 0.11.0-rc.4: Reactive state management
+- `Highlighter` 0.9.0: Syntax highlighting
+- `Log` 0.3.0: Logging library
+- `LuauPolyfill` 1.2.7: JS polyfills for Luau
+- `ModuleLoader` 0.11.0: Hot-reload module cache bypass
+- `React` 17.0.2 (jsdotlua): React library
+- `ReactCharm` 0.4.0-rc.3: Charm + React integration
+- `ReactRoblox` 17.0.2 (jsdotlua): React renderer for Roblox
+- `ReactSpring` 2.0.0: Animation library
+- `sha256` 1.0.1: Hashing
+- `Sift` 0.0.8: Table utilities
+- `Storyteller` 1.12.0: Story discovery/rendering
+- `t` 3.0.0: Type checking
 
 **Dev:**
 
-- `Fusion` 0.2.0 — Reactive UI library (stories only)
-- `Jest` 3.10.0 (jsdotlua) — Test runner
-- `JestGlobals` 3.10.0 (jsdotlua) — Jest globals
-- `Roact` 1.4.4 — React-like library (stories only)
+- `Fusion` 0.2.0: Reactive UI library (stories only)
+- `Jest` 3.10.0 (jsdotlua): Test runner
+- `JestGlobals` 3.10.0 (jsdotlua): Jest globals
+- `Roact` 1.4.4: React-like library (stories only)
 
 ### loom.config.luau
 
 Loom-managed (non-Wally) dependencies.
 
-| Package              | Source                                      | Version                              |
-| -------------------- | ------------------------------------------- | ------------------------------------ |
-| `flipbook-batteries` | github.com/flipbook-labs/flipbook-batteries | v0.9.0 — Shared Lute utilities       |
-| `lute`               | github.com/luau-lang/lute                   | v1.0.0 — Build system                |
-| `dotenv`             | github.com/erlcx/lute-dotenv                | v0.1.0 — Environment variable loader |
+| Package              | Source                                      | Version                             |
+| -------------------- | ------------------------------------------- | ----------------------------------- |
+| `flipbook-batteries` | github.com/flipbook-labs/flipbook-batteries | v0.9.0, Shared Lute utilities       |
+| `lute`               | github.com/luau-lang/lute                   | v1.0.0, Build system                |
+| `dotenv`             | github.com/erlcx/lute-dotenv                | v0.1.0, Environment variable loader |
 
 ---
 
@@ -270,17 +270,17 @@ Deep dive into how dead-code stripping works for prod builds.
 
 ### Process Rules
 
-1. **`convert_require`** — Rewrite Luau string requires (`require("@pkg/foo")`) to Roblox property access (`require(script.Parent.Foo)`), using Rojo sourcemap at `./sourcemap-darklua.json`.
+1. **`convert_require`**: Rewrite Luau string requires (`require("@pkg/foo")`) to Roblox property access (`require(script.Parent.Foo)`), using Rojo sourcemap at `./sourcemap-darklua.json`.
 
-2. **`inject_global_value`** — Inject 8 globals (see section 2); each rule maps an identifier to an environment variable.
+2. **`inject_global_value`**: Inject 8 globals (see section 2); each rule maps an identifier to an environment variable.
 
 3. **Dead-code elimination** (applied in order):
-   - `compute_expression` — Simplify constant expressions
-   - `remove_unused_if_branch` — Strip branches where condition is a constant (e.g., `if _G.BUILD_CHANNEL == "production" then ... end` becomes `...` in prod)
-   - `remove_unused_while` — Strip while loops with constant false condition
-   - `filter_after_early_return` — Remove unreachable code after return
-   - `remove_nil_declaration` — Strip assignments to nil
-   - `remove_empty_do` — Remove empty `do ... end` blocks
+   - `compute_expression`: Simplify constant expressions
+   - `remove_unused_if_branch`: Strip branches where condition is a constant (e.g., `if _G.BUILD_CHANNEL == "production" then ... end` becomes `...` in prod)
+   - `remove_unused_while`: Strip while loops with constant false condition
+   - `filter_after_early_return`: Remove unreachable code after return
+   - `remove_nil_declaration`: Strip assignments to nil
+   - `remove_empty_do`: Remove empty `do ... end` blocks
 
 This means: if you gate code with `if _G.BUILD_CHANNEL == "production" then`, in prod builds that entire branch is the only one that remains, and in dev builds the gated-out code is completely stripped. This is how `*.story.luau` files disappear from prod.
 
@@ -453,7 +453,7 @@ grep "ENABLE_OUTPUT_LOGGING" .darklua.json
 
 ---
 
-## Provenance & Maintenance
+## Provenance and Maintenance
 
 - **Last verified:** 2026-07-01 by reading `.env.template`, `.darklua.json`, `project.luau`, `.luaurc`, `workspace/flipbook-core/src/UserSettings/defaultSettings.luau`, `workspace/flipbook-core/src/constants.luau`, `rokit.toml`, `wally.toml`, `loom.config.luau`, `rbxasset.toml`, and grepping `_G.` usage in source.
 - **To update:** Re-run re-verification commands; any new vars, settings, or constants will appear immediately.

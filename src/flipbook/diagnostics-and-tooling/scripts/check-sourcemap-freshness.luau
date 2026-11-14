@@ -106,5 +106,5 @@ end
 if allFresh then
 	print("\n✅ All sourcemaps are fresh\n")
 else
-	print("\n⚠️  Some sourcemaps may be stale — rebuild with: lute run build --clean\n")
+	print("\n⚠️  Some sourcemaps may be stale. Rebuild with: lute run build --clean\n")
 end

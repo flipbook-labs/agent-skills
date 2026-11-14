@@ -28,7 +28,7 @@ Link the issue or PR when a fuller story exists. The comment holds the constrain
 
 ## What a good one looks like
 
-A static snapshot from Storyteller ([storyteller#132](https://github.com/flipbook-labs/storyteller/pull/132)) — reproduced here as an illustration of the bar, not a live anchor into that repo's source:
+A static snapshot from Storyteller ([storyteller#132](https://github.com/flipbook-labs/storyteller/pull/132)), reproduced here as an illustration of the bar, not a live anchor into that repo's source:
 
 ```lua
 if result.packages and getmetatable(result.packages) == nil then
@@ -69,4 +69,4 @@ The comments worth keeping most often explain a constraint from _outside_ the fi
 
 **Date stamped:** 2026-07-07. Doctrine written for the exemplar from storyteller#132, which the maintainer flagged as the house bar for code comments. Updated 2026-07-07 with the refactor "how it used to be" tell, deleting generated comment slop, and naming off-site constraints, from recurring corrections across Changewrite, ModuleLoader, deploy-storybook, and flipbook-cli reviews. Updated 2026-07-13 to cross-link `org/durable-writing`, the cross-cutting root this skill applies to comments.
 
-**Re-verify these claims when this skill next loads:** nothing. This `org/` skill carries no single-repo anchors — the exemplar above is a frozen snapshot quoted for illustration, deliberately _not_ a live pointer into Storyteller source (broader-scope skills must avoid single-repo anchors; see CONTRIBUTING.md). It stands on its own even if that file later changes. The doctrine has no volatile layer.
+**Re-verify these claims when this skill next loads:** nothing. This `org/` skill carries no single-repo anchors. The exemplar above is a frozen snapshot quoted for illustration, deliberately _not_ a live pointer into Storyteller source (broader-scope skills must avoid single-repo anchors; see CONTRIBUTING.md). It stands on its own even if that file later changes. The doctrine has no volatile layer.

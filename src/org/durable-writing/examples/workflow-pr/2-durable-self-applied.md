@@ -1,10 +1,12 @@
+<!-- doctrine-exempt rules="em-dash" reason="A self-edit that led with the why and left the author's own punctuation where it stood." -->
+
 ## What this changes
 
 The weekly RobloxPackages upgrade updates the in-flight upgrade PR in place, including when its branch already exists.
 
 ## Why it's built this way
 
-- **Runs as the flipbook-backend GitHub App** rather than the default `GITHUB_TOKEN`. A push or PR authored by `GITHUB_TOKEN` cannot trigger `on: push` / `on: pull_request` workflows, so CI on the upgrade PR would sit unrun until a maintainer manually approved it. An app token triggers those workflows, matching the other PR-based workflows in the org (e.g. Storyteller's release).
+- **Runs as the flipbook-backend GitHub App** rather than the default `GITHUB_TOKEN`. A push or PR authored by `GITHUB_TOKEN` cannot trigger `on: push` / `on: pull_request` workflows — so CI on the upgrade PR would sit unrun until a maintainer manually approved it. An app token triggers those workflows, matching the other PR-based workflows in the org (e.g. Storyteller's release).
 - **Stacks the version bump onto the existing branch instead of rebuilding it from `main`.** An upgrade can stay open for weeks while we work out the code changes needed to accommodate the new packages; rebuilding the branch from base each run would discard that work. Checking out the branch and committing on top preserves it.
 - **Plain push, not force.** If someone pushes to the branch between the fetch and the push, the push fails and the run can be retried, rather than a force push silently overwriting their commit.
 - **The version edit rewrites the `ROBLOX_PACKAGES_VERSION` assignment line**, so it lands the latest version regardless of what the branch currently holds, and no-ops when the branch already matches.
