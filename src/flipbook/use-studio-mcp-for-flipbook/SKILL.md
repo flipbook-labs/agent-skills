@@ -19,13 +19,17 @@ lute run build plugin --channel dev --clean
 lute run build storybook --channel dev --clean
 ```
 
-Open the generated Storybook experience in a new Studio instance. The repository registers Studio MCP as `Roblox_Studio` in `.mcp.json`. Select the new instance with `list_roblox_studios` and `set_active_studio`, then use the Edit data model for gateway calls.
+Open the generated Storybook experience in a new Studio instance. The repository registers Studio MCP as `Roblox_Studio` in `.mcp.json`. Find the new instance's id with `list_roblox_studios` and pass it as `studio_id` on every call, then use the Edit data model for gateway calls.
+
+The plugin build writes to the Studio Plugins folder that every checkout shares, so another checkout's build can replace yours mid-session. Before trusting a result, check that the widget under `PluginGuiService` is named `Flipbook [<sha>]` with the commit you built.
 
 If Studio MCP reports `Not connected to the WS host`, stop and ask the user to enable Studio MCP in the open Studio session. Selecting the instance again does not repair that connection.
 
 ## Drive Flipbook
 
 Start with the gateway manifest and read its instructions. Follow the protocol in [`agent-gateway/use-agent-gateway`](../../agent-gateway/use-agent-gateway/SKILL.md), using the gateway named `FlipbookAgentGateway`.
+
+Flipbook only creates this gateway once its app adapter is wired in. If discovery finds no `AgentGateway`-tagged instance, the build you're running doesn't have it. Use the [embedded Play-mode workflow](references/embedded-play-mode.md) for navigation as well as capture.
 
 Use this sequence:
 
@@ -46,4 +50,15 @@ Studio MCP viewport captures do not include plugin dock widgets. For visual evid
 
 ## Provenance and Maintenance
 
-**Last verified:** 2026-09-13 against Flipbook PR #635.
+**Last verified:** 2026-11-14 against Flipbook `main` and PR #663, using Studio's built-in MCP server.
+
+**Re-verify these claims when this skill next loads** (run from a Flipbook checkout):
+
+```bash
+# Is the gateway wired into the app yet? No match means the fallback path applies.
+git grep -n "createAgentGateway" origin/main -- src workspace/flipbook-core/src
+# The root project still embeds the dev build under ReplicatedStorage.Flipbook.
+git show origin/main:default.project.json
+# The embedded client still mounts a ScreenGui named Flipbook.
+git grep -n 'screenGui.Name = "Flipbook"' origin/main -- src/EmbeddedClientStarterScript.client.luau
+```
