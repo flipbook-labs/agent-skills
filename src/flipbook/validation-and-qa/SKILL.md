@@ -214,7 +214,7 @@ A visual artifact proves what Studio rendered. Pair it with concrete read-back e
 6. Invoke the advertised action that returns Flipbook to its widget, then confirm the selected story and controls remain intact.
 7. Close only the Studio instance opened in step 2. Verify `list_roblox_studios` has returned to the baseline so validation does not leave duplicate Studio processes consuming memory.
 
-If the gateway does not advertise an Edit-mode viewport action, use the pull request's Storybook preview or the existing Play-mode embedding flow. State which surface the evidence shows. If capture tooling is unavailable, report the blocker and keep the visual evidence incomplete rather than substituting an unverified claim.
+If the gateway does not advertise an Edit-mode viewport action, use the pull request's Storybook preview or the Play-mode embedding flow in [`flipbook/use-studio-mcp-for-flipbook`](../use-studio-mcp-for-flipbook/SKILL.md). State which surface the evidence shows. If capture tooling is unavailable, report the blocker and keep the visual evidence incomplete rather than substituting an unverified claim.
 
 ---
 
