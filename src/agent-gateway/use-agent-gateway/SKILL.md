@@ -33,14 +33,14 @@ You need a way to run Luau inside the open Studio session. Preferred: the **Robl
 
 Useful Studio MCP tools:
 
-- `list_roblox_studios` / `set_active_studio`: pick the target Studio instance.
+- `list_roblox_studios`: find the target Studio instance's id. Every other tool takes it as `studio_id`, because several instances are often open at once.
 - `get_studio_state`: confirm Edit/Client/Server data models and play state.
 - `execute_luau`: run Luau. Use `datamodel_type = "Edit"` for plugin and gateway work.
 - `start_stop_play`, `screen_capture`: playtesting and viewport captures.
 
 ### Troubleshooting
 
-- **No active instance:** call `list_roblox_studios`, then `set_active_studio`. As a fallback probe, `search_game_tree` against `Workspace` before retrying.
+- **Wrong or missing instance:** call `list_roblox_studios` again and pass the intended id as `studio_id`. As a fallback probe, `search_game_tree` against `Workspace` with that `studio_id` before retrying.
 - **`Not connected to the WS host`:** the Studio-side server isn't enabled in the open session. Stop and ask the user to enable it (step 1 above). Retrying tools will not fix this.
 - **`screen_capture` captures the 3D viewport only**, never plugin dock widgets. To visually inspect plugin UI, look for a gateway action that embeds the UI into the place, then capture in play mode.
 - If a Command Bar is all you have (no MCP), the same Luau snippets below work there (View → Command Bar).
