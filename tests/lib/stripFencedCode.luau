@@ -7,17 +7,17 @@
 -- and the run inside is sample text rather than the end of the block.
 
 local function matchFence(line: string): string?
-	return string.match(line, "^%s*(```+)") or string.match(line, "^%s*(~~~+)")
+	return line:match("^%s*(```+)") or line:match("^%s*(~~~+)")
 end
 
 local function isClosedBy(openingFence: string, fence: string): boolean
-	return string.sub(fence, 1, 1) == string.sub(openingFence, 1, 1) and #fence >= #openingFence
+	return fence:sub(1, 1) == openingFence:sub(1, 1) and #fence >= #openingFence
 end
 
 local function stripFencedCode(text: string): string
 	local lines = {}
 	local openingFence: string? = nil
-	for _, line in string.split(text, "\n") do
+	for _, line in text:split("\n") do
 		local fence = matchFence(line)
 		if openingFence then
 			if fence and isClosedBy(openingFence, fence) then

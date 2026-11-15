@@ -25,7 +25,7 @@ test.suite("discoverMarkdownFiles", function(suite)
 
 		assert.that(#found > 0, "the skill ships at least a SKILL.md")
 		for _, filePath in found do
-			assert.that(string.match(filePath, "%.md$") ~= nil, `{filePath} is markdown`)
+			assert.that(filePath:match("%.md$") ~= nil, `{filePath} is markdown`)
 		end
 	end)
 

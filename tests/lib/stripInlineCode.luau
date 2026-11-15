@@ -4,8 +4,8 @@
 
 local function stripInlineCode(text: string): string
 	local lines = {}
-	for _, line in string.split(text, "\n") do
-		local stripped = string.gsub(line, "`[^`]*`", "")
+	for _, line in text:split("\n") do
+		local stripped = line:gsub("`[^`]*`", "")
 		table.insert(lines, stripped)
 	end
 	return table.concat(lines, "\n")

@@ -34,7 +34,7 @@ for _, check in checks do
 	local result = process.run({ "git", "-C", REPO, "show", `{REF}:{check.file}` })
 	if not result.ok then
 		table.insert(drift, `cannot read {check.file} at {REF} (is the branch fetched?)`)
-	elseif not string.find(result.stdout, check.needle, 1, true) then
+	elseif not result.stdout:find(check.needle, 1, true) then
 		table.insert(drift, `{check.desc}: "{check.needle}" not found in {check.file} at {REF}`)
 	end
 end

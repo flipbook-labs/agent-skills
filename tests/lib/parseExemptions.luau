@@ -17,24 +17,24 @@ export type Exemptions = {
 }
 
 local function parseAttribute(attributes: string, name: string): string?
-	return string.match(attributes, `{name}="([^"]*)"`)
+	return attributes:match(`{name}="([^"]*)"`)
 end
 
 local function parseExemptions(contents: string): Exemptions
 	local ruleIds: { string } = {}
 	local problems: { string } = {}
 
-	for attributes in string.gmatch(contents, MARKER_PATTERN) do
+	for attributes in contents:gmatch(MARKER_PATTERN) do
 		local named: { string } = {}
-		for _, rawId in string.split(parseAttribute(attributes, "rules") or "", ",") do
-			local ruleId = string.gsub(rawId, "^%s*(.-)%s*$", "%1")
+		for _, rawId in (parseAttribute(attributes, "rules") or ""):split(",") do
+			local ruleId = rawId:gsub("^%s*(.-)%s*$", "%1")
 			if ruleId ~= "" and not table.find(named, ruleId) then
 				table.insert(named, ruleId)
 			end
 		end
 
 		local reason = parseAttribute(attributes, "reason")
-		local hasReason = reason ~= nil and string.match(reason, "^%s*$") == nil
+		local hasReason = reason ~= nil and reason:match("^%s*$") == nil
 
 		if #named == 0 then
 			table.insert(problems, `exemption marker names no rules: <!-- doctrine-exempt{attributes}-->`)

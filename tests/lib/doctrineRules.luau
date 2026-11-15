@@ -65,15 +65,15 @@ local EXCERPT_RADIUS = 40
 local function excerptAround(line: string, matchStart: number): string
 	local from = math.max(1, matchStart - EXCERPT_RADIUS)
 	local to = math.min(#line, matchStart + EXCERPT_RADIUS)
-	return `…{string.sub(line, from, to)}…`
+	return `…{line:sub(from, to)}…`
 end
 
 -- Reports the first match on each line, quoted with its line number so the
 -- failure is fixable without opening the file.
 local function findMatches(text: string, pattern: string): { string }
 	local matches = {}
-	for lineNumber, line in string.split(text, "\n") do
-		local matchStart = string.find(line, pattern)
+	for lineNumber, line in text:split("\n") do
+		local matchStart = line:find(pattern)
 		if matchStart then
 			table.insert(matches, `line {lineNumber}: {excerptAround(line, matchStart)}`)
 		end
@@ -94,8 +94,8 @@ end
 -- The checklist bounds the body, so the frontmatter block does not count against
 -- the ceiling.
 local function getBody(contents: string): string
-	local normalized = string.gsub(contents, "\r\n", "\n")
-	return string.match(normalized, "^%-%-%-\n.-\n%-%-%-\n(.*)$") or normalized
+	local normalized = contents:gsub("\r\n", "\n")
+	return normalized:match("^%-%-%-\n.-\n%-%-%-\n(.*)$") or normalized
 end
 
 -- The frontmatter limits are stated in characters, and a description may carry a
@@ -107,7 +107,7 @@ local function countCharacters(text: string): number
 end
 
 local function countLines(text: string): number
-	local lines = string.split(text, "\n")
+	local lines = text:split("\n")
 	-- A file ending in a newline splits to a trailing empty piece that is not a line.
 	if lines[#lines] == "" then
 		table.remove(lines)
@@ -135,7 +135,7 @@ local skillRules: { SkillRule } = {
 			local fields = parseFrontmatter(contents)
 			local description = fields and fields.description
 			-- "Use when", and the narrowing forms "Use only when" and "Use this when".
-			if description and string.find(description, "Use%s+[%l%s]*when") then
+			if description and description:find("Use%s+[%l%s]*when") then
 				return {}
 			end
 			return { 'frontmatter "description" carries no "Use when" trigger' }
@@ -154,7 +154,7 @@ local skillRules: { SkillRule } = {
 			end
 			local violations = {}
 			for _, check in NAME_FORMAT_CHECKS do
-				if string.find(name, check.pattern) then
+				if name:find(check.pattern) then
 					table.insert(violations, `name "{name}" {check.problem}`)
 				end
 			end
@@ -198,7 +198,7 @@ local skillRules: { SkillRule } = {
 		id = "provenance-footer",
 		summary = "carries a `## Provenance and Maintenance` footer",
 		findViolations = function(_skill, contents)
-			if string.find(contents, "\n## Provenance and Maintenance", 1, true) then
+			if contents:find("\n## Provenance and Maintenance", 1, true) then
 				return {}
 			end
 			return { "no `## Provenance and Maintenance` footer" }
@@ -208,8 +208,8 @@ local skillRules: { SkillRule } = {
 		id = "date-stamp",
 		summary = "the provenance footer carries an ISO date stamp",
 		findViolations = function(_skill, contents)
-			local isStamped = string.find(contents, "%*%*Date stamped:%*%* %d%d%d%d%-%d%d%-%d%d")
-				or string.find(contents, "%*%*Last verified:%*%* %d%d%d%d%-%d%d%-%d%d")
+			local isStamped = contents:find("%*%*Date stamped:%*%* %d%d%d%d%-%d%d%-%d%d")
+				or contents:find("%*%*Last verified:%*%* %d%d%d%d%-%d%d%-%d%d")
 			if isStamped then
 				return {}
 			end
@@ -262,13 +262,13 @@ local proseRules: { ProseRule } = {
 			-- markdown syntax being demonstrated, not a link the reader can follow.
 			-- A real link keeps its target outside any span even when its label is
 			-- code, so `[`org/x`](../x/SKILL.md)` is still checked.
-			for target in string.gmatch(toProse(file.contents), "%]%(([^)]+)%)") do
+			for target in toProse(file.contents):gmatch("%]%(([^)]+)%)") do
 				-- A leading `/` is a docs-site route rather than a path on disk, so
 				-- it resolves against a site this rule knows nothing about.
-				local isExternal = string.find(target, "^%a+:")
-					or string.find(target, "^#")
-					or string.find(target, "^/")
-				local withoutAnchor = string.match(target, "^([^#]*)")
+				local isExternal = target:find("^%a+:")
+					or target:find("^#")
+					or target:find("^/")
+				local withoutAnchor = target:match("^([^#]*)")
 				if not isExternal and withoutAnchor and withoutAnchor ~= "" then
 					local resolved = path.format(path.normalize(path.join(file.directory, withoutAnchor)))
 					if not fs.exists(resolved) then

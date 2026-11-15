@@ -10,7 +10,7 @@ local function collectMarkdown(directory: string, found: { string })
 		local entryPath = path.format(path.join(directory, entry.name))
 		if entry.type == "dir" then
 			collectMarkdown(entryPath, found)
-		elseif string.match(entry.name, "%.md$") then
+		elseif entry.name:match("%.md$") then
 			table.insert(found, entryPath)
 		end
 	end
