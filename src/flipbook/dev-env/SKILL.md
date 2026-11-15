@@ -29,9 +29,11 @@ Useful flags:
 - `--filter <pattern>` runs only specs whose path matches.
 - `--build-only` and `--run-only` split the build from the cloud run, with `--place` naming the file in between.
 
+In Flipbook, `lute run check` runs the path a fork author has without a key: `changewrite check`, `lute setup`, lint, analyze, and a dev plugin build to a temporary file. Use it as the default local check for a contribution.
+
 ### When the key is missing
 
-Do not claim the change is tested. Run lint and analyze, and say in the PR that the cloud tests did not run and why. List what you ran in their place. Neither lint nor analyze proves behavior, so for anything beyond a rename or a typo, say so plainly. CI runs the cloud tests with its own key, and for fork PRs a maintainer approves that run.
+Do not claim the change is tested. Run `lute run check` in Flipbook, or lint and analyze in Storyteller and ModuleLoader, and say in the PR that the cloud tests did not run and why. List what you ran in their place. Neither lint nor analyze proves behavior, so for anything beyond a rename or a typo, say so plainly. CI runs the cloud tests with its own key, and for fork PRs a maintainer approves that run.
 
 ## Testing Storyteller or ModuleLoader changes in Flipbook
 
@@ -67,7 +69,8 @@ Tests also cannot see visual changes. Jest renders to Instances, not pixels, so 
 **Re-verify these claims when this skill next loads.** Run these from a Flipbook checkout. A command that fails or prints nothing means the skill needs updating:
 
 ```sh
-ls .lute/install.luau .lute/build.luau .lute/test.luau .lute/lint.luau .lute/analyze.luau
+ls .lute/install.luau .lute/build.luau .lute/test.luau .lute/lint.luau .lute/analyze.luau .lute/check.luau
+grep -n -E "build-only|run-only" .lute/test.luau
 grep -n ROBLOX_API_KEY .env.template
 git grep -n FIXME -- workspace/flipbook-core/src/createFlipbookApp.luau
 ```

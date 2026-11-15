@@ -36,11 +36,13 @@ Secrets live in GitHub environments, never in workflow-level `env`. Environment 
 
 The release job signs in as the `flipbook-backend` GitHub App through the `FLIPBOOK_BACKEND_CLIENT_ID` variable and the `FLIPBOOK_BACKEND_APP_PRIVATE_KEY` secret. It does not use `GITHUB_TOKEN` because events created by that token do not trigger the release-published run.
 
-The `strict.yml` and `storybook.yml` workflows use `pull_request_target`. Pull request code is built on a secretless runner, and only the built artifacts reach jobs that hold secrets. Keep it that way. Never check out or run pull request code in a job that has an environment secret.
+The `strict.yml` and `storybook.yml` workflows use `pull_request_target`. Pull request code is built on a secretless runner, and only the built artifacts reach jobs that hold secrets. Keep it that way. Never check out or run pull request code in a job that has an environment secret. Environment approval only delays when a protected job starts. It does not make fork code safe to run with that job's secrets.
+
+Fork and Dependabot builds skip build provenance attestation in `ci.yml`, because their read-only token cannot mint attestations. The build and artifact upload still run.
 
 ## Storybook previews
 
-A pull request storybook deliberately uses the last public Flipbook release as its runtime, so a UI change is previewed against the shipped baseline and a half-built plugin cannot hide it. On `main`, the workflow embeds a fresh prod build instead, which catches embedding problems before a release. Do not pass `flipbook-rbxm` for pull request deploys.
+A pull request storybook deliberately uses the last public Flipbook release as its runtime, so a UI change is previewed against the shipped baseline and a half-built plugin cannot hide it. On `main`, the workflow embeds a fresh prod build instead, which catches embedding problems before a release. Do not pass `flipbook-rbxm` for pull request deploys. On `pull_request_target` runs, deploy-storybook's own comment is turned off because v0.4.0 only comments on `pull_request` events. The deploy job posts the preview link with `flipbook-cli comment` instead.
 
 ## PostHog release reporting
 
@@ -64,5 +66,6 @@ Dependency bumps. After changing `wally.toml`, `loom.config.luau`, `rokit.toml`,
 ls .github/workflows/release.yml .github/workflows/storybook.yml .github/workflows/strict.yml
 git grep -n ASSET_NAMES_BY_CHANNEL -- .lune/publish-plugin.luau
 git grep -n luau-execution-gated -- .github/workflows
+git grep -n "flipbook-cli comment" -- .github/workflows/storybook.yml
 ls .lute/posthog.luau
 ```
