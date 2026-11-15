@@ -40,3 +40,10 @@ Preview with `lute run serve-docs`, which installs and starts the site from `doc
 ## Provenance and Maintenance
 
 **Date stamped:** 2026-11-14. Rewritten for the plain Docusaurus layout.
+
+**Re-verify these claims when this skill next loads.** Run these from a Flipbook checkout. A command that fails or prints nothing means the skill needs updating:
+
+```sh
+grep -n onBrokenLinks docs/docusaurus.config.ts
+ls docs/docs docs/sidebars.ts .lute/serve-docs.luau
+```

@@ -63,3 +63,11 @@ Tests also cannot see visual changes. Jest renders to Instances, not pixels, so 
 ## Provenance and Maintenance
 
 **Date stamped:** 2026-11-14. Consolidated from setup-dev-env, run-checks, test-dependencies, develop-through-studioplugins, and validation-and-qa.
+
+**Re-verify these claims when this skill next loads.** Run these from a Flipbook checkout. A command that fails or prints nothing means the skill needs updating:
+
+```sh
+ls .lute/install.luau .lute/build.luau .lute/test.luau .lute/lint.luau .lute/analyze.luau
+grep -n ROBLOX_API_KEY .env.template
+git grep -n FIXME -- workspace/flipbook-core/src/createFlipbookApp.luau
+```

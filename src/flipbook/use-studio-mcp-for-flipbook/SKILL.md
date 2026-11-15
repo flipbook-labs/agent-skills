@@ -53,3 +53,11 @@ Embedding changes the open place. Do not pass `overwrite = true`, which replaces
 ## Provenance and Maintenance
 
 **Date stamped:** 2026-11-14. Merged the embedded Play-mode reference and linked the gateway skill for protocol details.
+
+**Re-verify these claims when this skill next loads.** Run these from a Flipbook checkout. A command that fails or prints nothing means the skill needs updating:
+
+```sh
+git grep -n -E "listStorybooks|openStory|setControls|getCurrentStory" -- workspace/flipbook-agents/src
+git grep -n embedFlipbook -- workspace/flipbook-agents/src
+git grep -n FlipbookAgentGateway -- workspace
+```

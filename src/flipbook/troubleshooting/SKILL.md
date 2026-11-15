@@ -78,3 +78,12 @@ Toggle one control a fixed number of times and compare the per-row totals before
 ## Provenance and Maintenance
 
 **Date stamped:** 2026-11-14. Consolidated from debugging-playbook, failure-archaeology, proof-and-analysis-toolkit, build-and-toolchain, diagnostics-and-tooling, and config-and-flags.
+
+**Re-verify these claims when this skill next loads.** Run these from a Flipbook checkout. A command that fails or prints nothing means the skill needs updating:
+
+```sh
+git grep -n "Charm.flags.frozen = false" -- src
+git grep -n -E "patchFoundationMainGui|patchStringRequires" -- .lute
+git grep -n getCommitHash -- .lute
+git grep -n ENABLE_OUTPUT_LOGGING -- workspace
+```

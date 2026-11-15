@@ -57,3 +57,12 @@ Dependency bumps. After changing `wally.toml`, `loom.config.luau`, `rokit.toml`,
 ## Provenance and Maintenance
 
 **Date stamped:** 2026-11-14. Consolidated from change-control and release-and-operations.
+
+**Re-verify these claims when this skill next loads.** Run these from a Flipbook checkout. A command that fails or prints nothing means the skill needs updating:
+
+```sh
+ls .github/workflows/release.yml .github/workflows/storybook.yml .github/workflows/strict.yml
+git grep -n ASSET_NAMES_BY_CHANNEL -- .lune/publish-plugin.luau
+git grep -n luau-execution-gated -- .github/workflows
+ls .lute/posthog.luau
+```

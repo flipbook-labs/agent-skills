@@ -81,3 +81,12 @@ Mark any claim about UI Labs or another storybook tool as unverified unless you 
 ## Provenance and Maintenance
 
 **Date stamped:** 2026-11-14. Consolidated from architecture-contract, domain-reference, and community-and-positioning.
+
+**Re-verify these claims when this skill next loads.** Run these from a Flipbook checkout. A command that fails or prints nothing means the skill needs updating:
+
+```sh
+git grep -n -E "createFlipbookPlugin|createEmbeddedFlipbookApp" -- workspace/flipbook-core/src
+git grep -n "type Pluginlike" -- workspace/flipbook-core/src
+git grep -n "FLIPBOOK_RUNTIME_TAG" -- workspace
+git grep -n -E "fireEventAsync|collectAnonymousUsageData" -- workspace/flipbook-core/src/Telemetry
+```

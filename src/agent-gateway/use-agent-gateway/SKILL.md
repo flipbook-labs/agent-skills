@@ -54,3 +54,5 @@ If an action has asynchronous effects, poll a read-back action in a loop with `t
 ## Provenance and Maintenance
 
 **Date stamped:** 2026-11-14. Trimmed; marked tag discovery, instructions, and validation as pending PR #13.
+
+**Re-verify these claims when this skill next loads:** run `scripts/check-drift.luau` with `lute` from the hub root. It reads PR #13's branch in a sibling `../agent-gateway` checkout through `git show`, so it works whatever is checked out, and skips cleanly when the repo or branch is missing. When PR #13 merges, point `REF` in the script at `origin/main` and drop the pending notes above.
