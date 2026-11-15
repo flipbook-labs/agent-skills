@@ -25,7 +25,7 @@ for the authoring doctrine.
 
    ```luau
    AgentSkills = {
-       rev = "v0.1.0", -- pin the version you validated against
+       rev = "v0.7.0", -- pin the version you validated against
        sourceKind = "github",
        source = "https://github.com/flipbook-labs/agent-skills",
    },
