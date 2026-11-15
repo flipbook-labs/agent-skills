@@ -62,6 +62,8 @@ Cloud tests cannot see a failure in `ContextProviders`. React's error boundary c
 
 Tests also cannot see visual changes. Jest renders to Instances, not pixels, so check layout, color, and font changes in Studio.
 
+For a change people can see, follow [`org/visual-evidence`](../../org/visual-evidence/SKILL.md) and attach evidence that lets the application reviewer judge the result without recreating the setup. Capture the exact story and state that the PR's Testing section describes, and pair the capture with a read-back such as the mounted story or a control value. Visual evidence adds to a spec or a manual recipe and never replaces them. If capture isn't possible, keep the PR in draft and report what blocked it rather than claiming the change was checked visually. [`flipbook/use-studio-mcp-for-flipbook`](../use-studio-mcp-for-flipbook/SKILL.md) covers how to capture.
+
 ## Provenance and Maintenance
 
 **Date stamped:** 2026-11-14. Consolidated from setup-dev-env, run-checks, test-dependencies, develop-through-studioplugins, and validation-and-qa.

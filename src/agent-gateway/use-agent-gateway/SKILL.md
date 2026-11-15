@@ -16,6 +16,8 @@ To validate the gateway library itself, see the `e2e` skill in the `flipbook-lab
 
 Run Luau in the Edit data model through the Studio MCP `execute_luau` tool, with `datamodel_type = "Edit"`. If a tool reports `Not connected to the WS host`, stop and ask the user to enable Studio as an MCP server. Retrying does not fix it. Several Studio instances are often open at once, so call `list_roblox_studios` to find the right one's id and pass it as `studio_id` on every call.
 
+Before opening a place to validate in, call `list_roblox_studios` and record the instance ids already open. Open one place, record its new id, and reuse that instance. When you finish, close only the instance you opened and check that the list is back to where it started, since each extra Studio process holds its own memory.
+
 Plugins parent gateways to `CoreGui` in the Edit data model unless they set another parent. Find one by name:
 
 ```lua
@@ -48,7 +50,7 @@ If an action has asynchronous effects, poll a read-back action in a loop with `t
 
 ## Gotchas
 
-- `screen_capture` captures the 3D viewport only, never plugin dock widgets. To see plugin UI, use a gateway action that embeds it into the place, then capture in Play mode.
+- `screen_capture` captures the Studio viewport, never plugin dock widgets. If the manifest advertises an action that moves the mounted plugin UI into the Edit-mode viewport, capture there, then call its return action so the UI goes back to its widget. Otherwise use a gateway action that embeds the UI into the place, then capture in Play mode.
 - Prefer gateway actions over simulated input. If you must fall back to input, tell the user, because that is a gap worth a new action.
 
 ## Provenance and Maintenance

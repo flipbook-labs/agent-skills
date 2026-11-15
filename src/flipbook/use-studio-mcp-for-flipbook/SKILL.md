@@ -44,7 +44,11 @@ Take every path from gateway results.
 
 ## Visual and input checks
 
-Studio MCP viewport captures do not include plugin dock widgets, so a capture in Edit mode never shows Flipbook. Embed it and playtest instead.
+Studio MCP viewport captures do not include plugin dock widgets, so a capture in Edit mode never shows Flipbook's widget.
+
+Flipbook PR #650, which is not merged, adds a gateway action that moves the mounted app into the Edit-mode viewport and back. When the manifest advertises it, capture in Edit mode: open the story, poll until it's mounted, capture, then call the return action and confirm the story and controls are unchanged. Record a short clip driven by virtual input when the behavior depends on hover or a transition, so your own pointer stays out of it.
+
+Otherwise, embed Flipbook and playtest:
 
 1. Call `embedFlipbook`. It returns the `path` it embedded into. The `parent` param defaults to `ReplicatedStorage`. With no gateway, embed the runtime as described in [Embedding without the gateway](#embedding-without-the-gateway).
 2. Start Play mode with `start_stop_play`, then poll `get_studio_state` until the Client data model appears.
