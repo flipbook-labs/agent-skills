@@ -21,7 +21,7 @@ test.suite("discoverMarkdownFiles", function(suite)
 	end)
 
 	suite:case("returns only markdown, so a skill's drift scripts stay out of scope", function(assert)
-		local found = discoverMarkdownFiles("src/flipbook/diagnostics-and-tooling")
+		local found = discoverMarkdownFiles("src/agent-gateway/use-agent-gateway")
 
 		assert.that(#found > 0, "the skill ships at least a SKILL.md")
 		for _, filePath in found do
