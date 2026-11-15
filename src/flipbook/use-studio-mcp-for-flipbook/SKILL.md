@@ -1,16 +1,16 @@
 ---
 name: use-studio-mcp-for-flipbook
-description: "Build and validate Flipbook through Studio MCP and FlipbookAgentGateway. Use when driving a local Flipbook build, changing gateway actions, or verifying Stories through semantic actions, embedded Play-mode input, and screenshots."
+description: "Drive a local Flipbook build through the Studio MCP and the FlipbookAgentGateway actions, including embedded Play-mode screenshots and input. Use when: verifying Stories in Studio, changing gateway actions, or capturing visual evidence of Flipbook UI."
 type: process
 ---
 
 # Use Studio MCP for Flipbook
 
-Build Flipbook, open the generated Storybook experience in Studio, use the gateway for semantic checks, and embed Flipbook for Play-mode interaction and screenshots. Keep behavior-specific fixtures and assertions in a reference beside this skill.
+Build Flipbook, open the generated Storybook experience in Studio, drive it through the gateway, and embed it for visual checks. For the protocol, polling, and connection errors, read [`agent-gateway/use-agent-gateway`](../../agent-gateway/use-agent-gateway/SKILL.md).
 
 ## When not to use
 
-Use [`flipbook/run-checks`](../run-checks/SKILL.md) for headless checks. Use [`flipbook/test-dependencies`](../test-dependencies/SKILL.md) before this workflow when the task overlays Storyteller or ModuleLoader. Use [`agent-gateway/use-agent-gateway`](../../agent-gateway/use-agent-gateway/SKILL.md) for generic gateway discovery, protocol details, and connection troubleshooting.
+Use [`flipbook/dev-env`](../dev-env/SKILL.md) for headless checks, and for overlaying local Storyteller or ModuleLoader changes first.
 
 ## Build and connect
 
@@ -19,31 +19,49 @@ lute run build plugin --channel dev --clean
 lute run build storybook --channel dev --clean
 ```
 
-Open the generated Storybook experience in a new Studio instance. The repository registers Studio MCP as `Roblox_Studio` in `.mcp.json`. Select the new instance with `list_roblox_studios` and `set_active_studio`, then use the Edit data model for gateway calls.
-
-If Studio MCP reports `Not connected to the WS host`, stop and ask the user to enable Studio MCP in the open Studio session. Selecting the instance again does not repair that connection.
+Open the generated Storybook experience in a new Studio instance, find it with `list_roblox_studios`, and use the Edit data model for gateway calls. Find the gateway named `FlipbookAgentGateway`.
 
 ## Drive Flipbook
 
-Start with the gateway manifest and read its instructions. Follow the protocol in [`agent-gateway/use-agent-gateway`](../../agent-gateway/use-agent-gateway/SKILL.md), using the gateway named `FlipbookAgentGateway`.
-
-Use this sequence:
+Call `list` first, then use this order:
 
 1. Call `openWidget`.
-2. Call `embedFlipbook` before Play mode when visual evidence or virtual input is needed.
+2. Call `embedFlipbook` before Play mode if you need screenshots or virtual input.
 3. Poll `listStorybooks` until the target Storybook appears.
-4. Call `listStories` with the returned Storybook path.
-5. Call `openStory` with returned Story and Storybook paths.
+4. Call `listStories` with that Storybook path.
+5. Call `openStory` with the Story and Storybook paths.
 6. Poll `getCurrentStory` until the path matches and `isMounted` is true.
 7. Poll `getControls` until the expected control appears.
-8. Call `setControls`, then confirm the values with `getControls`.
+8. Call `setControls`, then confirm with `getControls`.
 
-Do not use fixed sleeps. Discover paths from gateway results instead of hard-coding a DataModel layout.
+Take every path from gateway results.
 
-## Embedded visual and input checks
+## Visual and input checks
 
-Studio MCP viewport captures do not include plugin dock widgets. For visual evidence, or when a missing semantic action makes UI input necessary, follow the [embedded Play-mode workflow](references/embedded-play-mode.md). Prefer gateway actions in Edit mode. Use virtual input against the embedded client when no semantic action covers the interaction, and add a focused action when the same interaction becomes routine.
+Studio MCP viewport captures do not include plugin dock widgets, so a capture in Edit mode never shows Flipbook's widget.
+
+Flipbook PR #650, which is not merged, adds a gateway action that moves the mounted app into the Edit-mode viewport and back. When the manifest advertises it, capture in Edit mode: open the story, poll until it's mounted, capture, then call the return action and confirm the story and controls are unchanged. Record a short clip driven by virtual input when the behavior depends on hover or a transition, so your own pointer stays out of it.
+
+Otherwise, embed Flipbook and playtest:
+
+1. Call `embedFlipbook`. It returns the `path` it embedded into. The `parent` param defaults to `ReplicatedStorage`.
+2. Start Play mode with `start_stop_play`, then poll `get_studio_state` until the Client data model appears.
+3. Find the embedded UI in the Client data model and wait for the target Story or control to appear. A blank or loading capture is not evidence.
+4. Capture with `screen_capture`.
+5. If no gateway action covers an interaction, use `user_mouse_input` or `user_keyboard_input` against a Client instance path you discovered. If the same fallback keeps recurring, add a gateway action for it.
+6. Check Client console output when the UI does not mount or react.
+7. Stop Play mode when you finish.
+
+Embedding changes the open place. Do not pass `overwrite = true`, which replaces an existing embedded runtime, and do not save the place without the user's permission.
 
 ## Provenance and Maintenance
 
-**Last verified:** 2026-09-13 against Flipbook PR #635.
+**Date stamped:** 2026-11-14. Merged the embedded Play-mode reference and linked the gateway skill for protocol details.
+
+**Re-verify these claims when this skill next loads.** Run these from a Flipbook checkout. A command that fails or prints nothing means the skill needs updating:
+
+```sh
+git grep -n -E "listStorybooks|openStory|setControls|getCurrentStory" -- workspace/flipbook-agents/src
+git grep -n embedFlipbook -- workspace/flipbook-agents/src
+git grep -n FlipbookAgentGateway -- workspace
+```
