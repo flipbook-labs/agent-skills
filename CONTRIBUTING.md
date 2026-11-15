@@ -152,7 +152,7 @@ drift fastest and heal slowest.
 - [ ] "When not to use" links sibling skills so the right one wins.
 - [ ] Provenance footer with a date stamp and a runnable re-verify block; a `scripts/`
       drift detector for single-repo scopes where the fact is mechanically checkable.
-- [ ] A `.changes/` entry (`bump:` + short description) so the change lands in the next release's changelog.
+- [ ] A `.changes/` entry (`bump:`, `category:`, `kind:`, and a short description) so the change lands in the next release's changelog.
 
 ## Most of the checklist is enforced
 
