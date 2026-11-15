@@ -1,5 +1,5 @@
 ---
-bump: major
+bump: minor
 category: Changes
 ---
 
