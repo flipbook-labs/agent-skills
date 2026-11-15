@@ -14,7 +14,7 @@ To validate the gateway library itself, see the `e2e` skill in the `flipbook-lab
 
 ## Connect and find a gateway
 
-Run Luau in the Edit data model through the Studio MCP `execute_luau` tool, with `datamodel_type = "Edit"`. If a tool reports `Not connected to the WS host`, stop and ask the user to enable Studio as an MCP server. Retrying does not fix it. If several Studio instances are open, call `list_roblox_studios` to find the right one.
+Run Luau in the Edit data model through the Studio MCP `execute_luau` tool, with `datamodel_type = "Edit"`. If a tool reports `Not connected to the WS host`, stop and ask the user to enable Studio as an MCP server. Retrying does not fix it. Several Studio instances are often open at once, so call `list_roblox_studios` to find the right one's id and pass it as `studio_id` on every call.
 
 Plugins parent gateways to `CoreGui` in the Edit data model unless they set another parent. Find one by name:
 
