@@ -21,17 +21,21 @@ for the authoring doctrine.
 
 ## Consuming the library
 
-1. **Depend on it.** Add `AgentSkills` to your repo's `loom.config.luau`:
+1. **Depend on it.** Add `AgentSkills` to your repo's `pkg.luau`:
 
    ```luau
    AgentSkills = {
-       rev = "v0.1.0", -- pin the version you validated against
+       rev = "v0.7.0", -- pin the version you validated against
        sourceKind = "github",
        source = "https://github.com/flipbook-labs/agent-skills",
    },
    ```
 
-   `lute run install` fetches it into `~/.loom/store/AgentSkills@<version>/`.
+   `lute pkg install` fetches it into the Loom store under `~/.loom/store/` and records its location as `installPath` in `pkg.lock.luau`, with `@pkg/` standing for the store. The directory name is a hash of the source and rev, so read it from the lockfile rather than guessing it. This prints the installed path:
+
+   ```sh
+   echo ~/.loom/store/$(sed -n 's|.*installPath = "@pkg/\(agent-skills--[^"]*\)".*|\1|p' pkg.lock.luau)
+   ```
 
 2. **Route to it.** Add a short block to your repo's `CLAUDE.md` / `AGENTS.md`
    telling agents the shared library is installed, where to find its `AGENTS.md`
@@ -52,4 +56,4 @@ Versioning and releases are managed by
 [Changewrite](https://github.com/flipbook-labs/changewrite): each PR adds a `.changes/`
 entry (`bump:` + a sentence), and the release workflow rolls those into
 [`CHANGELOG.md`](CHANGELOG.md), bumps the version in `changewrite.toml` (mirrored into
-`loom.config.luau`), tags, and publishes a GitHub release.
+`pkg.luau`), tags, and publishes a GitHub release.
