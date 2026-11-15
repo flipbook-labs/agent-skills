@@ -49,8 +49,10 @@ That usually takes less than it seems. A small fix needs a sentence or two under
 > ## Solution
 >
 > To settle on one pattern, every types-only module now returns `nil`, as seven already did.
+>
+> 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-That's the whole description. The diff shows which files changed, and the reader needs nothing more to judge it.
+That's the whole description, down to the disclosure line that closes every generated body. The diff shows which files changed, and the reader needs nothing more to judge it.
 
 ## What each section does
 
@@ -149,6 +151,8 @@ This is flipbook-labs/flipbook#658, rewritten to show everything above working t
 >
 > 1. A 1Password item `flipbook-posthog-ci` in the Flipbook Edge vault with `project-token`, `personal-api-key`, and `project-id` fields.
 > 2. A `posthog` environment holding `OP_SERVICE_ACCOUNT_TOKEN` for a service account that can read that item, limited to `main` and release tags.
+>
+> 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 **What to notice**
 
@@ -158,6 +162,7 @@ This is flipbook-labs/flipbook#658, rewritten to show everything above working t
 - The three events are sentences rather than bullets, because each one adds to the last.
 - Testing ends on what hasn't run, so the reviewer knows where the risk is.
 - Notes for reviewers holds only what someone has to do before merge, and it's the one place a numbered list fits.
+- The disclosure line closes the body, below the last section.
 
 ## What we've learned
 
