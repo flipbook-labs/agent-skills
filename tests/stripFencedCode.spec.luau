@@ -12,11 +12,11 @@ local SAMPLE = "a line only a sample would hold"
 local PROSE = "a line the rules should judge"
 
 local function countLines(text: string): number
-	return #string.split(text, "\n")
+	return #text:split("\n")
 end
 
 local function isKept(prose: string, line: string): boolean
-	return string.find(prose, line, 1, true) ~= nil
+	return prose:find(line, 1, true) ~= nil
 end
 
 test.suite("stripping fenced code", function(suite)

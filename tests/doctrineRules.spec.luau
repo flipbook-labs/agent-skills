@@ -83,20 +83,20 @@ test.suite("doctrine rules", function(suite)
 	suite:case("frontmatter-genre rejects a type outside the two genres", function(assert)
 		assert.eq(countSkillViolations("frontmatter-genre", clean), 0, "the fixture declares process")
 
-		local runbook = string.gsub(clean, "type: process", "type: runbook")
+		local runbook = clean:gsub("type: process", "type: runbook")
 		assert.eq(countSkillViolations("frontmatter-genre", runbook), 1, "runbook is not a genre")
 
-		local missing = string.gsub(clean, "type: process\n", "")
+		local missing = clean:gsub("type: process\n", "")
 		assert.eq(countSkillViolations("frontmatter-genre", missing), 1, "a missing type is a violation")
 	end)
 
 	suite:case("frontmatter-trigger rejects a description with no load trigger", function(assert)
 		assert.eq(countSkillViolations("frontmatter-trigger", clean), 0, 'the fixture says "Use when"')
 
-		local noTrigger = string.gsub(clean, "Use when: you need the thing.", "It is about things.")
+		local noTrigger = clean:gsub("Use when: you need the thing.", "It is about things.")
 		assert.eq(countSkillViolations("frontmatter-trigger", noTrigger), 1, "a topic summary is not a trigger")
 
-		local narrowed = string.gsub(clean, "Use when:", "Use only when:")
+		local narrowed = clean:gsub("Use when:", "Use only when:")
 		assert.eq(countSkillViolations("frontmatter-trigger", narrowed), 0, "a narrowing form still triggers")
 	end)
 
@@ -138,7 +138,7 @@ test.suite("doctrine rules", function(suite)
 		local multibyte = withDescription(string.rep("→", 1024))
 		assert.eq(countSkillViolations("description-length", multibyte), 0, "the limit counts characters, not bytes")
 
-		local missing = string.gsub(clean, 'description: "[^"]*"\n', "")
+		local missing = clean:gsub('description: "[^"]*"\n', "")
 		assert.eq(
 			countSkillViolations("description-length", missing),
 			0,
@@ -156,10 +156,10 @@ test.suite("doctrine rules", function(suite)
 	suite:case("date-stamp accepts either footer label and rejects a bare date", function(assert)
 		assert.eq(countSkillViolations("date-stamp", clean), 0, "**Date stamped:** with an ISO date")
 
-		local verified = string.gsub(clean, "%*%*Date stamped:%*%*", "**Last verified:**")
+		local verified = clean:gsub("%*%*Date stamped:%*%*", "**Last verified:**")
 		assert.eq(countSkillViolations("date-stamp", verified), 0, "**Last verified:** is the other label")
 
-		local bare = string.gsub(clean, "%*%*Date stamped:%*%* ", "Date: ")
+		local bare = clean:gsub("%*%*Date stamped:%*%* ", "Date: ")
 		assert.eq(countSkillViolations("date-stamp", bare), 1, "an unlabelled date does not count")
 	end)
 

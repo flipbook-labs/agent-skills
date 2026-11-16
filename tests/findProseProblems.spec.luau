@@ -33,7 +33,7 @@ end
 local function countMentioning(problems: { string }, needle: string): number
 	local count = 0
 	for _, problem in problems do
-		if string.find(problem, needle, 1, true) then
+		if problem:find(needle, 1, true) then
 			count += 1
 		end
 	end

@@ -42,8 +42,8 @@ test.suite("skill library", function(suite)
 		local indexed: { [string]: boolean } = {}
 		if fs.exists("AGENTS.md") then
 			local agents = fs.readFileToString("AGENTS.md")
-			for id in string.gmatch(agents, "`([%w%-]+/[%w%-]+)`") do
-				local scope = string.match(id, "^([%w%-]+)/")
+			for id in agents:gmatch("`([%w%-]+/[%w%-]+)`") do
+				local scope = id:match("^([%w%-]+)/")
 				if scope and scopes[scope] then
 					indexed[id] = true
 				end
