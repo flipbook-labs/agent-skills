@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 
 
+## v0.7.1
+
+Internal 2
+
+<details>
+<summary>Internal (2)</summary>
+
+1. <picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-validation-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-validation-light.svg"><img src="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-validation-light.png" alt="Validation" height="18" align="texttop"></picture> The test helpers and the agent-gateway drift check call string methods with colon notation, as `org/write-luau-code` asks. ([#59](https://github.com/flipbook-labs/agent-skills/pull/59))
+2. <picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-release-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-release-light.svg"><img src="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-release-light.png" alt="Release" height="18" align="texttop"></picture> Release with Changewrite v0.12.0, which reads the `pkg.luau` version without a custom pattern. ([#60](https://github.com/flipbook-labs/agent-skills/pull/60))
+
+</details>
+
+
 ## v0.7.0
 
 Changes 6 · Fixes 1
