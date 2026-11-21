@@ -12,11 +12,11 @@ Flipbook's `AGENTS.md` lists the tools and the common commands. This skill cover
 
 Run `rokit install` and then `lute run install` from the repo root. Copy `.env.template` to `.env` in Flipbook before building. The build fails without `BASE_URL`, and `lute run test` reads the Open Cloud values from the same file.
 
-`Packages/`, `RobloxPackages/`, `LuauPackages/`, `.env`, and `build/` are all gitignored. A new worktree starts with none of them, so run the install and create `.env` again in each one. Never edit them by hand.
+`Packages/`, `RobloxPackages/`, `LuauPackages/`, `.lpm/`, `.env`, and `build/` are all gitignored. A new worktree starts with none of them, so run the install and create `.env` again in each one. Never edit them by hand.
 
 `lute run install` also patches some third-party packages after fetching them, so a hand-edited `Packages/` does not survive it.
 
-If `lute run` reports unresolved imports, rerun `lute run install`. Loom packages live in the global store, `~/.loom/store`, so a missing store entry shows up as a failed `require` of an `@luaupkg` module. The install detects an incomplete store and refreshes it. If rokit fails with "No such file or directory (os error 2)", it is invoking a tool it has not installed. Run `rokit install`.
+If `lute run` reports unresolved imports, rerun `lute run install`. It vendors the Lute packages from `pkg.luau` into `.lpm/<key>@<rev>`, so a missing or stale folder shows up as a failed `require` of an `@lpm/` module. That happens in a fresh worktree, or after a `rev` changes in `pkg.luau`. If rokit fails with "No such file or directory (os error 2)", it is invoking a tool it has not installed. Run `rokit install`.
 
 ## Checks
 

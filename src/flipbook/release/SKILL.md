@@ -54,7 +54,7 @@ Community first. Flipbook may run inside internal Roblox environments, but the i
 
 Telemetry. Collection is gated by the `collectAnonymousUsageData` setting, checked in `fireEventAsync`. Any change that adds events, fields, or a new kind of collection must stay behind that setting and must say in the pull request what is collected, why, and how it respects privacy. Do not add collection that bypasses `fireEventAsync`.
 
-Dependency bumps. After changing `wally.toml`, `loom.config.luau`, `rokit.toml`, or `RobloxPackages`, rebuild with `--clean` before you trust any result, because a cached build can hide a broken require. For Storyteller or ModuleLoader changes, verify through Flipbook with the overlay described in [`flipbook/dev-env`](../dev-env/SKILL.md) before relying on a release of the dependency. Confirm the overlay is the code that ran. Do not bump tool versions as a side effect of another change.
+Dependency bumps. After changing `wally.toml`, `pkg.luau`, `rokit.toml`, or `RobloxPackages`, rebuild with `--clean` before you trust any result, because a cached build can hide a broken require. For Storyteller or ModuleLoader changes, verify through Flipbook with the overlay described in [`flipbook/dev-env`](../dev-env/SKILL.md) before relying on a release of the dependency. Confirm the overlay is the code that ran. Do not bump tool versions as a side effect of another change.
 
 ## Provenance and Maintenance
 
