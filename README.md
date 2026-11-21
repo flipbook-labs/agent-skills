@@ -21,25 +21,21 @@ for the authoring doctrine.
 
 ## Consuming the library
 
-1. **Depend on it.** Add `AgentSkills` to your repo's `pkg.luau`:
+1. **Depend on it.** Add `agent-skills` to the `dev_dependencies` in your repo's `pkg.luau`:
 
    ```luau
-   AgentSkills = {
+   ["agent-skills"] = {
        rev = "v0.7.0", -- pin the version you validated against
        sourceKind = "github",
        source = "https://github.com/flipbook-labs/agent-skills",
    },
    ```
 
-   `lute pkg install` fetches it into the Loom store under `~/.loom/store/` and records its location as `installPath` in `pkg.lock.luau`, with `@pkg/` standing for the store. The directory name is a hash of the source and rev, so read it from the lockfile rather than guessing it. This prints the installed path:
-
-   ```sh
-   echo ~/.loom/store/$(sed -n 's|.*installPath = "@pkg/\(agent-skills--[^"]*\)".*|\1|p' pkg.lock.luau)
-   ```
+   `lute pkg install --vendor` copies it into `.lpm/agent-skills@<rev>`, named after the key and the pinned `rev`. Add `/.lpm/` to your `.gitignore`.
 
 2. **Route to it.** Add a short block to your repo's `CLAUDE.md` / `AGENTS.md`
-   telling agents the shared library is installed, where to find its `AGENTS.md`
-   index (under the installed package's `src/`), and to read a skill before working.
+   telling agents to run the install, that the routing index is
+   `.lpm/agent-skills@<rev>/AGENTS.md`, and to read a skill before working.
 
 3. **Update deliberately.** Bump the pinned `rev` when you want newer skills; the
    [`CHANGELOG.md`](CHANGELOG.md) shows what changed between versions.

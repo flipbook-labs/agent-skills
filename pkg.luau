@@ -3,7 +3,7 @@ return {
 		name = "AgentSkills",
 		version = "0.7.1",
 		-- Pure skill library: markdown SKILL.md files under src/, no runtime dependencies.
-		-- Consumers add this package and read skills from the installed store path; see README.md.
+		-- Consumers vendor this package into `.lpm/` and read the skills from there; see README.md.
 		dependencies = {},
 	},
 }
