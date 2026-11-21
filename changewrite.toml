@@ -5,6 +5,7 @@ collapsed = ["Dependencies", "Internal"]
 current = "0.7.1"
 mirror = [
   { file = "pkg.luau" },
+  { file = "README.md", pattern = "rev = \"v([%d%.]+)\"" },
 ]
 
 [kind]
