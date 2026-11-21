@@ -154,6 +154,10 @@ drift fastest and heal slowest.
       drift detector for single-repo scopes where the fact is mechanically checkable.
 - [ ] A `.changes/` entry (`bump:`, `category:`, `kind:`, and a short description) so the change lands in the next release's changelog.
 
+## Releases
+
+[Changewrite](https://github.com/flipbook-labs/changewrite) runs releases. Each PR adds one `.changes/` entry, described in [`.changes/README.md`](.changes/README.md). On every push to `main`, the release workflow keeps a publish PR open that rolls the entries into `CHANGELOG.md` and bumps the version in `changewrite.toml`, which it mirrors into `pkg.luau` and the README's install snippet. Merging that PR tags the release and publishes it on GitHub.
+
 ## Most of the checklist is enforced
 
 `lute test` runs the mechanical half of the checklist over every skill, so it fails loudly instead of depending on an author to remember it. The rules live in `tests/lib/doctrineRules.luau`, split by what they judge:

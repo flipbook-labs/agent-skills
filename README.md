@@ -1,59 +1,48 @@
-# agent-skills
+# AgentSkills
 
-The single hub for **agent skills across the flipbook-labs org**. Instead of each
-repo growing its own `.agents/skills/` in isolation, skills live here once and are
-distributed as a versioned [Loom](https://github.com/luau-lang/lute) package
-(`AgentSkills`). Consumers depend on it, pin a version, and pull updates as a
-deliberate, changelog-reviewed bump — exactly like any other package in the org.
+AgentSkills is a shared library of agent skills. Each skill is a plain `SKILL.md` file that any agent tool can read, and repos pin the library as a versioned Lute package so every agent works from the same doctrine and runbooks.
 
-Skills are plain, vendor-neutral `SKILL.md` files (usable by Claude Code, Fable,
-Cursor, or any agent tool), organized by scope under `src/`:
+AgentSkills is built for flipbook-labs repos.
 
-| Scope                | What lives here                                                                                                         |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `src/org/`           | Cross-cutting doctrine that applies to any repo (test discipline, change control, research methodology, writing style). |
-| `src/family/`        | The Flipbook ↔ Storyteller ↔ ModuleLoader repo family (dev-env setup, checks, dependency testing, the domain contract). |
-| `src/flipbook/`      | Flipbook-specific knowledge and runbooks.                                                                               |
-| `src/agent-gateway/` | AgentGateway protocol and workflows.                                                                                    |
+## Install
 
-See [`AGENTS.md`](AGENTS.md) for the routing index and [`CONTRIBUTING.md`](CONTRIBUTING.md)
-for the authoring doctrine.
+Add this to the `dev_dependencies` in `pkg.luau` and run `lute pkg install --vendor`:
 
-## Consuming the library
+```luau
+["agent-skills"] = {
+	rev = "v0.7.1",
+	sourceKind = "github",
+	source = "https://github.com/flipbook-labs/agent-skills",
+},
+```
 
-1. **Depend on it.** Add `AgentSkills` to your repo's `pkg.luau`:
+The skills land in `.lpm/agent-skills@<rev>`.
 
-   ```luau
-   AgentSkills = {
-       rev = "v0.7.0", -- pin the version you validated against
-       sourceKind = "github",
-       source = "https://github.com/flipbook-labs/agent-skills",
-   },
-   ```
+## Use
 
-   `lute pkg install` fetches it into the Loom store under `~/.loom/store/` and records its location as `installPath` in `pkg.lock.luau`, with `@pkg/` standing for the store. The directory name is a hash of the source and rev, so read it from the lockfile rather than guessing it. This prints the installed path:
+Agents find a skill through the routing index at `.lpm/agent-skills@<rev>/AGENTS.md`, which lists every skill with the triggers that call for it. Point your repo's `AGENTS.md` at that index:
 
-   ```sh
-   echo ~/.loom/store/$(sed -n 's|.*installPath = "@pkg/\(agent-skills--[^"]*\)".*|\1|p' pkg.lock.luau)
-   ```
+```md
+## Shared skills
 
-2. **Route to it.** Add a short block to your repo's `CLAUDE.md` / `AGENTS.md`
-   telling agents the shared library is installed, where to find its `AGENTS.md`
-   index (under the installed package's `src/`), and to read a skill before working.
+Shared doctrine and runbooks live in the AgentSkills library, vendored into `.lpm/agent-skills@<rev>`, where `<rev>` is the `agent-skills` rev in `pkg.luau`. Read its `AGENTS.md` index in full before you start, then read a skill's `src/<scope>/<name>/SKILL.md` before doing the work it covers.
+```
 
-3. **Update deliberately.** Bump the pinned `rev` when you want newer skills; the
-   [`CHANGELOG.md`](CHANGELOG.md) shows what changed between versions.
+To pick up newer skills, bump `rev` and check [CHANGELOG.md](CHANGELOG.md) for what changed.
+
+## Scopes
+
+Skills live under `src/`, in the narrowest scope that fits:
+
+- `org/`: doctrine for any flipbook-labs repo, such as writing style, Luau style, and changelog entries.
+- `family/`: the Flipbook, Storyteller, and ModuleLoader repo family.
+- `flipbook/`: Flipbook's architecture, dev environment, and release runbooks.
+- `agent-gateway/`: the AgentGateway protocol.
 
 ## Contributing
 
-Skills are living documents. When your work contradicts a skill — a renamed symbol
-an anchor points at, a changed config value, a "known bug" you just fixed — fix the
-skill and add a [`.changes/`](.changes/README.md) entry in the same PR. Because this
-is a versioned package, that fix reaches consumers on their next bump. Read
-[`CONTRIBUTING.md`](CONTRIBUTING.md) before authoring or heavily editing a skill.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Versioning and releases are managed by
-[Changewrite](https://github.com/flipbook-labs/changewrite): each PR adds a `.changes/`
-entry (`bump:` + a sentence), and the release workflow rolls those into
-[`CHANGELOG.md`](CHANGELOG.md), bumps the version in `changewrite.toml` (mirrored into
-`pkg.luau`), tags, and publishes a GitHub release.
+## License
+
+MIT.
