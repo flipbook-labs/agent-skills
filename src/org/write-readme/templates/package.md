@@ -45,7 +45,7 @@ PackageName = "flipbook-labs/REPO@0.0.0"
 With Lute, add this to `pkg.luau` and run `lute pkg install --vendor`:
 
 ```luau
-REPO = {
+["REPO"] = {
 	rev = "v0.0.0",
 	sourceKind = "github",
 	source = "https://github.com/flipbook-labs/REPO",
