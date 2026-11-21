@@ -23,7 +23,7 @@ Take the files the change touches and pull each into the skills that govern it. 
 | Workflows and actions (`.github/workflows/*.yml`, `action.yml`)  | `org/github-actions`, `org/repo-conventions` |
 | Repo setup, CI policy, `.lute/` scripts                          | `org/repo-conventions`                       |
 | A `.changes/` entry or `CHANGELOG.md`                            | `org/changelog-entries`                      |
-| A README or getting-started doc                                  | `org/user-facing-docs`                       |
+| A README or CONTRIBUTING.md                                      | `org/write-readme`                           |
 | Any prose you generate (PR body, commit message, comments, docs) | `org/writing-style`                          |
 | The shape and scope of the change itself                         | `org/reviewable-changes`                     |
 
