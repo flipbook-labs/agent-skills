@@ -21,7 +21,7 @@ return {
 
 The `summary` is the line the reader sees in the changelog, and an optional `body` holds more detail. This skill is about those two and the choices around them. For the field mechanics and each repo's list of kinds, see the repo's own `.changes/README.md`.
 
-A repo on a Changewrite release older than v0.14 still writes Markdown entries, with the fields in frontmatter and the summary as the body. After it upgrades, `changewrite check --fix` converts its pending entries to Luau.
+A repo on a Changewrite release older than v0.14 still writes Markdown entries, with the fields in frontmatter and the summary as the body. After it upgrades, `changewrite check --fix` converts its pending entries to Luau. From v0.15, the same command also converts `changewrite.toml` to `changewrite.luau`, whose settings are camelCase.
 
 ## Read it in isolation
 
@@ -43,7 +43,7 @@ Most of the time the PR is simply large, and one entry is still right. Collapse 
 A summary has to be scannable. The changelog is read as a list of many entries, and a reader hunting for one fact skips over anything that looks like a paragraph, so a long summary loses the information it carries.
 
 - One short sentence: what changed, and only when it changes what the reader does, why.
-- Keep it to one line of at most 140 characters, which `changewrite check` enforces. A repo can change the limit with `max_summary_length`. When a summary runs over, cut content rather than compressing the grammar.
+- Keep it to one line of at most 140 characters, which `changewrite check` enforces. A repo can change the limit with `maxSummaryLength`. When a summary runs over, cut content rather than compressing the grammar.
 - When a change has many parts, name the change and stop. "Add `org/repo-conventions`, the repo setup and CI conventions for flipbook-labs repos." is a complete entry. Following it with a colon and every convention inside the skill turns the entry into a wall of text, and a reader who wants the list opens the skill.
 - Drop implementation detail that does not change how the reader uses the project.
 
@@ -74,7 +74,7 @@ The cross-repo issue link and the in-progress-PR aside both go, because a user c
 
 ## Category, kind, and bump
 
-- **Pick the category from the repo's list.** Each repo sets `categories` in `changewrite.toml`, and Changewrite rejects anything else. The org's repos share `Features`, `Changes`, `Fixes`, `Dependencies`, and `Internal`, in present-tense form, so the assembled notes read the same everywhere.
+- **Pick the category from the repo's list.** Each repo sets `categories` in `changewrite.luau`, and Changewrite rejects anything else. The org's repos share `Features`, `Changes`, `Fixes`, `Dependencies`, and `Internal`, in present-tense form, so the assembled notes read the same everywhere.
 - **Put maintenance under `Internal`.** A change nobody using the released artifact can see (CI, release automation, review routing, contributing docs) takes `Internal`. That section starts collapsed in release notes, so the changes a user cares about stay on top.
 - **Pick the kind by where the reader would look.** The kind renders as a chip beside the entry, so a skimming reader can find the changes to the part of the project they use. Choose from the repo's `[kind]` table. A refactor takes the kind of whatever it touches. The project kinds (`docs`, `build`, `tooling`, `packages`, `ci`, `release`, `contributing`) mean the same thing in every repo.
 - **Use `patch` as the catch-all when the tool offers no "skip".** Changewrite requires a bump on every entry and has no internal or skip level, so a change with no user-facing effect (CI, tooling, a pure refactor) takes `patch`. Marin: _"We're essentially using patch as a catch-all for actual patches and anything else a PR could possibly do since there's no skip option."_
@@ -100,6 +100,6 @@ Everything in [`org/writing-style`](../writing-style/SKILL.md) applies to the bo
 
 Updated 2026-11-15 for Changewrite 0.11's rich release notes, which every flipbook-labs repo adopted (flipbook-labs/infra#37): the `kind` chip, the collapsed `Internal` category, `flags`, `highlight`, and `release.md`.
 
-Updated 2026-11-22 for Changewrite v0.14, which writes entries as Luau with a checked one-line `summary` and an optional `body`, and capitalizes flag names. The org's repos move to it under flipbook-labs/infra#47.
+Updated 2026-11-22 for Changewrite v0.15, which writes entries as Luau with a checked one-line `summary` and an optional `body`, capitalizes flag names, and reads settings from `changewrite.luau`. The org's repos move to it under flipbook-labs/infra#47.
 
 **Re-verify these claims when this skill next loads:** nothing. This `org/` skill is pure doctrine with no single-repo anchors. The before/after above is a frozen snapshot quoted for illustration, not a live pointer into Storyteller source. The audience examples (Storyteller as a library, Flipbook as a plugin) are stable facts about the org. When the house approach to changelogs changes, update this skill and add a `.changes/` entry.

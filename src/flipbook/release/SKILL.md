@@ -10,7 +10,7 @@ type: process
 
 ## How a release happens
 
-Every release-worthy change adds one entry under `.changes/`. The format is in `.changes/README.md`. Every push to `main` runs `release.yml`, which builds `Flipbook.rbxm` and runs Changewrite. Changewrite opens or updates a `Publish v{version}` pull request that bumps the version, mirrors it into the manifests listed in `changewrite.toml`, and writes `CHANGELOG.md`.
+Every release-worthy change adds one entry under `.changes/`. The format is in `.changes/README.md`. Every push to `main` runs `release.yml`, which builds `Flipbook.rbxm` and runs Changewrite. Changewrite opens or updates a `Publish v{version}` pull request that bumps the version, mirrors it into the manifests listed in `changewrite.luau`, and writes `CHANGELOG.md`.
 
 A person merges that publish pull request. Merging it creates the tag and the GitHub release with `Flipbook.rbxm` attached. The published release triggers a second `release.yml` run that publishes to the Creator Store.
 
