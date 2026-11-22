@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 
 
+## v0.8.0
+
+Features 1 · Changes 2 · Fixes 1
+
+### Features
+
+1. <picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-org-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-org-light.svg"><img src="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-org-light.png" alt="Org" height="18" align="texttop"></picture> Rename `org/user-facing-docs` to `org/write-readme` and add App, Package, and Tool README templates. ([#63](https://github.com/flipbook-labs/agent-skills/pull/63))
+
+### Changes
+
+1. <picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-org-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-org-light.svg"><img src="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-org-light.png" alt="Org" height="18" align="texttop"></picture> Keep README titles plain in `org/write-readme`, with the docs site linked from the intro. ([#66](https://github.com/flipbook-labs/agent-skills/pull/66))
+2. <picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-org-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-org-light.svg"><img src="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-org-light.png" alt="Org" height="18" align="texttop"></picture> Require packages by string in `org/write-readme` examples. ([#67](https://github.com/flipbook-labs/agent-skills/pull/67))
+
+### Fixes
+
+1. <picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-flipbook-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-flipbook-light.svg"><img src="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-flipbook-light.png" alt="Flipbook" height="18" align="texttop"></picture> Point the Flipbook skills at vendored `.lpm/` folders and `pkg.luau` instead of the Loom store. ([#64](https://github.com/flipbook-labs/agent-skills/pull/64))
+
+
 ## v0.7.1
 
 Internal 2
