@@ -10,7 +10,7 @@ Add this to the `dev_dependencies` in `pkg.luau` and run `lute pkg install --ven
 
 ```luau
 ["agent-skills"] = {
-	rev = "v0.7.1",
+	rev = "v0.8.0",
 	sourceKind = "github",
 	source = "https://github.com/flipbook-labs/agent-skills",
 },
