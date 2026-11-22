@@ -26,7 +26,7 @@ Copy the template's block into the README, fill it in, and delete its guidance c
 
 All three templates share this shape, top to bottom:
 
-- **Title.** The PascalCase name prose uses (Storyteller, ModuleLoader, FlipbookBatteries), never the repo slug. Link it to the docs site when there is one.
+- **Title.** The PascalCase name prose uses (Storyteller, ModuleLoader, FlipbookBatteries), never the repo slug. Keep it plain text, and link the docs site from the intro instead.
 - **Icon.** A square image floated right beside the intro with `align="right"` at 128 by 128. Use an SVG, or a PNG of at least 256px, on its own filled background so it reads in light and dark mode. Apps need one. Packages and tools are encouraged to have one, and a README can ship without it and add it later.
 - **Intro.** One to three short paragraphs: what it does and what sets it apart, what it supports, and where the docs live. No badges, slogan, or Features list.
 - **Hero image.** Apps only, right after the intro.
