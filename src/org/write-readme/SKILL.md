@@ -41,14 +41,15 @@ Two rules hold the shape together:
 
 ## Keep install versions current
 
-Install snippets show the real version, never `latest` or a placeholder. Changewrite keeps them current: add a `[version].mirror` entry to `changewrite.toml` for each version string in the README, with a Lua `pattern` whose one capture is the version without its `v`:
+Install snippets show the real version, never `latest` or a placeholder. Changewrite keeps them current: add an entry to `version.mirror` in `changewrite.luau` for each version string in the README, with a Lua `pattern` whose one capture is the version without its `v`:
 
-```toml
-[version]
-mirror = [
-  { file = "README.md", pattern = "flipbook%-labs/storyteller@([%d%.]+)" },
-  { file = "README.md", pattern = "rev = \"v([%d%.]+)\"" },
-]
+```luau
+version = {
+	mirror = {
+		{ file = "README.md", pattern = "flipbook%-labs/storyteller@([%d%.]+)" },
+		{ file = "README.md", pattern = 'rev = "v([%d%.]+)"' },
+	},
+},
 ```
 
 A mirror replaces only the first match of its pattern, and the release fails if the pattern matches nothing. So when the same version string appears twice, such as an Action's `uses:` line in Install and again in Use's workflow, give each copy a pattern that only it matches, for example by including its indentation.
