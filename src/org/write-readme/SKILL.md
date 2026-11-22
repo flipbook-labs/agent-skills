@@ -71,6 +71,7 @@ Use needs at least one real example, and the example must actually work.
 
 - **Real, not placeholder.** Use a real build command and realistic names (_"Let's use a real rojo build example"_; a display name like `Flipbook Stories`, not `my-input-here`). Readers copy and paste, so a made-up or wrong example breaks their first run.
 - **Real API.** Check every function, field, and flag against the source before it goes in the example.
+- **String requires.** Require packages by string, as in `require("@pkg/Storyteller")`, never by an instance path like `ReplicatedStorage.Packages.Storyteller`.
 - **Watch for characters that break in practice.** Marin hit trouble using `#` in a Roblox place name and cut it from the example. When a value has environment constraints, keep the example inside them and note the constraint.
 
 ## Nudge setup toward the right primitives
