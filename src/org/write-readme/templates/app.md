@@ -14,9 +14,7 @@ Say each point once: in the intro or in a section, never both.
 Delete guidance comments when filling it in.
 -->
 
-# [AppName](https://flipbook-labs.github.io/REPO)
-
-<!-- Link the title to the docs site when there is one; otherwise use a plain title. -->
+# AppName
 
 <!-- Icon: square SVG, or a PNG of at least 256px, on its own filled background so it reads in light and dark mode. -->
 <img src="img/icon.svg" width="128" height="128" align="right" alt="AppName icon" />
