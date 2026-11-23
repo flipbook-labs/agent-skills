@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 
 
+## v0.9.0
+
+Changes 2
+
+### Changes
+
+1. <picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-org-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-org-light.svg"><img src="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-org-light.png" alt="Org" height="18" align="texttop"></picture> Describe Changewrite v0.15's Luau entries and `changewrite.luau` settings, with the length limit on `summary` and detail in `body`. ([#69](https://github.com/flipbook-labs/agent-skills/pull/69))
+2. <picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-org-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-org-light.svg"><img src="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-org-light.png" alt="Org" height="18" align="texttop"></picture> `org/repo-conventions` now has new repos start from the `repo-template` template repository. ([#72](https://github.com/flipbook-labs/agent-skills/pull/72))
+
+
 ## v0.8.0
 
 Features 1 · Changes 2 · Fixes 1

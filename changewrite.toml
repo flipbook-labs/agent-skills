@@ -2,7 +2,7 @@ categories = ["Features", "Changes", "Fixes", "Dependencies", "Internal"]
 collapsed = ["Dependencies", "Internal"]
 
 [version]
-current = "0.8.0"
+current = "0.9.0"
 mirror = [
   { file = "pkg.luau" },
   { file = "README.md", pattern = "rev = \"v([%d%.]+)\"" },
