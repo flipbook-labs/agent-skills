@@ -1,12 +1,24 @@
 ---
 name: repo-conventions
-description: "Repo setup and CI conventions for any flipbook-labs repo: pinning GitHub Actions by trust boundary, 5-minute job timeouts, strictness from .luaurc instead of --!strict headers, check logic in .lute/ scripts rather than workflow YAML, @std/* over @lute/*, and fetching dev-tool artifacts from upstream main. Use when: creating a new repo, writing or reviewing a GitHub Actions workflow, adding a CI job, or writing a Lute script."
+description: "Repo setup and CI conventions for any flipbook-labs repo: starting new repos from the repo-template template repository, pinning GitHub Actions by trust boundary, 5-minute job timeouts, strictness from .luaurc instead of --!strict headers, check logic in .lute/ scripts rather than workflow YAML, @std/* over @lute/*, and fetching dev-tool artifacts from upstream main. Use when: creating a new repo, writing or reviewing a GitHub Actions workflow, adding a CI job, or writing a Lute script."
 type: process
 ---
 
 # Repo Conventions
 
 The setup and CI conventions for flipbook-labs repos. Apply them from the first commit of a new repo, and hold new workflows and scripts in existing repos to the same bar. Older repos may predate some of these; when you touch their CI, bring it forward rather than copying the old pattern.
+
+## Start a new repo from `repo-template`
+
+Create every new repository from [flipbook-labs/repo-template](https://github.com/flipbook-labs/repo-template), a GitHub template repository that already follows the conventions below:
+
+```sh
+gh repo create flipbook-labs/<name> --template flipbook-labs/repo-template --public --clone
+```
+
+Then work through the checklist in its README. It covers the steps the template can't take: naming the package, writing the README from [`org/write-readme`](../write-readme/SKILL.md), registering the repository in infra's GitHub stack, and the extra setup for apps, CLIs, and Roblox packages. Don't assemble a new repo by copying files out of a sibling.
+
+Why: a copy carries its source repo's quirks, and copies drift from these conventions and from each other. The template gets updated in the same org-wide passes that bump every other repo's pins, so a repo created from it starts current.
 
 ## Pin GitHub Actions by trust boundary
 
@@ -70,5 +82,7 @@ This skill covers repo setup and the CI _policies_ a repo is configured against.
 ## Provenance and Maintenance
 
 **Date stamped:** 2026-07-07. Captured from the maintainer's review of the CI and release infrastructure PR for a new repo (flipbook-labs/archivist#4), then corroborated against their review comments across storyteller, changewrite, flipbook-cli, agent-gateway, deploy-storybook, and module-loader: action pinning by trust boundary, 5-minute timeouts, `.luaurc` over `--!strict` headers, workflow logic in `.lute/` scripts, `@std/*` over `@lute/*`, and fetching dev-tool artifacts from upstream `main`. The downloads guidance is stated from Marin's explicit archivist#4 decision (_"Let's just use the main branch"_), which reversed an earlier pin-to-version draft. The `--!nocheck` stance (same scrutiny as an `any` cast, tooling-config boundaries for vendored code, human approval per header) is from their review of agent-skills#14, which corrected an earlier "acceptable on vendored files" draft.
+
+The `repo-template` section records the decision on flipbook-labs/infra#50 to keep one template repository for every kind of repo, updated alongside the org-wide pin bumps.
 
 **Re-verify these claims when this skill next loads:** nothing mechanical. This `org/` skill is doctrine with no single-repo anchors. Its volatile edge is the named tooling (luau-lsp, rokit, Lute's `@std` library) and the luau-lsp `globalTypes` URL: if the repo you are working in has replaced one of these, follow that repo's setup and update this skill with a `.changes/` entry.
