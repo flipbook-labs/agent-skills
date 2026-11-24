@@ -18,8 +18,9 @@ Scopes:
 
 - **`org/`**: cross-cutting doctrine that applies to any flipbook-labs repo.
 - **`family/`**: the Flipbook / Storyteller / ModuleLoader repo family.
-- **`flipbook/`**: Flipbook-specific knowledge and runbooks.
 - **`agent-gateway/`**: AgentGateway protocol and workflows.
+
+Knowledge and runbooks about one repo's own code live in that repo, next to the code, so they change in the same pull request. Flipbook's are under `.claude/skills/` in the Flipbook repo.
 
 Each entry declares a genre. `type: process` is a runbook (what to do next) and
 `type: knowledge` is reference (how the system is and why). See CONTRIBUTING.md.
@@ -69,21 +70,12 @@ subagent will find the skills on its own.
 - `org/reviewable-changes`: how to scope a change so it is easy to review and safe to land. Keep the diff small and do not move code you do not have to, separate refactoring from features, make an unavoidable reorganization's diff tell its story, do not expose public API or add dependencies ahead of the feature that needs them, defer discovered rework to a follow-up, and remove temporary code before merge. Read when planning a PR or refactoring alongside a feature. `type: process`.
 - `org/write-luau-code`: the house Luau style. Type discipline (`unknown` over `any`, named types), expanded tables, verb-and-`is` naming with one term per concept, stdlib-first idioms (colon notation, no redundant asserts, import aliases, require ordering), frozen-table enums, `err`/`problem` error fields, one-responsibility modules, and not abstracting ahead of need. Read before writing or editing Luau source anywhere, including `.lute/` scripts. `type: process`.
 - `org/write-luau-tests`: writing unit tests that specify intended behavior and can actually fail. The red-first gate, forbidden moves (tautologies, mocking the subject, coverage theater), and the definition-of-good rubric. Vendor-neutral doctrine. Repo-specific runner and framework mechanics live in that repo's own test skill. `type: process`.
-- `org/write-readme`: writing or editing any repo README, and the CONTRIBUTING.md beside it. Picking the App, Package, or Tool template, the shared shape (PascalCase title, right-floated icon, short intro, Install, Use, topic sections, Contributing, License), keeping install versions current with Changewrite mirrors, centering the product not its implementation, the is-this-useful-to-an-end-user filter, and shipping a runnable example. Defers to `org/writing-style` for voice and to `flipbook/write-docs` for the Flipbook docs site. `type: process`.
+- `org/write-readme`: writing or editing any repo README, and the CONTRIBUTING.md beside it. Picking the App, Package, or Tool template, the shared shape (PascalCase title, right-floated icon, short intro, Install, Use, topic sections, Contributing, License), keeping install versions current with Changewrite mirrors, centering the product not its implementation, the is-this-useful-to-an-end-user filter, and shipping a runnable example. Defers to `org/writing-style` for voice. `type: process`.
 - `org/writing-style`: the house voice for prose you generate (skills, docs, PRs, commit messages, changelog entries). The no-conventional-commits rule for commit and PR titles, sentence craft (people and parts of the system as subjects, known before new, one idea per sentence, problems at their real size, issue numbers that support a sentence instead of carrying it), the banned patterns (antithesis framing, hype words, em dashes, semicolon overuse), and the self-critic pass. Run it over any prose you write or edit. `type: process`.
 
 ### Family: Flipbook / Storyteller / ModuleLoader (`family/`)
 
 _none yet_
-
-### Flipbook (`flipbook/`)
-
-- `flipbook/architecture`: Flipbook's non-obvious design contracts. Pluginlike and embedding, the Flipbook to Storyteller to ModuleLoader layering, why state lives in Charm, reload behavior, plugin versus embedded limits, and the community-first policy for the internal build, telemetry, and claims about other tools. Use when: changing embedding or bootstrap code, story loading, stores, telemetry, or the internal build. `type: knowledge`.
-- `flipbook/dev-env`: set up, repair, and validate the Flipbook, Storyteller, and ModuleLoader environment. Installs, `.env`, lint, analyze, cloud tests and their Open Cloud key, testing local Storyteller or ModuleLoader changes in Flipbook, StudioPlugins, and what counts as evidence for a fix. Use when: setting up, running checks, tests cannot run, or testing a dependency change in Flipbook. `type: process`.
-- `flipbook/release`: how releases happen and what an agent must not do in them, channels and assets, CI environments and secrets, storybook previews, PostHog release reporting, and the rules for telemetry, community parity, and dependency bumps. Use when: a change touches releases, publishing, workflows, telemetry, or dependencies. `type: process`.
-- `flipbook/troubleshooting`: non-obvious runtime and build failures, past incidents not to repeat, and measurement techniques. Use when: the plugin is stale, an injected global is wrong, tests wait on a fork PR, a Windows or Rotriever build breaks, or you need evidence for a build or re-render fix. `type: knowledge`.
-- `flipbook/use-studio-mcp-for-flipbook`: build and validate Flipbook through Studio MCP and FlipbookAgentGateway. Use when: driving a local Flipbook build, changing gateway actions, or verifying Stories through semantic actions, embedded Play-mode input, and screenshots. `type: process`.
-- `flipbook/write-docs`: authoring Flipbook's Docusaurus docs site. Where pages live, the sidebar, code samples, and grounding every claim in source. Defers to `org/writing-style` for voice. `type: process`.
 
 ### AgentGateway (`agent-gateway/`)
 

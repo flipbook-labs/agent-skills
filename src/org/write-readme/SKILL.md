@@ -1,6 +1,6 @@
 ---
 name: write-readme
-description: "How to write or edit the README of a flipbook-labs repo: pick the App, Package, or Tool template, fill it in, and keep it current. Covers the shared shape (PascalCase title, right-floated icon, short intro, Install, Use, topic sections, Contributing, License), what each template leads with, keeping install versions current with Changewrite mirrors, moving dev setup into CONTRIBUTING.md, centering the product rather than its implementation, the is-this-useful-to-an-end-user filter, and shipping a runnable example. Use when: writing, rewriting, or editing any repo README, or adding a CONTRIBUTING.md beside one. For prose voice see org/writing-style; for Flipbook's docs site see flipbook/write-docs."
+description: "How to write or edit the README of a flipbook-labs repo: pick the App, Package, or Tool template, fill it in, and keep it current. Covers the shared shape (PascalCase title, right-floated icon, short intro, Install, Use, topic sections, Contributing, License), what each template leads with, keeping install versions current with Changewrite mirrors, moving dev setup into CONTRIBUTING.md, centering the product rather than its implementation, the is-this-useful-to-an-end-user filter, and shipping a runnable example. Use when: writing, rewriting, or editing any repo README, or adding a CONTRIBUTING.md beside one. For prose voice see org/writing-style; for Flipbook's docs site see the write-docs skill in the Flipbook repo."
 type: process
 ---
 
@@ -81,7 +81,7 @@ When the README walks a reader through credentials or configuration, point them 
 
 ## When not to use
 
-For the prose voice (banned patterns, no em dashes, the self-critic pass), follow [`org/writing-style`](../writing-style/SKILL.md). Flipbook's docs site has its own mechanics in [`flipbook/write-docs`](../../flipbook/write-docs/SKILL.md). For a changelog entry rather than a README, see [`org/changelog-entries`](../changelog-entries/SKILL.md).
+For the prose voice (banned patterns, no em dashes, the self-critic pass), follow [`org/writing-style`](../writing-style/SKILL.md). Flipbook's docs site has its own mechanics in the `write-docs` skill in the Flipbook repo. For a changelog entry rather than a README, see [`org/changelog-entries`](../changelog-entries/SKILL.md).
 
 ---
 
