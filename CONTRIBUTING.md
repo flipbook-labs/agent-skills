@@ -160,7 +160,7 @@ drift fastest and heal slowest.
 
 ## Releases
 
-[Changewrite](https://github.com/flipbook-labs/changewrite) runs releases. Each PR adds one `.changes/` entry, described in [`.changes/README.md`](.changes/README.md). On every push to `main`, the release workflow keeps a publish PR open that rolls the entries into `CHANGELOG.md` and bumps the version in `changewrite.toml`, which it mirrors into `pkg.luau` and the README's install snippet. Merging that PR tags the release and publishes it on GitHub.
+[Changewrite](https://github.com/flipbook-labs/changewrite) runs releases. Each PR adds one `.changes/` entry, described in [`.changes/README.md`](.changes/README.md). On every push to `main`, the release workflow keeps a publish PR open that rolls the entries into `CHANGELOG.md` and bumps the version in `changewrite.luau`, which it mirrors into `pkg.luau` and the README's install snippet. Merging that PR tags the release and publishes it on GitHub.
 
 ## Most of the checklist is enforced
 
