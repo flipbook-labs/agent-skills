@@ -37,10 +37,6 @@ The dependency chain is Flipbook, then Storyteller, then ModuleLoader. Each laye
 - Storyteller discovers, loads, migrates, and renders stories. It knows nothing about Flipbook's UI.
 - Flipbook is the interface on top. It calls Storyteller's functions and does not load or require story modules itself.
 
-Two rules follow from this.
-
-Flipbook does not use ModuleLoader. It does not require the package, construct a loader, or call `loader:require`, and it gets ModuleLoader only as Storyteller's dependency instead of pinning it in `wally.toml`. Storyteller's `LoadedStorybook` type has no loader field, so `createLoadedStorybook` builds one from a name, a source, and story roots alone.
-
 UI Labs schemas are migrated in Storyteller and never parsed in Flipbook. `loadStoryModule` runs the controls through `migrateControlsSchema`, and the per-source migrations live under `src/controls/migrations/` in Storyteller. Flipbook only ever sees the Storyteller schema. To support another control format, add a migration there, using the README in that folder.
 
 ## Why stores use Charm
