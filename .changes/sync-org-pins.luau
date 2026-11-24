@@ -1,6 +1,6 @@
 return {
 	bump = "patch",
-	category = "Dependencies",
+	category = "Internal",
 	kind = "tooling",
 	summary = "Move to Changewrite v0.16.0.",
 }
