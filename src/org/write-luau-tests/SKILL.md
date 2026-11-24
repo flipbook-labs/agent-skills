@@ -10,7 +10,7 @@ The discipline for writing tests worth keeping: what a test is _for_, the red-fi
 
 ## When not to use
 
-For how to _run_ tests in a given repo (the command, filtering, the API keys or services a suite needs), its framework idioms (Jest-Luau matchers, `act()`, fake timers), spec-file placement, and its reference exemplars, see that repo's own test skill (for example a `flipbook/write-tests`). This skill is the doctrine those build on; it names no runner and no framework.
+For how to _run_ tests in a given repo (the command, filtering, the API keys or services a suite needs), its framework idioms (Jest-Luau matchers, `act()`, fake timers), spec-file placement, and its reference exemplars, see that repo's own test skill (for example a `write-tests` skill in that repo). This skill is the doctrine those build on; it names no runner and no framework.
 
 ## 1. The objective: what a test is for
 

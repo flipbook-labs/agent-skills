@@ -36,7 +36,6 @@ Skills live under `src/`, in the narrowest scope that fits:
 
 - `org/`: doctrine for any flipbook-labs repo, such as writing style, Luau style, and changelog entries.
 - `family/`: the Flipbook, Storyteller, and ModuleLoader repo family.
-- `flipbook/`: Flipbook's architecture, dev environment, and release runbooks.
 - `agent-gateway/`: the AgentGateway protocol.
 
 ## Contributing

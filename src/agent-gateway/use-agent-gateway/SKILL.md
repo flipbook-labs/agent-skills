@@ -10,7 +10,7 @@ Plugins built on [AgentGateway](https://github.com/flipbook-labs/agent-gateway) 
 
 ## When not to use
 
-To validate the gateway library itself, see the `e2e` skill in the `flipbook-labs/agent-gateway` repo. For Flipbook's workflow, see [`flipbook/use-studio-mcp-for-flipbook`](../../flipbook/use-studio-mcp-for-flipbook/SKILL.md).
+To validate the gateway library itself, see the `e2e` skill in the `flipbook-labs/agent-gateway` repo. For Flipbook's workflow, see the `use-studio-mcp` skill in the `flipbook-labs/flipbook` repo.
 
 ## Connect and find a gateway
 
