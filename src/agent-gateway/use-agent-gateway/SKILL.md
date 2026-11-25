@@ -49,9 +49,9 @@ If an action has asynchronous effects, poll a read-back action in a loop with `t
 
 ## Gotchas
 
-- `screen_capture` captures the 3D viewport only, never plugin dock widgets. To see plugin UI, look for a gateway action that puts it in the viewport, or one that embeds it into the place for a capture in Play mode.
+- `screen_capture` captures the 3D viewport only, never plugin dock widgets. To see plugin UI, look for a gateway action that puts it in the viewport, or clone the widget's children into a ScreenGui under `StarterGui`, capture, and destroy the clone.
 - `screen_capture` also leaves out anything under `CoreGui`.
-- `user_mouse_input` and `user_keyboard_input` only reach the Client data model, so simulated input needs Play mode.
+- `user_mouse_input` and `user_keyboard_input` only reach the Client data model. In Edit mode, `UserInputService:CreateVirtualInput(widget)` run through `execute_luau` clicks, types, and scrolls in a dock widget, and with no argument it reaches the viewport. It refuses to click anything under `CoreGui`.
 - Prefer gateway actions over simulated input. If you must fall back to input, tell the user, because that is a gap worth a new action.
 
 ## Provenance and Maintenance
