@@ -40,7 +40,8 @@ local response = gateway:Invoke({ method = "call", action = "<actionName>", para
 - The manifest lists each action's `name`, `title`, `description`, and optional `inputSchema`, plus `protocolVersion`.
 - Unknown actions return `unknown action: <name>`. A bad request returns an error starting with `malformed request:`.
 - Pending PR #13: the manifest also carries the plugin author's `instructions`, and params are validated against `inputSchema` before an action runs. Validation errors start with `invalid params for <action>:` and quote the schema. Without that change, an action gets raw params and reports its own errors.
-- Return data from `execute_luau` as a string with `HttpService:JSONEncode(...)`.
+- Roblox types such as `Color3` and `EnumItem` cross the gateway unchanged. Pass them to actions as they are.
+- Return a response from `execute_luau` as a plain table. `HttpService:JSONEncode` silently turns `Color3`, `EnumItem`, `DateTime`, `Vector3`, and `Instance` values into `null`.
 
 ## Poll, do not sleep
 
@@ -48,11 +49,13 @@ If an action has asynchronous effects, poll a read-back action in a loop with `t
 
 ## Gotchas
 
-- `screen_capture` captures the 3D viewport only, never plugin dock widgets. To see plugin UI, use a gateway action that embeds it into the place, then capture in Play mode.
+- `screen_capture` captures the 3D viewport only, never plugin dock widgets. To see plugin UI, look for a gateway action that puts it in the viewport, or one that embeds it into the place for a capture in Play mode.
+- `screen_capture` also leaves out anything under `CoreGui`.
+- `user_mouse_input` and `user_keyboard_input` only reach the Client data model, so simulated input needs Play mode.
 - Prefer gateway actions over simulated input. If you must fall back to input, tell the user, because that is a gap worth a new action.
 
 ## Provenance and Maintenance
 
-**Date stamped:** 2026-11-14. Trimmed; marked tag discovery, instructions, and validation as pending PR #13.
+**Date stamped:** 2026-11-25. Roblox types, `CoreGui` captures, and Client-only input were checked in Studio. Tag discovery, instructions, and validation are pending PR #13.
 
 **Re-verify these claims when this skill next loads:** run `scripts/check-drift.luau` with `lute` from the hub root. It reads PR #13's branch in a sibling `../agent-gateway` checkout through `git show`, so it works whatever is checked out, and skips cleanly when the repo or branch is missing. When PR #13 merges, point `REF` in the script at `origin/main` and drop the pending notes above.
