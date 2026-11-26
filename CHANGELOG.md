@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## v0.10.0
+
+Changes 2 · Fixes 1 · Internal 1
+
+### Changes
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-flipbook-dark.svg" /><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-flipbook-light.svg" /><img src="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-flipbook-light.png" alt="Flipbook" height="18" align="texttop" /></picture> `flipbook/architecture` drops its note about Flipbook constructing a ModuleLoader, which Storyteller no longer needs. ([#78](https://github.com/flipbook-labs/agent-skills/pull/78))
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-flipbook-dark.svg" /><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-flipbook-light.svg" /><img src="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-flipbook-light.png" alt="Flipbook" height="18" align="texttop" /></picture> The `flipbook/` skills move into the Flipbook repo under `.claude/skills/`, so they change alongside the code they describe. ([#78](https://github.com/flipbook-labs/agent-skills/pull/78))
+
+### Fixes
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-agent-gateway-dark.svg" /><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-agent-gateway-light.svg" /><img src="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-agent-gateway-light.png" alt="AgentGateway" height="18" align="texttop" /></picture> Tell agents to return gateway responses without `JSONEncode`, which drops Roblox types. ([#80](https://github.com/flipbook-labs/agent-skills/pull/80))
+
+### Internal
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-tooling-dark.svg" /><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-tooling-light.svg" /><img src="https://raw.githubusercontent.com/flipbook-labs/agent-skills/main/.changes/assets/kind-tooling-light.png" alt="Tooling" height="18" align="texttop" /></picture> Move to Changewrite v0.16.0. ([#78](https://github.com/flipbook-labs/agent-skills/pull/78))
 
 ## v0.9.0
 
